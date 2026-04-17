@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>強調・倒置・挿入・省略・同格のまとめ - 英文リスニング</title>
+  <style>
+    :root {
+      --primary-color: #2563eb;
+      --bg-color: #f3f4f6;
+      --card-bg: #ffffff;
+      --text-main: #1f2937;
+      --text-sub: #4b5563;
+      --radius: 12px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      margin: 0;
+      padding: 0;
+      padding-top: 130px;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      z-index: 1000;
+      padding: 15px 0;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 10px 0;
+      font-size: 1.2rem;
+      color: var(--primary-color);
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      padding: 0 15px;
+    }
+
+    button {
+      border: none;
+      border-radius: 25px;
+      padding: 12px 20px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    button:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .btn-play-all {
+      background: var(--primary-color);
+      color: white;
+      flex: 1;
+      max-width: 200px;
+      justify-content: center;
+    }
+
+    .btn-stop {
+      background: #ef4444;
+      color: white;
+      flex: 1;
+      max-width: 120px;
+      justify-content: center;
+    }
+
+    .container {
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 0 15px 50px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .card.playing {
+      border-color: var(--primary-color);
+      transform: scale(1.02);
+      box-shadow: 0 8px 16px rgba(37, 99, 235, 0.15);
+      background-color: #eff6ff;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .no {
+      font-size: 0.8rem;
+      color: #1d4ed8;
+      background: #dbeafe;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+
+    .btn-play-single {
+      background: #dbeafe;
+      color: #1d4ed8;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      box-shadow: none;
+    }
+
+    .en-text {
+      font-size: 1.25rem;
+      font-weight: 500;
+      margin-bottom: 10px;
+      line-height: 1.4;
+      color: #111827;
+    }
+
+    /* 文法ポイントの強調スタイル */
+    .en-text strong {
+      color: var(--primary-color);
+      font-weight: 800;
+      background: linear-gradient(transparent 70%, #dbeafe 70%);
+    }
+
+    /* アコーディオン部分（解説） */
+    .details {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, opacity 0.3s ease;
+      opacity: 0;
+    }
+
+    .card.open .details {
+      max-height: 600px;
+      opacity: 1;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px dashed #e5e7eb;
+    }
+
+    .ja-text {
+      font-size: 0.95rem;
+      margin-bottom: 15px;
+      color: var(--text-sub);
+      border-left: 3px solid #cbd5e1;
+      padding-left: 10px;
+      font-weight: bold;
+      display: block;
+    }
+
+    .exp-box {
+      background: #f8fafc;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: #334155;
+      line-height: 1.5;
+      border: 1px solid #e2e8f0;
+    }
+
+    .hint-badge {
+      font-size: 0.7rem;
+      color: #6b7280;
+      text-align: center;
+      display: block;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>強調・倒置・挿入・省略・同格 (全77文)</h1>
+    <div class="controls">
+      <button class="btn-play-all" id="playAllBtn">▶ 連続再生</button>
+      <button class="btn-stop" id="stopBtn">■ 停止</button>
+    </div>
+    <span class="hint-badge">カードをタップして和訳・ポイントを確認</span>
+  </header>
+
+  <main class="container" id="card-container"></main>
+
+  <script>
+    const data = [
+      { no: "T-312", en: "<strong>Do</strong> feel free to call me any time.", ja: "いつでも遠慮なく電話してきてくださいね。", exp: "【1.強調：動詞の強調】肯定文や命令文で、動詞の前に助動詞 do/does/did を置いて「本当に・ぜひ」と強調する。" },
+      { no: "T-313", en: "This is <strong>the very</strong> book I've been looking for!", ja: "これこそまさに私が探していた本だ！", exp: "【1.強調：名詞の強調】<the very＋名詞>「まさにその〜」。" },
+      { no: "T-314", en: "Your dress is <strong>just</strong> wonderful!", ja: "あなたのドレスは本当に素敵だ！", exp: "【1.強調：語句の強調】just, simply, really などの副詞を用いて形容詞などを強調する。" },
+      { no: "T-315", en: "Who <strong>on earth</strong> is calling at this hour?", ja: "いったい全体、こんな時間に電話してくるのは誰だ？", exp: "【1.強調：疑問詞の強調】on earth, in the world「いったい全体」。疑問詞の直後に置く。" },
+      { no: "T-316", en: "What <strong>in the world</strong> did she say to Jim?", ja: "彼女はいったいジムに何と言ったんだ？", exp: "【1.強調：疑問詞の強調】<疑問詞＋in the world>「いったい全体」。" },
+      { no: "T-317", en: "Did you follow the doctor's advice <strong>at all</strong>?", ja: "あなたは医者の助言に少しでも従ったのですか？（そもそも従ったのか？）", exp: "【1.強調：疑問文の強調】at all は疑問文で使うと「いったい／そもそも／少しでも」と問いを強調する。" },
+      { no: "T-318", en: "I do <strong>not</strong> believe his story <strong>at all</strong>.", ja: "私は彼の話を全く信じない。", exp: "【1.強調：否定の強調】<not ... at all>「全く〜ない」。" },
+      { no: "T-319", en: "I'm <strong>not</strong> interested in baseball <strong>in the least</strong>.", ja: "私は野球には全く興味がない。", exp: "【1.強調：否定の強調】<not ... in the least>「少しも〜ない」。" },
+      { no: "T-320", en: "I have <strong>no</strong> doubt <strong>whatever</strong> about his innocence.", ja: "彼の無実について、少しの疑いも持っていない。", exp: "【1.強調：否定の強調】<no ... whatever>「少しの〜もない」。whatever が名詞を後ろから強調する。" },
+      { no: "T-321", en: "I <strong>just don't</strong> like chicken.", ja: "私はどうしても鶏肉が好きになれない（ただ単に嫌いだ）。", exp: "【1.強調：否定の強調】<just don't ...>「どうしても〜ない／とにかく〜ない」。" },
+      { no: "T-322", en: "He tells the same jokes <strong>again and again</strong>.", ja: "彼は同じ冗談を何度も何度も言う。", exp: "【1.強調：反復】同じ語句を繰り返すことで強調する。" },
+      { no: "T-323", en: "The child <strong>cried and cried</strong> during dinner.", ja: "その子供は夕食の間中、泣きに泣いた。", exp: "【1.強調：反復】動詞の繰り返し（泣いて泣いた＝泣きに泣いた）。" },
+      { no: "T-324", en: "<strong>It was</strong> Jim <strong>that [who]</strong> caught a turtle in this pond yesterday.", ja: "昨日この池でカメを捕まえたのは、ジムだった。", exp: "【1.強調：強調構文(主語)】<It is X that ...>で X（ジム）を強調。強調されるのが人の場合は that の代わりに who も可。" },
+      { no: "T-325", en: "<strong>It was</strong> in this pond <strong>that</strong> Jim caught a turtle yesterday.", ja: "ジムが昨日カメを捕まえたのは、この池でのことだった。", exp: "【1.強調：強調構文(副詞句)】場所を表す副詞句（in this pond）を It was と that の間に挟んで強調。" },
+      { no: "T-326", en: "<strong>It was</strong> yesterday I borrowed your textbook.", ja: "私があなたの教科書を借りたのは昨日でした。", exp: "【1.強調：thatの省略】口語では強調構文の that が省略されることがある。" },
+      { no: "T-327", en: "<strong>It is I who am</strong> responsible for safety in this theater.", ja: "この劇場での安全責任を負うのは私です。", exp: "【1.強調：代名詞の格】強調される代名詞が主語の場合、主格（I）を用いる。動詞（am）も先行詞（I）に一致させる（堅い表現）。" },
+      { no: "T-328", en: "<strong>It is me that [who] is</strong> responsible for safety in this theater.", ja: "この劇場での安全責任を負うのは私です。", exp: "【1.強調：代名詞の格】口語では主語でも目的格（me）が使われることが多く、その場合動詞は3人称単数（is）になることが多い。" },
+      { no: "T-329", en: "<strong>It is because</strong> pandas look cute <strong>that</strong> we like them so much.", ja: "私たちがパンダを大好きなのは、見た目が可愛いからだ。", exp: "【1.強調：副詞節の強調】because 節などの副詞節も It is ... that で挟んで強調できる。" },
+      { no: "T-330", en: "<strong>Who was it that</strong> invented the telephone?", ja: "電話を発明したのはいったい誰ですか？", exp: "【1.強調：疑問詞の強調構文】<疑問詞 is it that ...?>「いったい〜なのは誰／何／いつ...か」。" },
+      { no: "T-331", en: "<strong>Where is it that</strong> she works?", ja: "彼女が働いているのはいったいどこですか？", exp: "【1.強調：疑問詞の強調構文】Where does she work? の強調形。Where が文頭に出る。" },
+      { no: "T-332", en: "<strong>When was it that</strong> he started learning English?", ja: "彼が英語を習い始めたのはいったいいつのことですか？", exp: "【1.強調：疑問詞の強調構文】When did he start...? の強調形。" },
+      { no: "T-333", en: "<strong>It is not</strong> what he has <strong>but</strong> what he is <strong>that</strong> makes him so popular.", ja: "彼をそんなに人気者にしているのは、彼の財産ではなく彼の人柄だ。", exp: "【1.強調：not A but B】強調構文の中で <not A but B>（A ではなく B）を使う形。what he has（財産）と what he is（人柄・今の彼自身）の対比。" },
+      { no: "T-334", en: "<strong>It is</strong> what he has <strong>that</strong> makes him so popular.", ja: "彼をそんなに人気者にしているのは、彼の財産だ。", exp: "【1.強調：強調構文】関係代名詞節（what he has＝持っているもの）を強調。" },
+      { no: "T-335", en: "<strong>What</strong> I like <strong>is</strong> her voice.", ja: "私が好きなのは彼女の声だ。", exp: "【1.強調：関係詞 What】<What S V is ...>の疑似強調構文。「S が V するのは...だ」と訳す。" },
+      { no: "T-336", en: "<strong>What</strong> surprised me <strong>was</strong> her scream.", ja: "私を驚かせたのは彼女の叫び声だった。", exp: "【1.強調：関係詞 What】「〜したのは...だった」と主語全体を名詞節（What〜）にして強調する。" },
+      { no: "T-337", en: "<strong>All</strong> you have to do <strong>is (to)</strong> wait here.", ja: "あなたはただここで待ちさえすればよい（あなたがすべきすべてのことは待つことだ）。", exp: "【1.強調：All ... is】<All S have to do is ...>「S は〜しさえすればよい」。補語の to はよく省略される。" },
+      { no: "T-338", en: "<strong>The first thing</strong> to remember <strong>is</strong> not to criticize anyone.", ja: "最初に覚えておくべきことは、誰のことも批判しないということだ。", exp: "【1.強調：The first thing】「まず第一に〜／最初に〜すべきこと」。" },
+      { no: "T-339", en: "<strong>The first thing</strong> to do <strong>is (to)</strong> organize your desk.", ja: "最初にすべきことは机を整理することだ。", exp: "【1.強調：The first thing】All 〜 と同様に、補語の to は省略されることが多い。" },
+      { no: "T-340", en: "<strong>Never have I</strong> seen such a beautiful rainbow.", ja: "私はこれほど美しい虹を今まで一度も見たことがない。", exp: "【2.倒置：否定語句の文頭】否定語（Never）が強調のために文頭に出ると、<疑問文の語順>で倒置が起こる。" },
+      { no: "T-341", en: "<strong>Rarely does he</strong> tell a joke.", ja: "彼はめったに冗談を言わない。", exp: "【2.倒置：否定語句の文頭】Rarely（めったに〜ない）＋助動詞（does）＋S＋V。" },
+      { no: "T-342", en: "<strong>At no time did the actor</strong> mention his private life.", ja: "その俳優は一度も私生活について語らなかった。", exp: "【2.倒置：否定の副詞句】at no time, in no way, on no account などの否定句が文頭に来る場合も倒置が起こる。" },
+      { no: "T-343", en: "<strong>Only</strong> in case of emergency <strong>can you</strong> use this exit.", ja: "非常時以外はこの出口を使用してはいけない（非常時のみ使用できる）。", exp: "【2.倒置：Only＋副詞句】only（〜だけ＝他はダメという準否定）が文頭に来る場合も、後ろが疑問文の語順になる。" },
+      { no: "T-344", en: "<strong>Not until</strong> I talked to him <strong>did I know</strong> he was homesick.", ja: "彼と話して初めて、彼がホームシックだと知った。", exp: "【2.倒置：Not until...】<Not until ... 疑問文の語順>「〜して初めて…する」。" },
+      { no: "T-345", en: "<strong>Not until</strong> yesterday <strong>did he tell</strong> the truth.", ja: "昨日になってようやく彼は真実を話した。", exp: "【2.倒置：Not until...】until の後は節だけでなく語句（yesterdayなど）でもよい。" },
+      { no: "T-346", en: "<strong>Not only does he</strong> draw illustrations <strong>but he (also)</strong> writes novels.", ja: "彼はイラストを描くだけでなく、小説も書く。", exp: "【2.倒置：Not only A but also B】Not only が文頭に出ると倒置が起こる。後半（but...）は倒置しない。" },
+      { no: "T-347", en: "<strong>Well do I</strong> remember that day.", ja: "私はその日のことをよく覚えている。", exp: "【2.倒置：程度の副詞】程度を表す副詞（Well）などが強調のために文頭に出ると倒置が起こることがある。" },
+      { no: "T-348", en: "<strong>So terrible was</strong> the concert <strong>that</strong> I left the hall.", ja: "コンサートがあまりにひどかったので、私は会場を出た。", exp: "【2.倒置：So...that】<So 形容詞/副詞 V S that...>。so が文頭に出て倒置が起きる。" },
+      { no: "T-349", en: "<strong>Down fell</strong> an apple.", ja: "リンゴが落ちてきた。", exp: "【2.倒置：方向・場所の副詞】<副詞＋V＋S>。主語が名詞の場合は VS の順になる（do などの助動詞は不要）。" },
+      { no: "T-350", en: "<strong>In my pocket was</strong> his business card.", ja: "私のポケットには彼の名刺が入っていた。", exp: "【2.倒置：場所の副詞句】<場所の副詞句＋V＋S>。MVS の倒置。" },
+      { no: "T-351", en: "<strong>Into the room he</strong> walked.", ja: "彼は部屋の中へ歩いて入った。", exp: "【2.倒置：代名詞主語】主語が代名詞（he）の場合は倒置しない（語順は 副詞＋S＋V）。" },
+      { no: "T-352", en: "<strong>Here comes</strong> the train.", ja: "電車が来たぞ。", exp: "【2.倒置：Here/There 構文】<Here V S>。主語が名詞の場合。" },
+      { no: "T-353", en: "<strong>Here he</strong> comes.", ja: "彼が来たぞ。", exp: "【2.倒置：Here/There 構文】主語が代名詞の場合は <Here S V>（倒置しない）。" },
+      { no: "T-354", en: "<strong>Not a word did she</strong> say.", ja: "彼女は一言も発しなかった。", exp: "【2.倒置：目的語の強調(否定)】目的語に否定語が含まれて文頭に出る場合、倒置が起こる（OSV → O＋助動詞＋S＋V）。" },
+      { no: "T-355", en: "<strong>No hope did I</strong> have at that time.", ja: "その時、私は何の希望も持っていなかった。", exp: "【2.倒置：目的語の強調(否定)】否定語を含む目的語（No hope）が文頭へ。" },
+      { no: "T-356", en: "<strong>Spaghetti I</strong> like, but <strong>macaroni I</strong> dislike.", ja: "スパゲッティは好きだが、マカロニは嫌いだ。", exp: "【2.倒置：目的語の強調(肯定)】否定語を含まない目的語が文頭に出る場合は、通常倒置は起こらない（OSV）。対比などで使われる。" },
+      { no: "T-357", en: "<strong>Wonderful was</strong> the view from the balcony.", ja: "バルコニーからの眺めは素晴らしかった。", exp: "【2.倒置：補語の強調】<C V S>。補語（形容詞）を強調して文頭へ。文のリズムを整える効果もある。" },
+      { no: "T-358", en: "<strong>Happy is</strong> the man who knows his business.", ja: "自分のやるべきことがわかっている人は幸せだ。", exp: "【2.倒置：補語の強調】主語が長い場合（関係詞節がつくなど）によく起こる倒置。" },
+      { no: "T-359", en: "\"I was poor at math in school.\" \"<strong>So was I</strong>.\"", ja: "「私は学生時代、数学が苦手だった」「私もそうだった」。", exp: "【2.倒置：慣用的倒置(肯定)】<So V S>「S もまたそうである」。相手の肯定文に同意する形。" },
+      { no: "T-360", en: "\"I don't like watching movies alone.\" \"<strong>Neither [Nor] do I</strong>.\"", ja: "「私は一人で映画を見るのが好きじゃない」「私もそうだ（好きじゃない）」。", exp: "【2.倒置：慣用的倒置(否定)】<Neither/Nor V S>「S もまたそうでない」。相手の否定文に同意する形。" },
+      { no: "T-361", en: "His son, <strong>fortunately</strong>, was rescued from the burning house.", ja: "幸運なことに、彼の息子は燃える家から救出された。", exp: "【3.挿入：語句の挿入】文の途中に副詞（fortunatelyなど）をコンマで挟んで挿入する。" },
+      { no: "T-362", en: "The clothes in this store, <strong>in my opinion</strong>, are too expensive.", ja: "私の意見では、この店の服は高すぎる。", exp: "【3.挿入：語句の挿入】in my opinion, after all, in fact など。" },
+      { no: "T-363", en: "Fishing in this river, <strong>as far as I know</strong>, is prohibited.", ja: "私の知る限り、この川での釣りは禁止されている。", exp: "【3.挿入：節の挿入】as far as I know, as far as I am concerned, if possible など。" },
+      { no: "T-364", en: "Too much exercise, <strong>I think</strong>, is bad for your health.", ja: "過度な運動は、思うに、健康に悪い。", exp: "【3.挿入：主語＋動詞の挿入】I think, I believe, it seems などが挿入される。" },
+      { no: "T-365", en: "He <strong>seldom, if ever,</strong> does his homework.", ja: "彼は（たとえあるにしても）めったに宿題をしない。", exp: "【3.挿入：慣用表現】<seldom/rarely, if ever>「あるとしてもごく稀に（めったに〜ない）」。" },
+      { no: "T-366", en: "<strong>Hardly if ever</strong> do I have a chance to talk with you.", ja: "あなたと話す機会はめったにない。", exp: "【3.挿入：慣用表現】<hardly, if ever>「めったに〜ない」。倒置を伴って文頭に出ることもある。" },
+      { no: "T-367", en: "The girls were brave, but the boys <strong>were not</strong>.", ja: "少女たちは勇敢だったが、少年たちはそうでなかった（勇敢ではなかった）。", exp: "【4.省略：補語の省略】文脈から明らかな補語（were not の後の brave）を省略。" },
+      { no: "T-368", en: "John ate a hamburger, and <strong>Mary French fries</strong>.", ja: "ジョンはハンバーガーを、メアリーはフライドポテトを食べた。", exp: "【4.省略：動詞の省略】共通する動詞（Mary の後の ate）を省略。" },
+      { no: "T-369", en: "You may sit whenever you <strong>want to</strong>.", ja: "座りたい時はいつでも座っていいですよ。", exp: "【4.省略：不定詞の省略】<want to (sit)>。to だけを残す（代不定詞）。" },
+      { no: "T-370", en: "John went upstairs <strong>and knocked</strong> at the door.", ja: "ジョンは2階に上がり、ドアをノックした。", exp: "【4.省略：主語の省略】同一主語（and の後の John）の省略。" },
+      { no: "T-371", en: "He broke his left leg <strong>while skiing</strong> in Canada.", ja: "彼はカナダでスキーをしている最中に左脚を骨折した。", exp: "【4.省略：接続詞＋S＋be の省略】while (he was) skiing。副詞節中の「主語＋be 動詞」は省略可能。" },
+      { no: "T-372", en: "<strong>Though tired</strong>, she studied till late.", ja: "疲れていたが、彼女は遅くまで勉強した。", exp: "【4.省略：接続詞＋S＋be の省略】Though (she was) tired。" },
+      { no: "T-373", en: "I'll help you <strong>if necessary</strong>.", ja: "必要ならば手伝いますよ。", exp: "【4.省略：if〜】if (it is) necessary。慣用的な省略。" },
+      { no: "T-374", en: "I'd like to see you off <strong>if possible</strong>.", ja: "可能ならばあなたを見送りたい。", exp: "【4.省略：if〜】if (it is) possible。" },
+      { no: "T-375", en: "Please point out the mistakes <strong>if any</strong>.", ja: "もしあればの話だが、間違いを指摘してください。", exp: "【4.省略：if any】「もしあれば」。" },
+      { no: "T-376", en: "Her best friend <strong>Lisa</strong> is a nurse.", ja: "彼女の親友のリサは看護師だ。", exp: "【5.同格：名詞の並列】名詞を並べて同格を表す（コンマなし）。" },
+      { no: "T-377", en: "John Steinbeck<strong>, a writer from California,</strong> won the Nobel Prize in Literature.", ja: "カリフォルニア出身の作家、ジョン・スタインベックはノーベル文学賞を受賞した。", exp: "【5.同格：コンマによる同格】コンマで挟んで前の名詞を補足説明する。" },
+      { no: "T-378", en: "She was born and raised in <strong>the city of Seattle</strong>.", ja: "彼女はシアトル市で生まれ育った。", exp: "【5.同格：of による同格】<the A of B>「B という A」。the city of Seattle（シアトルという市）。" },
+      { no: "T-379", en: "They need two kinds of support<strong>: economic and technical</strong>.", ja: "彼らには2種類の支援が必要だ。経済的支援と技術的支援である。", exp: "【5.同格：コロン】具体例を列挙したり、説明を加えたりする。" },
+      { no: "T-380", en: "There is one thing I have trouble remembering <strong>— people's name</strong>.", ja: "私には覚えるのが苦手なことが一つある。人の名前だ。", exp: "【5.同格：ダッシュ】コロンと同様、言い換えや説明に使う。" },
+      { no: "T-381", en: "I read War and Peace, <strong>that is,</strong> one of the masterpieces by Tolstoy.", ja: "私は『戦争と平和』、つまりトルストイの傑作の一つを読んだ。", exp: "【5.同格：接続語句】that is (to say), namely「つまり、すなわち」。" },
+      { no: "T-382", en: "He studies astronomy, <strong>or</strong> the study of stars, at college.", ja: "彼は大学で天文学、つまり星の研究をしている。", exp: "【5.同格：or】「すなわち、言い換えれば」。" },
+      { no: "T-383", en: "I heard a rumor <strong>that</strong> he's living in India now.", ja: "彼が今インドに住んでいるという噂を聞いた。", exp: "【5.同格：同格の that】<名詞＋that 節>「〜という（噂・事実など）」。後ろには完全な文が続く。" },
+      { no: "T-384", en: "I know the fact <strong>that</strong> she is trying to conceal.", ja: "私は彼女が隠そうとしている事実を知っている。", exp: "【5.同格：関係代名詞との区別】conceal（〜を隠す）の目的語が欠けているため、これは関係代名詞の that。" },
+      { no: "T-385", en: "I know the fact <strong>that</strong> she is trying to conceal the scandal.", ja: "私は彼女がスキャンダルを隠そうとしているという事実を知っている。", exp: "【5.同格：同格の that】that 以下が完全な文（スキャンダルを隠そうとしている）なので、これは同格の that。" },
+      { no: "T-386", en: "We discussed the question <strong>whether</strong> a new baseball stadium should be built.", ja: "私たちは新しい野球場を建設すべきかどうかという問題について議論した。", exp: "【5.同格：疑問詞・whether】question, doubt などの名詞の後には、whether や疑問詞の節が同格として続くことがある。" },
+      { no: "T-387", en: "His idea <strong>of making</strong> a fortune overnight is unrealistic.", ja: "一夜にして財産を築くという彼の考えは非現実的だ。", exp: "【5.同格：of＋動名詞】<名詞＋of＋doing>「〜するという（考え・夢など）」。" },
+      { no: "T-388", en: "She has a desire <strong>to succeed</strong> as an opera singer.", ja: "彼女はオペラ歌手として成功したいという願望を持っている。", exp: "【5.同格：to 不定詞】<名詞＋to do>「〜したいという（願望・計画など）」。これからの動作を表す名詞につく。" }
+    ];
+
+    const container = document.getElementById('card-container');
+    
+    data.forEach((item, index) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.id = `card-${index}`;
+      
+      // カードタップでアコーディオン開閉 (再生ボタン以外)
+      card.onclick = (e) => {
+        if (!e.target.classList.contains('btn-play-single')) {
+            card.classList.toggle('open');
+        }
+      };
+      
+      // < と > をエスケープ処理（HTMLタグとして消えるのを防ぐ）
+      const escapedExp = item.exp.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      
+      card.innerHTML = `
+        <div class="card-header">
+          <span class="no">${item.no}</span>
+          <button class="btn-play-single" onclick="playSingle(${index})">🔊 再生</button>
+        </div>
+        <div class="en-text">${item.en}</div>
+        <div class="details">
+            <span class="ja-text">${item.ja}</span>
+            <div class="exp-box">${escapedExp}</div>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+
+    const synth = window.speechSynthesis;
+    let currentPlayIndex = -1;
+    let isPlayingAll = false;
+
+    // HTMLタグ（<strong>など）を除去してプレーンテキストにする
+    function stripHtml(html) {
+      const tmp = document.createElement("DIV");
+      tmp.innerHTML = html;
+      return tmp.textContent || tmp.innerText || "";
+    }
+
+    function speakText(text, onEndCallback) {
+      synth.cancel();
+      const plainText = stripHtml(text);
+      const utterance = new SpeechSynthesisUtterance(plainText);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.9;
+      
+      utterance.onend = function() {
+        if (onEndCallback) onEndCallback();
+      };
+      utterance.onerror = function(e) {
+        console.error('Speech error', e);
+        if (onEndCallback) onEndCallback();
+      };
+      synth.speak(utterance);
+    }
+
+    function updateHighlights(index) {
+      document.querySelectorAll('.card').forEach((card, i) => {
+        if (i === index) {
+          card.classList.add('playing');
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          card.classList.remove('playing');
+        }
+      });
+    }
+
+    function playNext() {
+      if (!isPlayingAll) return;
+      currentPlayIndex++;
+      
+      if (currentPlayIndex >= data.length) {
+        isPlayingAll = false;
+        currentPlayIndex = -1;
+        updateHighlights(-1);
+        return;
+      }
+      
+      updateHighlights(currentPlayIndex);
+      speakText(data[currentPlayIndex].en, playNext);
+    }
+
+    window.playSingle = function(index) {
+      isPlayingAll = false;
+      synth.cancel();
+      currentPlayIndex = index;
+      updateHighlights(index);
+      
+      speakText(data[index].en, () => {
+        updateHighlights(-1);
+      });
+    };
+
+    document.getElementById('playAllBtn').addEventListener('click', () => {
+      isPlayingAll = true;
+      currentPlayIndex = -1;
+      playNext();
+    });
+
+    document.getElementById('stopBtn').addEventListener('click', () => {
+      isPlayingAll = false;
+      synth.cancel();
+      updateHighlights(-1);
+    });
+  </script>
+</body>
+</html>

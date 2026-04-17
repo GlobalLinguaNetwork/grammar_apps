@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>否定完全マスター - 英文リスニング</title>
+  <style>
+    :root {
+      --primary-color: #e11d48; /* 否定編はアクセントの強いローズレッド */
+      --accent-color: #f59e0b;
+      --bg-color: #fff1f2;
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-sub: #475569;
+      --radius: 16px;
+    }
+
+    body {
+      font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      margin: 0;
+      padding-top: 140px;
+      line-height: 1.6;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      z-index: 1000;
+      padding: 20px 0;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 15px 0;
+      font-size: 1.3rem;
+      color: var(--primary-color);
+      letter-spacing: 0.05em;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 0 15px;
+    }
+
+    button {
+      border: none;
+      border-radius: 50px;
+      padding: 12px 24px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-play-all { background: var(--primary-color); color: white; }
+    .btn-stop { background: #475569; color: white; }
+    button:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    .container {
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 0 15px 50px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .card.playing {
+      border-color: var(--primary-color);
+      background-color: #fff1f2;
+      transform: scale(1.02);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .no {
+      font-size: 0.8rem;
+      color: var(--primary-color);
+      background: #ffe4e6;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .btn-play-single {
+      background: #ffe4e6;
+      color: var(--primary-color);
+      padding: 6px 12px;
+      font-size: 0.75rem;
+    }
+
+    .en-text {
+      font-size: 1.2rem;
+      font-weight: 500;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .en-text strong {
+      color: var(--primary-color);
+      border-bottom: 2px solid #fecdd3;
+      font-weight: 700;
+    }
+
+    .details {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, opacity 0.3s ease;
+      opacity: 0;
+    }
+
+    .card.open .details {
+      max-height: 600px;
+      opacity: 1;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px dashed #e2e8f0;
+    }
+
+    .ja-text {
+      font-size: 0.95rem;
+      color: var(--text-sub);
+      font-weight: bold;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .exp-box {
+      background: #f8fafc;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: #475569;
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .hint-badge {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      text-align: center;
+      display: block;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>否定のまとめ (全67文)</h1>
+    <div class="controls">
+      <button class="btn-play-all" id="playAllBtn"><span>▶</span> 連続再生</button>
+      <button class="btn-stop" id="stopBtn"><span>■</span> 停止</button>
+    </div>
+    <span class="hint-badge">カードをクリックして和訳・ポイントを確認</span>
+  </header>
+
+  <main class="container" id="card-container"></main>
+
+  <script>
+    const data = [
+      { "no": "T-482", "en": "We <strong>do not come</strong> to school by train.", "ja": "私たちは電車で通学していない。", "exp": "【述語動詞の否定：文全体】do not + 動詞の原形で文全体の内容を否定する。" },
+      { "no": "T-483", "en": "He <strong>is not</strong> an artist.", "ja": "彼は芸術家ではない。", "exp": "【述語動詞の否定：be動詞】be動詞の直後に not を置く。" },
+      { "no": "T-484", "en": "She <strong>did not call</strong> me.", "ja": "彼女は私に電話しなかった。", "exp": "【述語動詞の否定：一般動詞(過去)】did not + 動詞の原形で過去の動作を否定する。" },
+      { "no": "T-485", "en": "It <strong>will not be</strong> fine tomorrow.", "ja": "明日は晴れないだろう。", "exp": "【述語動詞の否定：助動詞】助動詞(will)の直後に not を置く。" },
+      { "no": "T-486", "en": "My teacher told me <strong>not to wear</strong> earrings.", "ja": "先生は私にイヤリングをしないように言った。", "exp": "【準動詞の否定】不定詞(to do)、動名詞(doing)、分詞を否定する場合は、その直前に not を置く。" },
+      { "no": "T-487", "en": "Dave is Australian, <strong>not British</strong>.", "ja": "デイブはオーストラリア人であり、イギリス人ではない。", "exp": "【語句の否定】特定の語句だけを否定する場合、その直前に not を置く。" },
+      { "no": "T-488", "en": "Mike comes from Canada, <strong>not from</strong> the United States.", "ja": "マイクはカナダ出身で、アメリカ出身ではない。", "exp": "【語句の否定】not A で「Aではない」と直後の前置詞句を否定する。" },
+      { "no": "T-489", "en": "She loves him <strong>not because</strong> he is handsome, <strong>but because</strong> he is warm-hearted.", "ja": "彼女が彼を愛しているのは、ハンサムだからではなく、心が温かいからだ。", "exp": "【節の否定】<not A but B> で「AではなくBだ」。because節などの節全体を対比して否定する。" },
+      { "no": "T-490", "en": "I will <strong>never</strong> ride a roller coaster again.", "ja": "私は二度とジェットコースターには乗らない。", "exp": "【強い否定：never】「一度も～ない」「決して～ない」と、not より強い否定を表す。" },
+      { "no": "T-491", "en": "It <strong>never snows</strong> on the island.", "ja": "その島では決して雪が降らない。", "exp": "【never の位置：一般動詞】一般動詞の場合は、その直前に never を置く。" },
+      { "no": "T-492", "en": "Peter <strong>is never</strong> at home.", "ja": "ピーターは決して家にいない。", "exp": "【never の位置：be動詞】be動詞や助動詞の場合は、その直後に never を置く。" },
+      { "no": "T-493", "en": "There were <strong>no children</strong> in the park.", "ja": "公園には子供が一人もいなかった。", "exp": "【名詞の否定：no + 名詞】「まったく～ない（1つも～ない）」。not a/any よりも強い全否定を表す。" },
+      { "no": "T-494", "en": "There was <strong>no chair</strong> for me to sit down.", "ja": "私が座る椅子は一つもなかった。", "exp": "【no + 単数形/複数形】no は単数形名詞にも複数形名詞にもつけられる。「1つも～ない」。" },
+      { "no": "T-495", "en": "<strong>No students</strong> are allowed to enter this room.", "ja": "どの学生もこの部屋に入ることは許されていない。", "exp": "【主語の全否定】主語の前に no を付けると、「～する（人/物）はいない」と文全体が否定される。" },
+      { "no": "T-496", "en": "Building a house is <strong>no simple task</strong>.", "ja": "家を建てることは決して簡単な仕事ではない。", "exp": "【強い否定：no + 名詞】「決して～ない」。単なる not よりも「少しもそんなことはない」と強く否定する。" },
+      { "no": "T-497", "en": "He is <strong>no genius</strong>.", "ja": "彼は決して天才ではない（ただの凡人だ）。", "exp": "【強い否定：no + 名詞】He is not a genius よりも「彼は天才とは対極にある（凡人だ）」と強く否定するニュアンス。" },
+      { "no": "T-498", "en": "I <strong>don't think</strong> (that) he is so talented.", "ja": "彼にそれほど才能があるとは思わない。", "exp": "【繰り上げ否定：think】think, believe, suppose 等は「～ないと思う」と主節の動詞を否定の形にするのが英語の原則。" },
+      { "no": "T-499", "en": "I <strong>don't expect</strong> (that) he will accept my apology.", "ja": "彼が謝罪を受け入れるとは思わない（予期しない）。", "exp": "【繰り上げ否定：expect】「～すると思わない（予期しない）」。従属節ではなく主節を否定する。" },
+      { "no": "T-500", "en": "He <strong>doesn't seem</strong> to know our secret.", "ja": "彼は私たちの秘密を知っているようには見えない。", "exp": "【繰り上げ否定：seem】「～するようには見えない」。主節の seem を否定する。" },
+      { "no": "T-501", "en": "I hope (that) it <strong>won't</strong> rain tomorrow.", "ja": "明日雨が降らないことを望む。", "exp": "【繰り上げ否定の例外：hope】hope は例外的に、主節(I hope not)ではなく that 節の中を否定する。" },
+      { "no": "T-502", "en": "I am afraid that she <strong>won't</strong> be able to get here on time.", "ja": "彼女は時間通りに来られないのではないかと思う（心配する）。", "exp": "【繰り上げ否定の例外：be afraid】be afraid, fear なども that 節の中を直接否定する。" },
+      { "no": "T-503", "en": "I <strong>just don't</strong> like her.", "ja": "私はとにかく彼女が好きではないのだ。", "exp": "【部分否定・全否定の語順：just don't】<just + don't> の語順で「ただ～ないだけ（とにかく～ない）」という全否定の強調。" },
+      { "no": "T-504", "en": "I <strong>don't just</strong> like her.", "ja": "私は彼女がただ好きなだけではない（愛している）。", "exp": "【部分否定・全否定の語順：don't just】<don't + just> の語順で「ただ～なだけではない（それ以上だ）」。語順で意味が変わる点に注意。" },
+      { "no": "T-505", "en": "\"Will Jackie be late again?\" \"I hope <strong>not</strong>.\"", "ja": "「ジャッキーはまた遅れるかな？」「遅れないといいけど」。", "exp": "【代用表現の not】hope, expect などの目的語となる節の内容を否定する場合、that 節の代わりに not を使う。" },
+      { "no": "T-506", "en": "\"Will he come back tomorrow?\" \"Yes, I'm afraid <strong>not</strong>.\"", "ja": "「彼は明日戻ってきますか？」「残念ながら戻らないと思います」。", "exp": "【代用表現：I'm afraid not】「残念ながら～ない」。相手の質問に対し、否定的な内容を丁寧に伝える表現。" },
+      { "no": "T-509", "en": "\"Is it still raining?\" \"Yes, I'm afraid <strong>so</strong>.\"", "ja": "「まだ雨が降っていますか？」「残念ながらそのようです」。", "exp": "【代用表現：I'm afraid so】that 節の代わりをする表現。内容が肯定の場合は not ではなく so を使う。「残念ながらそうです」。" },
+      { "no": "T-510", "en": "I am <strong>not afraid</strong>.", "ja": "私は怖くない。", "exp": "【位置の違い：not afraid】通常の be動詞の否定文。「私は怖くない」。" },
+      { "no": "T-511", "en": "I am <strong>afraid not</strong>.", "ja": "残念ながらそうではない（否定の同意）。", "exp": "【位置の違い：afraid not】I am afraid not は「残念ながらそうではない」という文修飾の副詞的な同意表現。" },
+      { "no": "T-512", "en": "I could <strong>hardly</strong> understand what he was saying.", "ja": "彼の言っていることがほとんど理解できなかった。", "exp": "【準否定語：程度】hardly, scarcely は「ほとんど～ない」と程度がゼロに近いことを表す。" },
+      { "no": "T-513", "en": "The injured child could <strong>scarcely</strong> walk.", "ja": "怪我をした子供はほとんど歩けなかった。", "exp": "【準否定語：程度】scarcely は hardly と同じく「ほとんど～ない」。" },
+      { "no": "T-514", "en": "I <strong>rarely</strong> listen to classical music.", "ja": "私はめったにクラシック音楽を聴かない。", "exp": "【準否定語：頻度】rarely, seldom は「めったに～ない」と頻度がゼロに近いことを表す。" },
+      { "no": "T-515", "en": "England has <strong>seldom</strong> won the World Cup.", "ja": "イングランドはめったにワールドカップで優勝したことがない。", "exp": "【準否定語：頻度】seldom は rarely と同じく「めったに～ない」。" },
+      { "no": "T-516", "en": "I <strong>hardly ever [scarcely ever]</strong> eat breakfast.", "ja": "私はめったに朝食を食べない。", "exp": "【準否定語の強調】hardly ever, scarcely ever で「めったに～ない」。seldom/rarely と同じ意味でより強調される。" },
+      { "no": "T-517", "en": "<strong>Few</strong> students handed in the homework.", "ja": "宿題を提出した生徒はほとんどいなかった。", "exp": "【準否定語：数（可算名詞）】<few + 可算名詞の複数形> で「（数が）ほとんどない」。a few（少しある）との違いに注意。" },
+      { "no": "T-518", "en": "I had <strong>little</strong> time to buy a present for her.", "ja": "彼女へのプレゼントを買う時間はほとんどなかった。", "exp": "【準否定語：量（不可算名詞）】<little + 不可算名詞> で「（量が）ほとんどない」。a little（少しある）との違いに注意。" },
+      { "no": "T-519", "en": "<strong>All</strong> of the members attended the meeting.", "ja": "メンバー全員が出席した。", "exp": "【全肯定】all, every, both などの「すべて」を表す語。" },
+      { "no": "T-520", "en": "<strong>Not all</strong> of the members attended the meeting.", "ja": "メンバー全員が出席したわけではない。", "exp": "【部分否定】<not + all / every / both / always> で「すべて（いつも）が～なわけではない」。一部を肯定する。" },
+      { "no": "T-521", "en": "<strong>None</strong> of the members attended the meeting.", "ja": "メンバーは誰も出席しなかった。", "exp": "【全否定】<no / none / neither / not ~ any> で「すべて～ない」。全体を完全に否定する。" },
+      { "no": "T-522", "en": "She does <strong>not always</strong> agree with me.", "ja": "彼女がいつも私に同意するとは限らない。", "exp": "【部分否定：頻度】<not always> で「いつも～するとは限らない」。" },
+      { "no": "T-523", "en": "Your theory is <strong>not completely</strong> wrong.", "ja": "君の理論は完全に間違っているわけではない。", "exp": "【部分否定：程度】<not completely / entirely / quite> で「完全に～というわけではない」。" },
+      { "no": "T-524", "en": "I did<strong>n't quite</strong> understand what he was saying.", "ja": "彼の言っていることが完全には理解できなかった。", "exp": "【部分否定：quite】<not quite> 「完全には～ない」。" },
+      { "no": "T-525", "en": "He <strong>never</strong> visits us <strong>without</strong> bringing a gift.", "ja": "彼が私たちを訪ねてくる時は、必ず手土産を持ってくる。", "exp": "【二重否定：never ~ without】「～せずに…することはない」＝「…すれば必ず～する」。強い肯定を表す。" },
+      { "no": "T-526", "en": "It's <strong>not unusual</strong> for couples to quarrel.", "ja": "夫婦が喧嘩するのは珍しいことではない（よくあることだ）。", "exp": "【二重否定：not unusual】否定の接頭辞(un-)を持つ語を not で打ち消し、「珍しくない（よくあることだ）」と控えめな肯定を表す。" },
+      { "no": "T-527", "en": "<strong>Nothing is impossible</strong> for a powerful man like him.", "ja": "彼のような有力者にとって不可能なことはない。", "exp": "【二重否定：Nothing is impossible】「不可能なものはない」＝「すべて可能だ」。強い肯定を表す。" },
+      { "no": "T-528", "en": "I <strong>cannot help crying</strong> when I hear that song.", "ja": "その歌を聞くと泣かずにはいられない。", "exp": "【慣用表現：cannot help doing】「～せずにはいられない」。cannot but + 原形 でも同じ意味になる。" },
+      { "no": "T-529", "en": "You <strong>cannot be too</strong> careful when you swim in the sea.", "ja": "海で泳ぐ時はいくら注意してもしすぎることはない。", "exp": "【慣用表現：cannot ~ too ...】「いくら～してもしすぎることはない（十分に～すべきだ）」。" },
+      { "no": "T-530", "en": "We <strong>cannot</strong> praise him <strong>too highly</strong>.", "ja": "彼をいくら称賛しても足りない（称賛しすぎることはない）。", "exp": "【慣用表現：cannot ~ too highly】「いくら（高く）称賛してもしすぎることはない」。" },
+      { "no": "T-531", "en": "I <strong>cannot</strong> apologize <strong>enough</strong>.", "ja": "いくら謝っても足りない（謝りきれない）。", "exp": "【慣用表現：cannot ~ enough】too の代わりに enough を使っても「いくら～してもしすぎることはない（～し足りない）」となる。" },
+      { "no": "T-532", "en": "It was <strong>not long before</strong> he started to use a smartphone.", "ja": "まもなく彼はスマートフォンを使い始めた。", "exp": "【慣用表現：It is not long before】「まもなく～する（SがVするまで長くはかからない）」。" },
+      { "no": "T-533", "en": "I did<strong>n't</strong> graduate from University <strong>until</strong> I was twenty-five.", "ja": "私は 25 歳になって初めて大学を卒業した。", "exp": "【慣用表現：not ~ until ...】「…するまで～ない」＝「…して初めて～する」。" },
+      { "no": "T-534", "en": "The game <strong>had hardly</strong> started <strong>when</strong> it began to rain.", "ja": "試合が始まるとすぐに雨が降り出した。", "exp": "【慣用表現：hardly ~ when/before】<had hardly p.p. ~ when 過去形> で「～するとすぐに…」。" },
+      { "no": "T-535", "en": "He <strong>had no sooner</strong> stepped outside <strong>than</strong> it started to rain.", "ja": "彼が外に出るとすぐに雨が降り出した。", "exp": "【慣用表現：no sooner ~ than】<had no sooner p.p. ~ than 過去形> で「～するとすぐに…」。" },
+      { "no": "T-536", "en": "Babies <strong>do nothing but</strong> cry.", "ja": "赤ちゃんは泣いてばかりいる。", "exp": "【慣用表現：do nothing but】<do nothing but + 原形> で「～してばかりいる（～以外何もしない）」。" },
+      { "no": "T-537", "en": "I <strong>had no choice but to</strong> quit my job.", "ja": "私は仕事を辞めるしかなかった。", "exp": "【慣用表現：have no choice but to】<have no choice but to + 不定詞> で「～するしかない（～する以外に選択肢がない）」。" },
+      { "no": "T-538", "en": "He is <strong>no longer</strong> a strong wrestler.", "ja": "彼はもはや強いレスラーではない。", "exp": "【慣用表現：no longer】「もはや～ない」。以前はそうだったが今は違うことを表す。" },
+      { "no": "T-539", "en": "I ca<strong>n't</strong> trust him <strong>any longer</strong>.", "ja": "彼をこれ以上信頼することはできない。", "exp": "【慣用表現：not ~ any longer】no longer と同じ意味で「もはや～ない」。" },
+      { "no": "T-540", "en": "He was <strong>too</strong> sleepy <strong>to do</strong> his homework.", "ja": "彼は眠すぎて宿題ができなかった。", "exp": "【否定語を使わない否定：too ~ to】<too ~ to do> で「あまりに…なので～できない（～するには…すぎる）」。" },
+      { "no": "T-541", "en": "This book was <strong>too</strong> boring <strong>for me to</strong> read through.", "ja": "この本は私には退屈すぎて通読できなかった。", "exp": "【否定語を使わない否定：too ~ for A to】意味上の主語(for A)が入る形。「Aにとっては～すぎて…できない」。" },
+      { "no": "T-542", "en": "He was <strong>so</strong> sleepy <strong>that</strong> he <strong>couldn't</strong> do his homework.", "ja": "彼はとても眠かったので宿題ができなかった。", "exp": "【so ~ that S cannot】<too ~ to> は <so ~ that S cannot> に書き換えられる。「とても…なので～できない」。" },
+      { "no": "T-543", "en": "He would be <strong>the last person to</strong> tell a lie.", "ja": "彼は決して嘘をつくような人ではない（嘘をつく最後の人だ）。", "exp": "【否定語を使わない否定：the last person to】<the last A to do> で「最も～しそうにないA」＝「決して～しないA」。" },
+      { "no": "T-544", "en": "He is <strong>the last person who</strong> I would want to talk about the matter.", "ja": "彼にはその件について一番話したくない（決して話したくない）。", "exp": "【否定語を使わない否定：the last person who】不定詞の代わりに関係代名詞を用いたパターン。「決して～しない人」。" },
+      { "no": "T-545", "en": "The alarm <strong>failed to</strong> ring.", "ja": "目覚まし時計が鳴らなかった。", "exp": "【否定語を使わない否定：fail to】<fail to do> で「～できない、～しそこなう」。" },
+      { "no": "T-546", "en": "<strong>Never fail to</strong> call me every day.", "ja": "毎日必ず私に電話してね。", "exp": "【否定語を使わない否定：never fail to】<never fail to do> で「必ず～する（しそこなうことはない）」。" },
+      { "no": "T-547", "en": "His story was <strong>anything but</strong> boring.", "ja": "彼の話は決して退屈なんてものではなかった。", "exp": "【否定語を使わない否定：anything but】<anything but ~> で「決して～でない（～以外なら何でも）」。" },
+      { "no": "T-548", "en": "Twenty thousand yen for a T-shirt is <strong>far from</strong> cheap!", "ja": "T シャツに 2 万円なんて、決して安くない（安いどころではない）！", "exp": "【否定語を使わない否定：far from】<far from ~> で「決して～でない（～からほど遠い）」。" },
+      { "no": "T-549", "en": "No animal can live <strong>free from(of)</strong> danger.", "ja": "どんな動物も危険なしには生きられない。", "exp": "【否定語を使わない否定：free from】<free from / of ~> で「（不快なものや危険が）ない」。" },
+      { "no": "T-550", "en": "The view from the window was beautiful <strong>beyond</strong> belief.", "ja": "窓からの景色は信じられないほど美しかった。", "exp": "【否定語を使わない否定：beyond】<beyond ~> で「（能力や程度を）超えている」＝「～できない」。" }
+    ];
+
+    const container = document.getElementById('card-container');
+    
+    data.forEach((item, index) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.id = `card-${index}`;
+      card.onclick = (e) => {
+        if (!e.target.classList.contains('btn-play-single')) {
+            card.classList.toggle('open');
+        }
+      };
+      
+      card.innerHTML = `
+        <div class="card-header">
+          <span class="no">${item.no}</span>
+          <button class="btn-play-single" onclick="playSingle(${index})">🔊 再生</button>
+        </div>
+        <div class="en-text">${item.en}</div>
+        <div class="details">
+            <span class="ja-text">${item.ja}</span>
+            <div class="exp-box">${item.exp}</div>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+
+    const synth = window.speechSynthesis;
+    let currentPlayIndex = -1;
+    let isPlayingAll = false;
+
+    function stripHtml(html) {
+      const tmp = document.createElement("DIV");
+      tmp.innerHTML = html;
+      return tmp.textContent || tmp.innerText || "";
+    }
+
+    function speakText(text, onEndCallback) {
+      synth.cancel();
+      const plainText = stripHtml(text);
+      const utterance = new SpeechSynthesisUtterance(plainText);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.85;
+      utterance.onend = () => { if (onEndCallback) onEndCallback(); };
+      synth.speak(utterance);
+    }
+
+    function updateHighlights(index) {
+      document.querySelectorAll('.card').forEach((card, i) => {
+        if (i === index) {
+          card.classList.add('playing');
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          card.classList.remove('playing');
+        }
+      });
+    }
+
+    function playNext() {
+      if (!isPlayingAll) return;
+      currentPlayIndex++;
+      if (currentPlayIndex >= data.length) {
+        stopAll();
+        return;
+      }
+      updateHighlights(currentPlayIndex);
+      speakText(data[currentPlayIndex].en, playNext);
+    }
+
+    function stopAll() {
+      isPlayingAll = false;
+      synth.cancel();
+      updateHighlights(-1);
+    }
+
+    window.playSingle = function(index) {
+      stopAll();
+      updateHighlights(index);
+      speakText(data[index].en);
+    };
+
+    document.getElementById('playAllBtn').addEventListener('click', () => {
+      isPlayingAll = true;
+      currentPlayIndex = -1;
+      playNext();
+    });
+
+    document.getElementById('stopBtn').addEventListener('click', stopAll);
+  </script>
+</body>
+</html>

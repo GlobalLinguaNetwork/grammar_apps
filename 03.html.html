@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>受動態完全マスター - 英文リスニング</title>
+  <style>
+    :root {
+      --primary-color: #6366f1; /* 受動態編は知的なインディゴ */
+      --accent-color: #f59e0b;
+      --bg-color: #f5f3ff;
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-sub: #475569;
+      --radius: 16px;
+    }
+
+    body {
+      font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      margin: 0;
+      padding-top: 140px;
+      line-height: 1.6;
+    }
+
+    /* 固定ヘッダー */
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      z-index: 1000;
+      padding: 20px 0;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 15px 0;
+      font-size: 1.3rem;
+      color: var(--primary-color);
+      letter-spacing: 0.05em;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 0 15px;
+    }
+
+    button {
+      border: none;
+      border-radius: 50px;
+      padding: 12px 24px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-play-all { background: var(--primary-color); color: white; }
+    .btn-stop { background: #ef4444; color: white; }
+    button:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    /* メインコンテンツ */
+    .container {
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 0 15px 50px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .card.playing {
+      border-color: var(--primary-color);
+      background-color: #f5f3ff;
+      transform: scale(1.02);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .no {
+      font-size: 0.8rem;
+      color: #64748b;
+      background: #f1f5f9;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .btn-play-single {
+      background: #f1f5f9;
+      color: var(--primary-color);
+      padding: 6px 12px;
+      font-size: 0.75rem;
+    }
+
+    .en-text {
+      font-size: 1.2rem;
+      font-weight: 500;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .en-text strong {
+      color: var(--primary-color);
+      border-bottom: 2px solid #c7d2fe;
+      font-weight: 700;
+    }
+
+    /* 隠し要素の制御 */
+    .details {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, opacity 0.3s ease;
+      opacity: 0;
+    }
+
+    .card.open .details {
+      max-height: 600px;
+      opacity: 1;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px dashed #e2e8f0;
+    }
+
+    .ja-text {
+      font-size: 0.95rem;
+      color: var(--text-sub);
+      font-weight: bold;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .exp-box {
+      background: #f8fafc;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: #475569;
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .hint-badge {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      text-align: center;
+      display: block;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>態（受動態）のまとめ (全44文)</h1>
+    <div class="controls">
+      <button class="btn-play-all" id="playAllBtn"><span>▶</span> 連続再生</button>
+      <button class="btn-stop" id="stopBtn"><span>■</span> 停止</button>
+    </div>
+    <span class="hint-badge">カードをクリックして和訳・ポイントを確認</span>
+  </header>
+
+  <main class="container" id="card-container"></main>
+
+  <script>
+    const data = [
+      { no: "T-686", en: "This car <strong>was repaired</strong> by my brother.", ja: "この車は私の兄によって修理された。", exp: "【形】be動詞＋過去分詞。受動態の基本構造。「～される（された）」。" },
+      { no: "T-687", en: "This temple <strong>was built</strong> about 500 years ago.", ja: "この寺は約 500 年前に建てられた。", exp: "【核】行為者が不明、あるいは重要でない場合は by ～ を省略する。" },
+      { no: "T-688", en: "The newspapers <strong>are delivered</strong> around 5 a.m.", ja: "新聞は午前 5 時ごろに配達される。", exp: "【核】行為者が明白（配達員など）な場合も by ～ は省略される。" },
+      { no: "T-689", en: "The book <strong>can be borrowed</strong> from the library.", ja: "その本は図書館から借りることができる。", exp: "【形】助動詞＋be＋過去分詞。助動詞の後は常に原形の be。" },
+      { no: "T-690", en: "The results <strong>will be announced</strong> soon.", ja: "選挙の結果はまもなく発表されるだろう。", exp: "【未来の受動態】will be＋過去分詞。「～されるだろう」。" },
+      { no: "T-691", en: "His new book <strong>is going to be published</strong> next week.", ja: "彼の新しい本は来週出版されることになっている。", exp: "【予定の受動態】be going to be＋過去分詞。「～される予定だ」。" },
+      { no: "T-692", en: "The stadium <strong>is being built</strong> now.", ja: "そのスタジアムは現在建設中だ。", exp: "【進行形の受動態】be＋being＋過去分詞。「今まさに～されているところだ」。" },
+      { no: "T-693", en: "My brother <strong>was being scolded</strong> when I came home.", ja: "私が帰宅した時、弟は母に叱られているところだった。", exp: "【過去進行形の受動態】was/were＋being＋過去分詞。「その時～されているところだった」。" },
+      { no: "T-694", en: "This song <strong>has been sung</strong> by a lot of singers.", ja: "この歌は多くの歌手によって歌われてきた。", exp: "【完了形の受動態】have/has＋been＋過去分詞。「（ずっと）～されている」。" },
+      { no: "T-695", en: "The thief <strong>had already been arrested</strong> when we arrived.", ja: "私たちが到着した時、泥棒はすでに逮捕されていた。", exp: "【過去完了の受動態】had＋been＋過去分詞。過去のある時点までに動作が完了していた状態。" },
+      { no: "T-696", en: "His name <strong>was not found</strong> on the list.", ja: "彼の名前はリストに見当たらなかった。", exp: "【否定】be動詞の直後に not を置く。" },
+      { no: "T-697", en: "Bad words <strong>must not be used</strong> in the classroom.", ja: "教室で汚い言葉を使ってはいけません。", exp: "【助動詞の否定】助動詞＋not be＋過去分詞。" },
+      { no: "T-698", en: "She <strong>was never allowed</strong> to go out at night.", ja: "彼女は夜の外出を一度も許されなかった。", exp: "【副詞の位置】never などの否定副詞は be動詞の後ろに置く。" },
+      { no: "T-699", en: "This custom <strong>would hardly be accepted</strong> in Japan.", ja: "この習慣は日本ではほとんど受け入れられないだろう。", exp: "【副詞の位置】助動詞がある場合は「助動詞＋副詞＋be」の順になる。" },
+      { no: "T-700", en: "<strong>Was</strong> this bag <strong>made</strong> in Italy?", ja: "このバッグはイタリア製ですか？", exp: "【疑問文】be動詞を主語の前に出す。" },
+      { no: "T-701", en: "<strong>Will</strong> this door <strong>be painted</strong> tomorrow?", ja: "このドアは明日塗装されますか？", exp: "【助動詞の疑問文】助動詞を文頭に。主語の後ろは be＋過去分詞。" },
+      { no: "T-702", en: "Who <strong>was invited</strong> to the party?", ja: "誰がパーティーに招待されましたか？", exp: "【疑問詞主語】Who が主語の場合は、肯定文と同じ語順のまま受動態にする。" },
+      { no: "T-703", en: "Which <strong>was painted</strong> by him?", ja: "どちらが彼によって描かれましたか？", exp: "【疑問詞主語】Which が主語のパターン。" },
+      { no: "T-704", en: "When <strong>was</strong> this bridge <strong>built</strong>?", ja: "この橋はいつ造られましたか？", exp: "【疑問詞＋疑問文】疑問詞＋be動詞＋主語＋過去分詞。" },
+      { no: "T-705", en: "Where <strong>was</strong> the cat <strong>found</strong>?", ja: "その猫はどこで見つかりましたか？", exp: "【疑問詞＋疑問文】場所を尋ねる受動態。" },
+      { no: "T-706", en: "Who <strong>was</strong> this CD <strong>produced by</strong>?", ja: "この CD は誰によって制作されましたか？", exp: "【重要】行為者を尋ねる疑問文では文末に by を残す。" },
+      { no: "T-707", en: "What <strong>is</strong> this tool <strong>used for</strong>?", ja: "この道具は何に使われますか？", exp: "【注意】用途を尋ねる受動態。be used for ～（～のために使われる）。" },
+      { no: "T-708", en: "Jim <strong>was sent</strong> a Christmas card by Mary.", ja: "ジムはメアリーからクリスマスカードを送られた。", exp: "【SVOOの受動態】「人（間接目的語）」を主語にした形。" },
+      { no: "T-709", en: "A Christmas card <strong>was sent to</strong> Jim by Mary.", ja: "クリスマスカードがメアリーによってジムに送られた。", exp: "【重要】「物」を主語にする場合、人の前に to を補う。" },
+      { no: "T-710", en: "A new dress <strong>was made for</strong> me by my mother.", ja: "新しいドレスが母によって私のために作られた。", exp: "【注意】make, buy などの「利益」を表す動詞は、人の前に for を置く。" },
+      { no: "T-711", en: "The baby <strong>was named</strong> Carl by his grandfather.", ja: "その赤ちゃんは祖父によってカールと名付けられた。", exp: "【SVOCの受動態】A be named B（AはBと名付けられる）。補語 B はそのまま残る。" },
+      { no: "T-712", en: "This flower <strong>is called</strong> \"sakura\" in our country.", ja: "この花は私たちの国では「サクラ」と呼ばれている。", exp: "【SVOCの受動態】A be called B（AはBと呼ばれている）。" },
+      { no: "T-713", en: "What <strong>is</strong> this flower <strong>called</strong> in your country?", ja: "あなたの国ではこの花は何と呼ばれていますか？", exp: "【SVOCの疑問文】「Aは何と呼ばれているか」を問う頻出形。" },
+      { no: "T-714", en: "The cat <strong>was taken care of by</strong> my sister.", ja: "その猫は私の姉によって世話をされた。", exp: "【重要】群動詞の受動態。take care of を1つの動詞とみなし、of と by が並んでもOK。" },
+      { no: "T-715", en: "The rubbish <strong>is taken away</strong> every Tuesday.", ja: "ゴミは毎週火曜日に収集される。", exp: "【群動詞】take away（持ち去る）の受動態。" },
+      { no: "T-716", en: "I <strong>was spoken to by</strong> a foreigner.", ja: "私は外国人に話しかけられた。", exp: "【重要】speak to（話しかける）の受動態。to by... という並びに注意。" },
+      { no: "T-717", en: "<strong>It is said that</strong> his mother is an actress.", ja: "彼の母親は女優だと言われている。", exp: "【形式主語】It is said/thought/believed that ... で「～だと言われている」。" },
+      { no: "T-718", en: "My glasses <strong>got broken</strong> while I was playing soccer.", ja: "サッカーをしている最中に眼鏡が壊れた。", exp: "【核】get＋過去分詞。予期せぬ「動作・変化」を強調する受動態。" },
+      { no: "T-719", en: "She <strong>was dressed</strong> in red.", ja: "彼女は赤い服を着ていた。", exp: "【状態】be dressed で「服を着ている状態」を表す。" },
+      { no: "T-720", en: "She <strong>got dressed</strong> quickly.", ja: "彼女は素早く服を着た。", exp: "【動作】get dressed で「服を着るという動作」を表す。" },
+      { no: "T-721", en: "The top of the mountain <strong>is covered with</strong> snow.", ja: "山頂は雪で覆われている。", exp: "【前置詞】by 以外を使う受動態。be covered with ～（～で覆われている）。" },
+      { no: "T-722", en: "The driver <strong>was killed in</strong> the accident.", ja: "運転手はその事故で亡くなった。", exp: "【前置詞】事故や戦争で亡くなる場合は be killed in を用いる。" },
+      { no: "T-723", en: "She <strong>was shocked at</strong> the news.", ja: "彼女はその知らせにショックを受けた。", exp: "【感情】感情・心理の受動態。be shocked at/by ～。" },
+      { no: "T-724", en: "He <strong>was disappointed at</strong> the news.", ja: "彼はその知らせにがっかりした。", exp: "【感情】be disappointed at/with ～（～に失望する）。" },
+      { no: "T-725", en: "They <strong>were confused with</strong> the news.", ja: "彼らはその知らせに困惑した。", exp: "【感情】be confused with/by ～（～に当惑する）。" },
+      { no: "T-726", en: "Our new products <strong>are selling</strong> very well.", ja: "我が社の新製品はとてもよく売れている。", exp: "【最重要】能動受動態。sell（売れる）などは能動態で受動の意味を表すことがある。" },
+      { no: "T-727", en: "This tough steak <strong>doesn't cut</strong> easily.", ja: "この硬いステーキは簡単には切れない。", exp: "【能動受動態】cut（切れる）。主語の性質について述べる。" },
+      { no: "T-728", en: "Red wine stains <strong>don't wash out</strong> easily.", ja: "赤ワインのシミは簡単には落ちない。", exp: "【能動受動態】wash out（洗って落ちる）。" },
+      { no: "T-729", en: "Your paper <strong>reads</strong> like a novel.", ja: "あなたの論文は小説のように（スラスラ）読める。", exp: "【能動受動態】read（（～と）読める）。" }
+    ];
+
+    const container = document.getElementById('card-container');
+    
+    data.forEach((item, index) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.id = `card-${index}`;
+      card.onclick = (e) => {
+        if (!e.target.classList.contains('btn-play-single')) {
+            card.classList.toggle('open');
+        }
+      };
+      
+      card.innerHTML = `
+        <div class="card-header">
+          <span class="no">${item.no}</span>
+          <button class="btn-play-single" onclick="playSingle(${index})">🔊 再生</button>
+        </div>
+        <div class="en-text">${item.en}</div>
+        <div class="details">
+            <span class="ja-text">${item.ja}</span>
+            <div class="exp-box">${item.exp}</div>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+
+    const synth = window.speechSynthesis;
+    let currentPlayIndex = -1;
+    let isPlayingAll = false;
+
+    function stripHtml(html) {
+      const tmp = document.createElement("DIV");
+      tmp.innerHTML = html;
+      return tmp.textContent || tmp.innerText || "";
+    }
+
+    function speakText(text, onEndCallback) {
+      synth.cancel();
+      const plainText = stripHtml(text);
+      const utterance = new SpeechSynthesisUtterance(plainText);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.85;
+      utterance.onend = () => { if (onEndCallback) onEndCallback(); };
+      synth.speak(utterance);
+    }
+
+    function updateHighlights(index) {
+      document.querySelectorAll('.card').forEach((card, i) => {
+        if (i === index) {
+          card.classList.add('playing');
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          card.classList.remove('playing');
+        }
+      });
+    }
+
+    function playNext() {
+      if (!isPlayingAll) return;
+      currentPlayIndex++;
+      if (currentPlayIndex >= data.length) {
+        stopAll();
+        return;
+      }
+      updateHighlights(currentPlayIndex);
+      speakText(data[currentPlayIndex].en, playNext);
+    }
+
+    function stopAll() {
+      isPlayingAll = false;
+      synth.cancel();
+      updateHighlights(-1);
+    }
+
+    window.playSingle = function(index) {
+      stopAll();
+      updateHighlights(index);
+      speakText(data[index].en);
+    };
+
+    document.getElementById('playAllBtn').addEventListener('click', () => {
+      isPlayingAll = true;
+      currentPlayIndex = -1;
+      playNext();
+    });
+
+    document.getElementById('stopBtn').addEventListener('click', stopAll);
+  </script>
+</body>
+</html>

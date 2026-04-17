@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>分詞完全マスター - 英文リスニング</title>
+  <style>
+    :root {
+      --primary-color: #0d9488; /* 分詞編は冷静なティール（青緑） */
+      --accent-color: #f59e0b;
+      --bg-color: #f0fdfa;
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-sub: #475569;
+      --radius: 16px;
+    }
+
+    body {
+      font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      margin: 0;
+      padding-top: 140px;
+      line-height: 1.6;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      z-index: 1000;
+      padding: 20px 0;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 15px 0;
+      font-size: 1.3rem;
+      color: var(--primary-color);
+      letter-spacing: 0.05em;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 0 15px;
+    }
+
+    button {
+      border: none;
+      border-radius: 50px;
+      padding: 12px 24px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-play-all { background: var(--primary-color); color: white; }
+    .btn-stop { background: #ef4444; color: white; }
+    button:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    .container {
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 0 15px 50px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .card.playing {
+      border-color: var(--primary-color);
+      background-color: #f0fdfa;
+      transform: scale(1.02);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .no {
+      font-size: 0.8rem;
+      color: #0d9488;
+      background: #ccfbf1;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .btn-play-single {
+      background: #ccfbf1;
+      color: var(--primary-color);
+      padding: 6px 12px;
+      font-size: 0.75rem;
+    }
+
+    .en-text {
+      font-size: 1.2rem;
+      font-weight: 500;
+      margin-bottom: 10px;
+      color: #0f172a;
+      white-space: pre-line;
+    }
+
+    .en-text strong {
+      color: var(--primary-color);
+      border-bottom: 2px solid #99f6e4;
+      font-weight: 700;
+    }
+
+    .details {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, opacity 0.3s ease;
+      opacity: 0;
+    }
+
+    .card.open .details {
+      max-height: 800px;
+      opacity: 1;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px dashed #e2e8f0;
+    }
+
+    .ja-text {
+      font-size: 0.95rem;
+      color: var(--text-sub);
+      font-weight: bold;
+      margin-bottom: 10px;
+      display: block;
+      white-space: pre-line;
+    }
+
+    .exp-box {
+      background: #f0f9ff;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: #475569;
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .hint-badge {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      text-align: center;
+      display: block;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>分詞のまとめ (全54項目)</h1>
+    <div class="controls">
+      <button class="btn-play-all" id="playAllBtn"><span>▶</span> 連続再生</button>
+      <button class="btn-stop" id="stopBtn"><span>■</span> 停止</button>
+    </div>
+    <span class="hint-badge">カードをクリックして和訳・ポイントを確認</span>
+  </header>
+
+  <main class="container" id="card-container"></main>
+
+  <script>
+    const data = [
+      { no: "259", en: "Who is the girl <strong>painting</strong> a picture over there?", ja: "あそこで絵を描いている少女は誰ですか？", exp: "【名詞修飾】後置修飾。名詞(girl)が「～している（能動）」の関係。" },
+      { no: "260", en: "The picture <strong>painted</strong> by a little girl won the contest.", ja: "小さな少女によって描かれた絵がコンテストで優勝した。", exp: "【名詞修飾】後置修飾。名詞(picture)が「～された（受動）」の関係。" },
+      { no: "261", en: "Someone is in that <strong>burning</strong> house!", ja: "誰かがあの燃えている家の中にいるぞ！", exp: "【名詞修飾】前置修飾。1語で修飾する場合は前から。「～している最中の」。" },
+      { no: "262", en: "The police found the <strong>stolen</strong> money in the car.", ja: "警察は車の中で盗まれたお金を見つけた。", exp: "【名詞修飾】前置修飾。「～された状態の」。" },
+      { no: "263", en: "It was an <strong>exciting</strong> game.", ja: "それは興奮させる（わくわくする）試合だった。", exp: "【分詞形容詞】現在分詞。物が主語で「（人を）ワクワクさせる」。" },
+      { no: "264", en: "I saw a lot of <strong>excited</strong> supporters.", ja: "私はたくさんの興奮したサポーターたちを見た。", exp: "【分詞形容詞】過去分詞。人が主語で「（感情を）与えられた＝興奮した」。" },
+      { no: "265", en: "He <strong>kept saying</strong> that he loved me.", ja: "彼は私を愛していると言い続けた。", exp: "【第2文型(SVC)】keep -ing「～し続ける」。主語の動作の継続。" },
+      { no: "266", en: "His eyes <strong>remain closed</strong>.", ja: "彼の目は閉じられたままだ。", exp: "【第2文型(SVC)】remain p.p.「～されたままである」。主語の状態の継続。" },
+      { no: "267", en: "They <strong>walked laughing</strong> into the room.", ja: "彼らは笑いながら部屋に入ってきた。", exp: "【付帯状況】V... -ing。「～しながら（歩いた）」。" },
+      { no: "268", en: "The teacher <strong>sat surrounded</strong> by his students.", ja: "その先生は生徒たちに囲まれて座っていた。", exp: "【付帯状況】V... p.p.。「～されて（座っていた）」。" },
+      { no: "269", en: "He <strong>kept me waiting</strong> for forty minutes.", ja: "彼は私を 40 分間待たせたままにした。", exp: "【第5文型(SVOC)】keep O -ing。「Oを～している状態にしておく」。" },
+      { no: "270", en: "I <strong>found my brother using</strong> my computer.", ja: "私は弟が私のコンピューターを使っているのを見つけた。", exp: "【第5文型(SVOC)】find O -ing。「Oが～しているのを見つける」。" },
+      { no: "271", en: "We usually <strong>keep the window locked</strong>.", ja: "私たちはたいていその窓の鍵を掛けておく。", exp: "【第5文型(SVOC)】keep O p.p.。「Oが～された状態を保つ」。" },
+      { no: "272", en: "I <strong>want this room cleaned up</strong> by tomorrow.", ja: "明日までにこの部屋を掃除しておいてほしい。", exp: "【第5文型(SVOC)】want O p.p.。「Oを～された状態にしてほしい」。" },
+      { no: "273", en: "The comedian <strong>had the people laughing</strong>.", ja: "コメディアンは人々を笑わせた。", exp: "【使役】have O -ing。「Oを～している状態にさせる」。" },
+      { no: "274", en: "He <strong>got the machine working</strong>.", ja: "彼はその機械を動くようにした。", exp: "【使役】get O -ing。「（苦労して）Oを～する状態にする」。" },
+      { no: "275", en: "I <strong>had my hair cut</strong> at a famous salon.", ja: "私は有名な美容院で髪を切ってもらった。", exp: "【超重要】have O p.p.。髪は「切られる」ものなので過去分詞。" },
+      { no: "276", en: "I <strong>got my fingers caught</strong> in the doors.", ja: "私は電車のドアに指を挟まれた。", exp: "【被害】get O p.p.。被害（～される）を表す用法。" },
+      { no: "277", en: "<strong>Have your essay finished</strong> by tomorrow!", ja: "明日までに作文を終わらせておきなさい！", exp: "【完了】have O p.p.。「Oを～し終えてしまう」。" },
+      { no: "278", en: "Can you <strong>make yourself understood</strong> in English?", ja: "英語で自分の言いたいことを伝えられますか？", exp: "【定型】make oneself understood「自分の考えを理解させる」。" },
+      { no: "279", en: "I couldn't <strong>make myself heard</strong> because of the noise.", ja: "騒音のせいで私の声は届かなかった。", exp: "【定型】make oneself heard「自分の声を聞こえるようにする」。" },
+      { no: "280", en: "We <strong>saw a bird building</strong> a nest.", ja: "私たちは鳥が巣を作っているのを見た。", exp: "【知覚】see O -ing。「Oが～している（最中）のを見る」。" },
+      { no: "281", en: "I <strong>saw a little girl scolded</strong> by her mother.", ja: "私は小さな女の子が母親に叱られるのを見た。", exp: "【知覚】see O p.p.。「Oが～されるのを見る」。" },
+      { no: "282", en: "We <strong>saw a duck cross</strong> the street.", ja: "私たちはアヒルが通りを横切るのを見た。", exp: "【比較】原形不定詞は「最初から最後まで（完了した動作）」を見る。" },
+      { no: "283", en: "We <strong>saw a duck crossing</strong> the street.", ja: "私たちはアヒルが通りを横切っているのを見た。", exp: "【比較】現在分詞は「動作の途中（進行中）」を見る。" },
+      { no: "284", en: "My mother is cleaning the kitchen <strong>singing</strong> the song.", ja: "母は歌を歌いながら台所を掃除している。", exp: "【分詞構文：付帯状況】「～しながら」。同時進行の動作。" },
+      { no: "285", en: "<strong>Seen</strong> from the plane, the island looks like a ship.", ja: "飛行機から見ると、その島は船のように見える。", exp: "【重要】受動の分詞構文。島が「見られる」側なので過去分詞で始める。" },
+      { no: "286", en: "Bob sat on the bench, <strong>playing</strong> the saxophone.", ja: "ボブはベンチに座って、サックスを吹いていた。", exp: "【分詞構文】文末に置く形。「座っていて、さらに～している」。" },
+      { no: "287", en: "Mary, <strong>shocked</strong> at the news, couldn't speak a word.", ja: "その知らせにショックを受けて、メアリーは一言も話せなかった。", exp: "【挿入】主語の直後に置いて理由や状態を付け加える形。" },
+      { no: "288", en: "Some girls are walking <strong>talking</strong> to each other.", ja: "数人の少女がおしゃべりをしながら道を歩いている。", exp: "【付帯状況】歩いている「様態」を分詞で説明。" },
+      { no: "289", en: "<strong>Walking</strong> along the beach, I found a beautiful shell.", ja: "浜辺を歩いている時、きれいな貝殻を見つけた。", exp: "【分詞構文：時】「～している時」。While I was walking...の書き換え。" },
+      { no: "290", en: "<strong>Taking out</strong> a key, he opened the box.", ja: "彼は鞄から鍵を取り出して、箱を開けた。", exp: "【分詞構文：連続】「～して、それから…した」。動作の連続。" },
+      { no: "291", en: "<strong>Written</strong> in simple English, this book is easy.", ja: "簡単な英語で書かれているので、この本は理解しやすい。", exp: "【分詞構文：理由】「～なので」。As it is written...の書き換え。" },
+      { no: "292", en: "<strong>Being written</strong> in haste, the report had errors.", ja: "急いで書かれたので、そのレポートには間違いがあった。", exp: "【注意】Being は通常省略されるが、受動や状態を強調する場合に残ることもある。" },
+      { no: "293", en: "<strong>Not knowing</strong> what to say, he kept silent.", ja: "何を言えばよいかわからなかったので、彼は黙っていた。", exp: "【否定】否定語 not は分詞の直前に置く。" },
+      { no: "294", en: "<strong>Having read</strong> the novel, I knew the ending.", ja: "原作を読んでいたので、私は映画の結末を知っていた。", exp: "【完了分詞構文】Having p.p.。主節の「知っていた」より前の動作を表す。" },
+      { no: "295", en: "<strong>While skiing</strong> in Hokkaido, he twisted his ankle.", ja: "スキーをしている最中に、彼は足首を捻挫した。", exp: "【接続詞＋分詞】意味をはっきりさせるために接続詞を残した形。" },
+      { no: "296", en: "<strong>Although impressing</strong> the interviewer, he didn't get it.", ja: "面接官に好印象を与えたが、彼は仕事を得られなかった。", exp: "【接続詞＋分詞】譲歩(Although)の意味を明示。" },
+      { no: "297", en: "<strong>Accepting</strong> that he may be right, I still don't like it.", ja: "彼が正しいかもしれないと認めるが、私は好きではない。", exp: "【譲歩】文脈から「～だけれども」と訳す分詞構文。" },
+      { no: "298", en: "<strong>It being</strong> Monday, the shop was closed.", ja: "月曜日だったので、理髪店は休みだった。", exp: "【重要：独立分詞構文】意味上の主語(It)が主節(shop)と異なるため、Itを消さずに残す。" },
+      { no: "299", en: "<strong>There being</strong> no bridge, we had to swim.", ja: "橋がなかったので、私たちは泳いで渡らなければならなかった。", exp: "【独立分詞構文】There is 構文の分詞化。There being...の形になる。" },
+      { no: "-", en: "<strong>frankly speaking / speaking of... / generally speaking / strictly speaking / judging from...</strong>", ja: "率直に言って / …と言えば / 一般的に言って / 厳密に言って / …から判断すると", exp: "【超重要：定型句】慣用的に使われる独立分詞構文。熟語として丸暗記。" },
+      { no: "300", en: "The dog sat there <strong>with his tongue hanging out</strong>.", ja: "その犬は舌を出しっぱなしにしてそこに座っていた。", exp: "【付帯状況のwith】with O -ing。「Oが～している状態で」。能動関係。" },
+      { no: "301", en: "He stood <strong>with his arms folded</strong>.", ja: "彼は腕を組んで立っていた。", exp: "【付帯状況のwith】with O p.p.。「Oが～された状態で」。受動関係（腕は組まれるもの）。" },
+      { no: "302", en: "Some people sleep <strong>with their eyes open</strong>.", ja: "目を開けたまま眠る人もいる。", exp: "【付帯状況のwith】分詞の代わりに形容詞(open)を使った形。" },
+      { no: "303", en: "Did you interview her <strong>with the recorder on</strong>?", ja: "レコーダーを回したままインタビューしましたか？", exp: "【付帯状況のwith】分詞の代わりに副詞(on)を使った形。" },
+      { no: "304", en: "He apologized <strong>with tears in his eyes</strong>.", ja: "彼は目に涙を浮かべて自分の過ちを詫びた。", exp: "【付帯状況のwith】分詞の代わりに前置詞句を使った形。" },
+      { no: "305", en: "<strong>There is a car coming</strong>.", ja: "車がやって来る。", exp: "【形】There is S -ing。「Sが～している（のが見える）」。" },
+      { no: "306", en: "<strong>There was no time left</strong> to explain.", ja: "説明するために残された時間はなかった。", exp: "【形】There is S p.p.。「～されたSがある」。" },
+      { no: "307", en: "I'm going to <strong>go skiing</strong>.", ja: "私はスキーをしに行くつもりだ。", exp: "【定型】go -ing「～しに行く（娯楽・スポーツ）」。" },
+      { no: "308", en: "They <strong>went talking</strong> loudly to the station.", ja: "彼らは大声で話しながら駅まで行った。", exp: "【形】V... -ing。「～しながら行く」。" },
+      { no: "309", en: "We are <strong>busy preparing</strong> for the party.", ja: "私たちはパーティーの準備でとても忙しい。", exp: "【重要】be busy -ing「～するのに忙しい」。inが省略された形。" },
+      { no: "310", en: "I <strong>spent a lot of time watching</strong> TV.", ja: "昨夜はテレビを見て多くの時間を過ごした。", exp: "【重要】spend 時間 -ing「～して時間を過ごす」。" },
+      { no: "311", en: "My father <strong>has trouble giving up</strong> cigarettes.", ja: "父はタバコをやめるのにとても苦労している。", exp: "【重要】have trouble -ing / have difficulty -ing。「～するのに苦労する」。" }
+    ];
+
+    const container = document.getElementById('card-container');
+    
+    data.forEach((item, index) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.id = `card-${index}`;
+      card.onclick = (e) => {
+        if (!e.target.classList.contains('btn-play-single')) {
+            card.classList.toggle('open');
+        }
+      };
+      
+      card.innerHTML = `
+        <div class="card-header">
+          <span class="no">${item.no}</span>
+          <button class="btn-play-single" onclick="playSingle(${index})">🔊 再生</button>
+        </div>
+        <div class="en-text">${item.en}</div>
+        <div class="details">
+            <span class="ja-text">${item.ja}</span>
+            <div class="exp-box">${item.exp}</div>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+
+    const synth = window.speechSynthesis;
+    let currentPlayIndex = -1;
+    let isPlayingAll = false;
+
+    function stripHtml(html) {
+      const tmp = document.createElement("DIV");
+      tmp.innerHTML = html;
+      return tmp.textContent || tmp.innerText || "";
+    }
+
+    function speakText(text, onEndCallback) {
+      synth.cancel();
+      const plainText = stripHtml(text);
+      const utterance = new SpeechSynthesisUtterance(plainText);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.85;
+      utterance.onend = () => { if (onEndCallback) onEndCallback(); };
+      synth.speak(utterance);
+    }
+
+    function updateHighlights(index) {
+      document.querySelectorAll('.card').forEach((card, i) => {
+        if (i === index) {
+          card.classList.add('playing');
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          card.classList.remove('playing');
+        }
+      });
+    }
+
+    function playNext() {
+      if (!isPlayingAll) return;
+      currentPlayIndex++;
+      if (currentPlayIndex >= data.length) {
+        stopAll();
+        return;
+      }
+      updateHighlights(currentPlayIndex);
+      speakText(data[currentPlayIndex].en, playNext);
+    }
+
+    function stopAll() {
+      isPlayingAll = false;
+      synth.cancel();
+      updateHighlights(-1);
+    }
+
+    window.playSingle = function(index) {
+      stopAll();
+      updateHighlights(index);
+      speakText(data[index].en);
+    };
+
+    document.getElementById('playAllBtn').addEventListener('click', () => {
+      isPlayingAll = true;
+      currentPlayIndex = -1;
+      playNext();
+    });
+
+    document.getElementById('stopBtn').addEventListener('click', stopAll);
+  </script>
+</body>
+</html>

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>仮定法完全マスター - 英文リスニング</title>
+  <style>
+    :root {
+      --primary-color: #2563eb; /* 仮定法編は知的なブルー */
+      --accent-color: #f59e0b;
+      --bg-color: #eff6ff;
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-sub: #475569;
+      --radius: 16px;
+    }
+
+    body {
+      font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      margin: 0;
+      padding-top: 140px;
+      line-height: 1.6;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      z-index: 1000;
+      padding: 20px 0;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 15px 0;
+      font-size: 1.3rem;
+      color: var(--primary-color);
+      letter-spacing: 0.05em;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 0 15px;
+    }
+
+    button {
+      border: none;
+      border-radius: 50px;
+      padding: 12px 24px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-play-all { background: var(--primary-color); color: white; }
+    .btn-stop { background: #ef4444; color: white; }
+    button:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    .container {
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 0 15px 50px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .card.playing {
+      border-color: var(--primary-color);
+      background-color: #f0fdf4; /* 再生中はほんのりグリーン */
+      transform: scale(1.02);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .no {
+      font-size: 0.8rem;
+      color: var(--primary-color);
+      background: #dbeafe;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .btn-play-single {
+      background: #dbeafe;
+      color: var(--primary-color);
+      padding: 6px 12px;
+      font-size: 0.75rem;
+    }
+
+    .en-text {
+      font-size: 1.2rem;
+      font-weight: 500;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .en-text strong {
+      color: var(--primary-color);
+      border-bottom: 2px solid #bfdbfe;
+      font-weight: 700;
+    }
+
+    .details {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, opacity 0.3s ease;
+      opacity: 0;
+    }
+
+    .card.open .details {
+      max-height: 600px;
+      opacity: 1;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px dashed #e2e8f0;
+    }
+
+    .ja-text {
+      font-size: 0.95rem;
+      color: var(--text-sub);
+      font-weight: bold;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .exp-box {
+      background: #f8fafc;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: #475569;
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .hint-badge {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      text-align: center;
+      display: block;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>仮定法のまとめ (全57文)</h1>
+    <div class="controls">
+      <button class="btn-play-all" id="playAllBtn"><span>▶</span> 連続再生</button>
+      <button class="btn-stop" id="stopBtn"><span>■</span> 停止</button>
+    </div>
+    <span class="hint-badge">カードをクリックして和訳・ポイントを確認</span>
+  </header>
+
+  <main class="container" id="card-container"></main>
+
+  <script>
+    const data = [
+      { no: "T-425", en: "<strong>If it rains</strong> tomorrow, we <strong>will cancel</strong> the picnic.", ja: "もし明日雨が降れば、ピクニックは中止します。", exp: "【直説法（現在・未来の可能性）】現実に起こる可能性がある条件は、仮定法ではなく直説法（現在形）で表す。未来のことでも if 節内は現在形になる点に注意。" },
+      { no: "T-426", en: "<strong>If I had</strong> a lot of money, I <strong>would buy</strong> an island.", ja: "もしお金がたくさんあったら、島を買うのになあ。", exp: "【仮定法過去（現在の反実仮想）】<If S 過去形, S would/could/might 原形>。「もし（今）～なら、…だろうに」。現在の事実とは違うことや実現不可能な願望を表す。" },
+      { no: "T-427", en: "<strong>If he were [was]</strong> ready, <strong>we would go</strong>.", ja: "もし彼の準備ができていれば、私たちは出かけるのだが。", exp: "【仮定法過去の be動詞】仮定法過去では主語に関わらず be動詞は原則 were を用いる。ただし口語では主語に合わせて was が使われることも多い。" },
+      { no: "T-428", en: "<strong>If I had</strong> enough time and money, I <strong>would travel</strong> around the world.", ja: "時間とお金が十分にあれば、世界中を旅行するのになあ。", exp: "【仮定法過去（実現可能性が低い願望）】現在の事実の反対だけでなく、現実に起こる可能性が著しく低いことへの願望にも仮定法過去を用いる。" },
+      { no: "T-429", en: "<strong>If he had</strong> time, he <strong>might come</strong> to see us.", ja: "もし彼に時間があれば、会いに来るかもしれないのに。", exp: "【仮定法過去：might】主節の助動詞に might を使うと、「（ひょっとすると）～かもしれないのに」という推量の意味が加わる。" },
+      { no: "T-430", en: "<strong>If I were</strong> handsome, I <strong>could work</strong> as a model.", ja: "もし僕がハンサムなら、モデルとして働けるのに。", exp: "【仮定法過去：could】主節の助動詞に could を使うと、「～できるのに」という能力や可能性の意味が加わる。" },
+      { no: "T-431", en: "<strong>If I had</strong> wings, I <strong>should fly</strong> to you.", ja: "もし翼があったなら、君のもとへ飛んでいくのに。", exp: "【仮定法過去：should】主語が一人称（I, we）の場合、主節の would の代わりに should が使われることがある。やや古風で文語的な表現。" },
+      { no: "T-432", en: "<strong>If I had left</strong> ten minutes earlier, I <strong>would not have missed</strong> the train.", ja: "10分早く家を出ていれば、電車に乗り遅れることはなかっただろうに。", exp: "【仮定法過去完了（過去の反実仮想）】<If S 過去完了(had p.p.), S would/could/might have p.p.>。「もし（あの時）～だったら、…だっただろうに」。過去の事実と逆の仮定。" },
+      { no: "T-433", en: "<strong>She would have died if</strong> the climber <strong>had not found</strong> her.", ja: "もし登山者が彼女を見つけていなかったら、彼女は死んでいただろう。", exp: "【仮定法過去完了】if 節が後ろにくるパターン。過去の事実（見つけてくれたから生きている）とは逆の仮定を表す。" },
+      { no: "T-434", en: "<strong>If I had taken</strong> the medicine <strong>then</strong>, I <strong>might be</strong> fine <strong>now</strong>.", ja: "あの時薬を飲んでいたら、今ごろ元気になっているかもしれないのに。", exp: "【混合仮定法（時制のズレ）】if 節は過去の事実に反する仮定（過去完了）、主節は現在の事実に反する仮定（過去形）。then と now などの副詞がヒントになる。" },
+      { no: "T-435", en: "<strong>If I had not taken</strong> the wrong train, I <strong>would be</strong> there <strong>now</strong>.", ja: "間違った電車に乗っていなければ、今ごろそこに着いているだろうに。", exp: "【混合仮定法（時制のズレ）】「（過去に）～していなければ、（今は）…だろうに」というように、過去の行動が現在の結果に影響している場合に用いる。" },
+      { no: "T-436", en: "<strong>I wish I knew</strong> her mobile number.", ja: "彼女の携帯番号を知っていればなあ。", exp: "【I wish ＋ 仮定法過去】<I wish S 過去形> で「（今）～ならいいのに」という現在の実現不可能な願望や、ないものねだりを表す。" },
+      { no: "T-437", en: "<strong>I wish I hadn't bought</strong> such an expensive bag.", ja: "あんな高いバッグを買わなければよかったなあ。", exp: "【I wish ＋ 仮定法過去完了】<I wish S 過去完了(had p.p.)> で「（あの時）～だったらよかったのに」という過去の事実に対する後悔を表す。" },
+      { no: "T-438", en: "<strong>I wish she were [was]</strong> here.", ja: "彼女がここにいればいいのになあ。", exp: "【I wish ＋ be動詞】be動詞は原則として were を用いるが、日常会話などのくだけた口語表現では was もよく使われる。" },
+      { no: "T-439", en: "<strong>I wished she were [was]</strong> at home when I called.", ja: "電話した時、彼女が家にいればいいのにと私は思った。", exp: "【wishと時制の一致（同時）】主節が過去形(wished)でも、その「思った」時点と同じ時の願望（電話した時に家にいること）であれば、仮定法過去(were)を用いる。" },
+      { no: "T-440", en: "<strong>I wish she had been</strong> at home when I called.", ja: "（電話した時）彼女が家にいてくれたらよかったのに（と今思う）。", exp: "【wishと時制のズレ】主節は現在(wish)。それよりも前の事実（電話した時にいなかった）に対する願望なので、仮定法過去完了(had been)を用いる。" },
+      { no: "T-441", en: "<strong>I wish I could play</strong> the guitar as well as you.", ja: "あなたと同じくらい上手にギターが弾けたらいいのになあ。", exp: "【I wish S could ~】「～できたらいいのに」と、能力や可能性についての願望を表す場合は助動詞 could を使う。" },
+      { no: "T-442", en: "<strong>I wish</strong> my father <strong>would give up</strong> smoking.", ja: "父がタバコをやめてくれたらいいのになあ。", exp: "【I wish S would ~】「～してくれたらいいのに」と、相手の意志や将来の変化に対する期待・願望を表す場合は助動詞 would を使う。" },
+      { no: "T-443", en: "He talks <strong>as if he were [was]</strong> an expert in economics.", ja: "彼はまるで経済の専門家であるかのように話す。", exp: "【as if ＋ 仮定法過去】<as if S 過去形> で「まるで（今）～であるかのように」。主節の時制(talks)と同じ時点の反実仮想を表す。実際は専門家ではない。" },
+      { no: "T-444", en: "You look <strong>as if you had seen</strong> a ghost!", ja: "君はまるで幽霊でも見たかのような顔をしているよ！", exp: "【as if ＋ 仮定法過去完了】<as if S 過去完了> で「まるで（以前に）～であったかのように」。主節の時制(look)よりも前の出来事に対する反実仮想を表す。" },
+      { no: "T-445", en: "He talked <strong>as if he were [was]</strong> an expert in economics.", ja: "彼は（その時）まるで経済の専門家であるかのように話した。", exp: "【as if と主節が同時の場合】主節が過去形(talked)であっても、話した時点での状態（その時専門家であるかのように）を仮定する場合は、仮定法過去(were)を使う。" },
+      { no: "T-446", en: "You looked <strong>as if you had seen</strong> a ghost!", ja: "君は（その時）まるで幽霊でも見たかのような顔をしていた！", exp: "【as if と主節より前の場合】主節が過去形(looked)で、それよりもさらに前の出来事（幽霊を見た）を仮定する場合は、仮定法過去完了(had seen)を使う。" },
+      { no: "T-447", en: "You talk <strong>as if you are</strong> angry.", ja: "君は怒っているみたいな口ぶりだね。", exp: "【as if ＋ 直説法】話し手が「実際に怒っているだろう」と、それが事実である可能性が高いと思っている場合は、仮定法ではなく直説法(are)を使う。" },
+      { no: "T-448", en: "You talk <strong>as if you were</strong> angry.", ja: "君は（怒っていないのに）まるで怒っているような口ぶりだね。", exp: "【as if ＋ 仮定法】話し手が「実際には怒っていないが」と、事実は違うと分かっている上で比喩として言う場合は、仮定法(were)を使う。" },
+      { no: "T-449", en: "Her guest suddenly stood up <strong>as if to leave</strong>.", ja: "彼女の客は、まるで帰ろうとするかのように突然立ち上がった。", exp: "【as if to do】<as if to 不定詞> で「まるで～するかのように」。as if he were going to leave のような表現の省略形として用いられる。" },
+      { no: "T-450", en: "<strong>If you were to win</strong> the lottery, <strong>what would you do</strong>?", ja: "もし宝くじに当たったらどうしますか？", exp: "【未来の仮定：were to】<If S were to do>。「（仮に）～するとすれば」。実現可能性が極めて低いか、全くない未来の仮定を表す純粋な仮定表現。" },
+      { no: "T-451", en: "<strong>If you were to give</strong> her a bunch of roses, <strong>she would be</strong> pleased.", ja: "もし彼女にバラの花束を贈れば、彼女は喜ぶでしょう。", exp: "【未来の仮定：were to の提案】実現可能性が低いことだけでなく、「仮に～すれば」と相手に提案したり、可能性を控えめに提示したりする場合にも使われる。" },
+      { no: "T-452", en: "<strong>If he was to fail</strong> again, his boss <strong>might fire</strong> him.", ja: "もし彼がまた失敗すれば、上司は彼をクビにするかもしれない。", exp: "【未来の仮定：was to】主語が単数（I, he, she, it など）の場合、were to の代わりに was to が使われることがある（口語表現）。" },
+      { no: "T-453", en: "<strong>If he should change</strong> his mind, <strong>he would call</strong> me.", ja: "万一彼が気が変われば、私に電話してくるだろう。", exp: "【未来の仮定：should】<If S should do>。「万一～すれば」。実現可能性が低い（しかしゼロではない）未来の事柄を表す。主節には would などがくる。" },
+      { no: "T-454", en: "<strong>If</strong> our teacher <strong>should find out</strong> about your cheating, <strong>he will punish</strong> you.", ja: "万一先生がカンニングを見つけたら、君を罰するだろう。", exp: "【未来の仮定：should ＋ 直説法】if 節が should の場合、主節には would などの過去形だけでなく、will や can などの直説法が使われることもよくある。" },
+      { no: "T-455", en: "<strong>If you should see</strong> John, <strong>ask him</strong> to call me.", ja: "万一ジョンに会ったら、私に電話するように言ってください。", exp: "【未来の仮定：should ＋ 命令文】if 節が should の場合、主節が命令文になることも多い。were to には通常この用法はない点に注意。" },
+      { no: "T-456", en: "<strong>Were I</strong> you, I <strong>would ask</strong> her for a date.", ja: "もし私があなたなら、彼女をデートに誘うのになあ。", exp: "【if の省略と倒置（Were）】If I were you の if を省略すると、主語(I)と動詞(Were)が倒置して Were I you という語順になる。文語調の表現。" },
+      { no: "T-457", en: "<strong>Had we known</strong> you were in the hospital, we <strong>would have visited</strong> you.", ja: "あなたが入院していると知っていたら、お見舞いに行ったのに。", exp: "【if の省略と倒置（Had）】If we had known の if を省略し、Had we known と倒置した形。<Had + S + p.p.> の形を見抜くことが重要。" },
+      { no: "T-458", en: "<strong>Should there be</strong> an earthquake, this bookshelf <strong>would fall</strong> forward.", ja: "万一地震が起きたら、この本棚は前に倒れるだろう。", exp: "【if の省略と倒置（Should）】If there should be の if を省略し、Should there be と倒置した形。<Should + S + 原形> の形になる。" },
+      { no: "T-459", en: "<strong>But for</strong> dreams, life <strong>would have</strong> no meaning.", ja: "夢がなければ、人生には意味がないだろう。", exp: "【if がない仮定法：But for】「（今）～がなければ」。Without dreams や If it were not for dreams と書き換え可能。前置詞句が条件の役割を果たす。" },
+      { no: "T-460", en: "<strong>Without</strong> your goal, we <strong>would have lost</strong> the game.", ja: "君のゴールがなかったら、私たちは試合に負けていただろう。", exp: "【if がない仮定法：Without】「（あの時）～がなかったら」。過去の事実に反する場合は、主節が would have p.p. となる。But for や If it had not been for と書き換え可能。" },
+      { no: "T-461", en: "<strong>With</strong> time, this project <strong>would succeed</strong>.", ja: "時間があれば、この計画はうまくいくのだろうに。", exp: "【if がない仮定法：With】「～があれば」。With が条件（もし～があれば）を表す。文脈や主節の形（would succeed）から仮定法だと判断する。" },
+      { no: "T-462", en: "<strong>With</strong> your advice, he <strong>would not have failed</strong> in business.", ja: "あなたの助言があったら、彼は事業に失敗しなかっただろうに。", exp: "【if がない仮定法：With（過去）】主節が would not have failed となっているため、「（あの時）～があったら」という過去の反実仮想だとわかる。" },
+      { no: "T-463", en: "I know he is innocent; <strong>otherwise</strong> I <strong>wouldn't try</strong> to save him.", ja: "私は彼が無実だと知っている。そうでなければ彼を救おうとはしないだろう。", exp: "【if がない仮定法：otherwise】「さもなければ（そうでなければ）」。直前の内容（彼が無実であること）と反対の仮定を表す副詞。" },
+      { no: "T-464", en: "We stopped talking; <strong>otherwise</strong> our teacher <strong>would have scolded</strong> us.", ja: "私たちは話すのをやめた。そうでなければ先生に叱られていただろう。", exp: "【if がない仮定法：otherwise（過去）】主節が would have scolded となっているため、「もしあの時（話すのを）やめていなければ」という過去の事実に反する仮定を表す。" },
+      { no: "T-465", en: "<strong>To hear</strong> him talk, you <strong>would think</strong> he knew all about the secret.", ja: "彼が話すのを聞けば、彼が秘密をすべて知っていると思うだろう。", exp: "【if がない仮定法：不定詞】To hear ~（～を聞けば）という不定詞の副詞的用法が、条件（If you heard him talk）の意味を表している。" },
+      { no: "T-466", en: "<strong>Living</strong> in this country, she <strong>would have lived</strong> a happy life.", ja: "この国に住んでいたら、彼女は幸せな生活を送っていただろうに。", exp: "【if がない仮定法：分詞構文】Living ~（もし住んでいたら）という分詞構文が条件（If she had lived ~）の意味を表している。主節の形から仮定法と判断する。" },
+      { no: "T-467", en: "<strong>A secret agent would never tell</strong> you his real name.", ja: "秘密諜報員なら、決して本名を教えないだろう。", exp: "【if がない仮定法：名詞が主語】「秘密諜報員」という主語自体が「もし彼が秘密諜報員なら」という条件の意味を含んでいるパターン（無生物主語による仮定）。" },
+      { no: "T-468", en: "<strong>Two years ago</strong>, I <strong>would have accepted</strong> your proposal.", ja: "2年前だったら、あなたのプロポーズを受けていただろうに。", exp: "【if がない仮定法：副詞句】Two years ago（2年前）という時を表す副詞句が、「もしそれが2年前のことだったなら」という条件の意味を含んでいる。" },
+      { no: "T-469", en: "<strong>If it were not for</strong> music, life <strong>would be</strong> boring.", ja: "もし音楽がなければ、人生は退屈だろう。", exp: "【仮定法の慣用表現：If it were not for ~】「（今）～がなければ」。現在の事実に反する仮定。But for ~ や Without ~ で書き換え可能。" },
+      { no: "T-470", en: "<strong>If it had not been for</strong> my seat belt, I <strong>would have been killed</strong>.", ja: "もしシートベルトをしていなかったら、私は死んでいただろう。", exp: "【仮定法の慣用表現：If it had not been for ~】「（あの時）～がなかったら」。過去の事実に反する仮定。But for ~ や Without ~ で書き換え可能。" },
+      { no: "T-471", en: "<strong>It's time you bought</strong> a new bicycle.", ja: "もう新しい自転車を買ってもよい時間だ（とっくに買うべき時期だ）。", exp: "【It is time ＋ 仮定法過去】<It is time S 過去形> で「もう（当然）～してもよい時期だ」。現実にはまだしていないため、仮定法過去(bought)が使われる。" },
+      { no: "T-472", en: "<strong>It's high time</strong> the children <strong>went</strong> to bed.", ja: "子供たちはとっくに寝る時間だ。", exp: "【It is high time ＋ 仮定法過去】high を加えることで「とっくに～する時間だ」と意味を強調する。S 過去形(went) の部分に注意。" },
+      { no: "T-473", en: "<strong>It's about time you apologized</strong> to her for what you did.", ja: "そろそろ彼女に自分のしたことを謝ってもいいころだ。", exp: "【It is about time ＋ 仮定法過去】about を加えることで「そろそろ～する時間だ」という意味になる。" },
+      { no: "T-474", en: "<strong>It's time for you to buy</strong> a new bicycle.", ja: "あなたは新しい自転車を買う時間だ。", exp: "【It is time to do への書き換え】仮定法を使わずに、<It is time for O to do> と不定詞を用いて同じような意味（直説法的な表現）を表すことができる。" },
+      { no: "T-475", en: "<strong>If only she were</strong> here!", ja: "彼女がここにいさえすればなあ！", exp: "【If only ＋ 仮定法過去】「（今）～でありさえすればなあ」。I wish をより強調した、強い願望を表す表現。感嘆符(!)がよく使われる。" },
+      { no: "T-476", en: "<strong>If only I had taken</strong> her advice!", ja: "彼女の助言を聞いてさえいたらなあ！", exp: "【If only ＋ 仮定法過去完了】「（あの時）～でさえあったらなあ」。過去の事実に対する強い後悔を表す。" },
+      { no: "T-477", en: "<strong>It would be nice if you could help</strong> me with my luggage.", ja: "荷物を運ぶのを手伝っていただけると嬉しいのですが。", exp: "【仮定法を用いた丁寧な表現①】「もし～していただけるなら素敵でしょう」と、現実とは距離を置く仮定法を使うことで、控えめで丁寧な依頼になる。" },
+      { no: "T-478", en: "<strong>Would it be all right if I sat</strong> here?", ja: "ここに座ってもよろしいでしょうか？", exp: "【仮定法を用いた丁寧な表現②】「もし私がここに座ったとしたら、大丈夫でしょうか」と、許可を求める際にも仮定法（Would, sat）を使うと非常に丁寧な響きになる。" },
+      { no: "T-479", en: "<strong>Would you mind if I opened</strong> the window?", ja: "窓を開けてもかまいませんか？", exp: "【仮定法を用いた丁寧な表現③】Do you mind if I open ~? より Would you mind if I opened ~? の方が、控えめでより丁寧な許可の求め方になる。" },
+      { no: "T-480", en: "<strong>I wonder if you could help</strong> me.", ja: "手伝っていただけないでしょうか。", exp: "【仮定法を用いた丁寧な表現④】I wonder if ...（～かなあと思う）。助動詞の過去形(could)を使うことで、「～していただけないかと思うのですが」と丁寧な依頼になる。" },
+      { no: "T-481", en: "<strong>I was wondering if I could use</strong> your phone.", ja: "電話をお借りできないかと思っていたのですが。", exp: "【仮定法を用いた丁寧な表現⑤】過去進行形(was wondering)と仮定法(could)を組み合わせることで、「（以前から）～できないかと思っていたのですが」と、さらに控えめで丁寧な響きになる。" }
+    ];
+
+    const container = document.getElementById('card-container');
+    
+    data.forEach((item, index) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.id = `card-${index}`;
+      card.onclick = (e) => {
+        if (!e.target.classList.contains('btn-play-single')) {
+            card.classList.toggle('open');
+        }
+      };
+      
+      card.innerHTML = `
+        <div class="card-header">
+          <span class="no">${item.no}</span>
+          <button class="btn-play-single" onclick="playSingle(${index})">🔊 再生</button>
+        </div>
+        <div class="en-text">${item.en}</div>
+        <div class="details">
+            <span class="ja-text">${item.ja}</span>
+            <div class="exp-box">${item.exp}</div>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+
+    const synth = window.speechSynthesis;
+    let currentPlayIndex = -1;
+    let isPlayingAll = false;
+
+    function stripHtml(html) {
+      const tmp = document.createElement("DIV");
+      tmp.innerHTML = html;
+      return tmp.textContent || tmp.innerText || "";
+    }
+
+    function speakText(text, onEndCallback) {
+      synth.cancel();
+      const plainText = stripHtml(text);
+      const utterance = new SpeechSynthesisUtterance(plainText);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.85;
+      utterance.onend = () => { if (onEndCallback) onEndCallback(); };
+      synth.speak(utterance);
+    }
+
+    function updateHighlights(index) {
+      document.querySelectorAll('.card').forEach((card, i) => {
+        if (i === index) {
+          card.classList.add('playing');
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          card.classList.remove('playing');
+        }
+      });
+    }
+
+    function playNext() {
+      if (!isPlayingAll) return;
+      currentPlayIndex++;
+      if (currentPlayIndex >= data.length) {
+        stopAll();
+        return;
+      }
+      updateHighlights(currentPlayIndex);
+      speakText(data[currentPlayIndex].en, playNext);
+    }
+
+    function stopAll() {
+      isPlayingAll = false;
+      synth.cancel();
+      updateHighlights(-1);
+    }
+
+    window.playSingle = function(index) {
+      stopAll();
+      updateHighlights(index);
+      speakText(data[index].en);
+    };
+
+    document.getElementById('playAllBtn').addEventListener('click', () => {
+      isPlayingAll = true;
+      currentPlayIndex = -1;
+      playNext();
+    });
+
+    document.getElementById('stopBtn').addEventListener('click', stopAll);
+  </script>
+</body>
+</html>

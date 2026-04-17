@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>助動詞完全マスター - 英文リスニング</title>
+  <style>
+    :root {
+      --primary-color: #059669; /* 助動詞編は知的なグリーン */
+      --accent-color: #f59e0b;
+      --bg-color: #f0fdf4;
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-sub: #475569;
+      --radius: 16px;
+    }
+
+    body {
+      font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      margin: 0;
+      padding-top: 140px;
+      line-height: 1.6;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      z-index: 1000;
+      padding: 20px 0;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 15px 0;
+      font-size: 1.3rem;
+      color: var(--primary-color);
+      letter-spacing: 0.05em;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 0 15px;
+    }
+
+    button {
+      border: none;
+      border-radius: 50px;
+      padding: 12px 24px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-play-all { background: var(--primary-color); color: white; }
+    .btn-stop { background: #ef4444; color: white; }
+    button:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    .container {
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 0 15px 50px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .card.playing {
+      border-color: var(--primary-color);
+      background-color: #f0fdf4;
+      transform: scale(1.02);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .no {
+      font-size: 0.8rem;
+      color: #64748b;
+      background: #f1f5f9;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .btn-play-single {
+      background: #f1f5f9;
+      color: var(--primary-color);
+      padding: 6px 12px;
+      font-size: 0.75rem;
+    }
+
+    .en-text {
+      font-size: 1.2rem;
+      font-weight: 500;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .en-text strong {
+      color: var(--primary-color);
+      border-bottom: 2px solid #bbf7d0;
+      font-weight: 700;
+    }
+
+    .details {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, opacity 0.3s ease;
+      opacity: 0;
+    }
+
+    .card.open .details {
+      max-height: 600px;
+      opacity: 1;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px dashed #e2e8f0;
+    }
+
+    .ja-text {
+      font-size: 0.95rem;
+      color: var(--text-sub);
+      font-weight: bold;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .exp-box {
+      background: #f8fafc;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: #475569;
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .hint-badge {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      text-align: center;
+      display: block;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>助動詞のまとめ (全102文)</h1>
+    <div class="controls">
+      <button class="btn-play-all" id="playAllBtn"><span>▶</span> 連続再生</button>
+      <button class="btn-stop" id="stopBtn"><span>■</span> 停止</button>
+    </div>
+    <span class="hint-badge">カードをクリックして和訳・ポイントを確認</span>
+  </header>
+
+  <main class="container" id="card-container"></main>
+
+  <script>
+    const data = [
+      { no: "T-047", en: "David <strong>can speak</strong> Japanese, but <strong>can't</strong> write it.", ja: "デイビッドは日本語を話せるが、書くことはできない。", exp: "【核】能力「～できる」。否定形 cannot (can't) は「能力がない」ことを表す。" },
+      { no: "T-048", en: "I <strong>can see</strong> you tomorrow morning.", ja: "明日の朝ならお会いできます。", exp: "【核】可能性「（状況的に）～できる」。" },
+      { no: "T-049", en: "You <strong>will be able to</strong> swim soon.", ja: "あなたはすぐに泳げるようになるでしょう。", exp: "【注意】助動詞 will と can は並べられないため、未来の能力は will be able to を使う。" },
+      { no: "T-050", en: "She <strong>could</strong> [was able to] play the violin at five.", ja: "彼女は 5 歳でバイオリンを弾くことができた。", exp: "【過去の能力】過去の一般的な能力は could と be able to どちらでもOK。" },
+      { no: "T-051", en: "I <strong>was able to</strong> swim 200 meters yesterday.", ja: "私は昨日、200 メートル泳ぐことができた。", exp: "【注意】「（その時実際に）～できた」という1回限りの達成は was able to を使う。could は不可。" },
+      { no: "T-052", en: "You <strong>can enter</strong> if you have a ticket.", ja: "チケットを持っていれば入ってもよい。", exp: "【核】許可「～してもよい」。may より口語的。" },
+      { no: "T-053", en: "You <strong>can't park</strong> your car here.", ja: "ここに車を駐車してはいけません。", exp: "【核】不許可「～してはいけない」。" },
+      { no: "T-054", en: "<strong>Can I</strong> turn on TV?", ja: "テレビをつけてもいいですか？", exp: "【核】許可を求める。丁寧にするなら Could I ～? / May I ～? を使う。" },
+      { no: "T-055", en: "<strong>Can I have</strong> a newspaper?", ja: "新聞を頂けますか？", exp: "【定型】注文や依頼の定番。「～をいただけますか」。" },
+      { no: "T-056", en: "<strong>Can you</strong> open the window?", ja: "窓を開けてくれませんか？", exp: "【核】依頼。カジュアルな表現。丁寧なら Could you ～?。" },
+      { no: "T-057", en: "<strong>Could you possibly</strong> lend me another fifty dollars?", ja: "もう 50 ドル貸していただくことは可能でしょうか？", exp: "【最上級の丁寧】possibly（ひょっとして）を加えることで、さらに控えめな依頼になる。" },
+      { no: "T-058", en: "<strong>May I</strong> ask you a personal question?", ja: "個人的な質問をさせて頂いてもよろしいでしょうか？", exp: "【核】改まった許可。権限を持つ相手に対して丁寧に許可を求める。" },
+      { no: "T-059", en: "You <strong>may not</strong> enter this room.", ja: "この部屋に入ってはいけません。", exp: "【注意】不許可だが、must not よりは少し柔らかい響き。ただし公的な禁止などで使われる。" },
+      { no: "T-060", en: "You <strong>must not</strong> enter this room.", ja: "この部屋に入ってはならない。", exp: "【核】強い禁止。「～してはいけない」。絶対にダメだというニュアンス。" },
+      { no: "T-061", en: "You <strong>must attend</strong> the meeting.", ja: "あなたはその会議に出席しなければならない。", exp: "【核】主観的な義務。「（私が）～すべきだと思う」という強い圧力。" },
+      { no: "T-062", en: "I <strong>have to write</strong> a report about my summer vacation.", ja: "私は夏休みについてのレポートを書かなけない。", exp: "【核】客観的な義務。「（ルールや状況で）～しなければならない」。" },
+      { no: "T-063", en: "I <strong>must go</strong> on a diet.", ja: "ダイエットしなきゃ！", exp: "【核】自分に対する強い決意。" },
+      { no: "T-064", en: "I <strong>had to get</strong> an international driver's license.", ja: "国際免許証を取らなければならなかった。", exp: "【過去の義務】must に過去形はないので、必ず had to を使う。" },
+      { no: "T-065", en: "You <strong>will have to</strong> replace this light bulb.", ja: "この電球を取り替えなければならないだろう。", exp: "【未来の義務】「これから～しなくてはならなくなる」という予測。" },
+      { no: "T-066", en: "You'<strong>ve got to</strong> be more patient.", ja: "君はもっと我慢強くならなきゃいけないよ。", exp: "【口語】have to の強調・カジュアル版。発音は「ガッタ」に近い。" },
+      { no: "T-067", en: "You <strong>must come</strong> and visit me.", ja: "ぜひ遊びに来てください。", exp: "【強い勧誘】「～しなければならない」を転じて「ぜひ～して！」という熱意を表す。" },
+      { no: "T-068", en: "You <strong>must not use</strong> a cellphone in class.", ja: "授業中に携帯電話を使ってはいけません。", exp: "【強い禁止】命令や規則でよく使われる。" },
+      { no: "T-069", en: "You <strong>don't have to</strong> take off your shoes here.", ja: "ここで靴を脱ぐ必要はありません。", exp: "【超重要】don't have to は「～しなくてもいい（不必要）」。禁止(must not)ではない。" },
+      { no: "T-070", en: "You <strong>should</strong> exercise every day.", ja: "毎日運動すべきですよ。", exp: "【核】義務・忠告。「（当然のこととして）～したほうがいい」。" },
+      { no: "T-071", en: "They <strong>ought not to</strong> leave that child alone.", ja: "その子供を一人にしておくべきではない。", exp: "【注意】否定形 ought not to の位置に注意。should とほぼ同じ意味。" },
+      { no: "T-072", en: "You <strong>had better</strong> report the accident.", ja: "警察に事故を報告したほうがいい。", exp: "【注意】「～しないと大変なことになるぞ」という警告。目上の人には使わない。" },
+      { no: "T-073", en: "You <strong>had better not</strong> tell this secret.", ja: "この秘密は誰にも言わないほうがいい。", exp: "【注意】否定形は had better not。警告の意味が含まれる。" },
+      { no: "T-074", en: "Anybody <strong>can make</strong> mistakes.", ja: "誰にだって間違いはありうる。", exp: "【核】潜在的可能性。「～することがある」「～しうる」。" },
+      { no: "T-075", en: "The light <strong>could be</strong> a plane.", ja: "空のあの光は飛行機かもしれない。", exp: "【核】控えめな推量。can より可能性が低く「～もありえる」程度。" },
+      { no: "T-076", en: "<strong>Can</strong> his story <strong>be</strong> true?", ja: "彼の話は本当だろうか？（いや、ありえない）", exp: "【核】強い疑念。「一体～なんてことがありうるだろうか」。" },
+      { no: "T-077", en: "We <strong>may have</strong> some rain tomorrow.", ja: "明日はいくらか雨が降るかもしれない。", exp: "【核】推量。50%程度の可能性。「～かもしれない」。" },
+      { no: "T-078", en: "He <strong>might come</strong> to the party.", ja: "彼はパーティーに来るかもしれない。", exp: "【核】ひょっとすると～かもしれない。may よりさらに可能性が低い。" },
+      { no: "T-079", en: "That <strong>will be</strong> my father.", ja: "たぶん父だろう。", exp: "【核】現在の推測。確信度は高め。「（今あそこにいるのは）たぶん～だ」。" },
+      { no: "T-080", en: "That <strong>would be</strong> the best solution.", ja: "それが最善の解決策でしょう。", exp: "【核】控えめな推測。will より「おそらく～ではないか」と和らげる。" },
+      { no: "T-081", en: "She <strong>must be</strong> Bobby's sister.", ja: "彼女はボビーのお姉さんに違いない。", exp: "【重要】「～に違いない」。強い確信を表す推量。" },
+      { no: "T-082", en: "Karen <strong>can't</strong> be home now.", ja: "カレンが今、家にいるはずがない。", exp: "【重要】must be（～に違いない）の否定。「～のはずがない」。" },
+      { no: "T-083", en: "You'<strong>ve got to</strong> be kidding.", ja: "冗談でしょう。", exp: "【口語】must be の代わり。「～してるに違いない」。" },
+      { no: "T-084", en: "My parents <strong>should be</strong> in Boston by now.", ja: "両親は今頃ボストンにいるはずだ。", exp: "【核】当然の推量。当然そうなっているはずだという期待。" },
+      { no: "T-085", en: "Our guests <strong>ought to be</strong> here in a few minutes.", ja: "ゲストは数分でここに到着するはずだ。", exp: "【核】should be と同様、当然の推量。" },
+      { no: "T-086", en: "I <strong>will do</strong> my best in my new job.", ja: "新しい仕事で全力を尽くします。", exp: "【核】意志。「（絶対に）～する」。" },
+      { no: "T-087", en: "He <strong>would have</strong> his own way.", ja: "彼は何事においても自分の思い通りにしようとした。", exp: "【過去の意志】「どうしても～しようとした」。" },
+      { no: "T-088", en: "He <strong>won't listen</strong> to our advice.", ja: "彼は私たちの助言を聞こうとしない。", exp: "【核】強い拒絶。「どうしても～しようとしない」。" },
+      { no: "T-089", en: "He <strong>wouldn't eat</strong> carrots.", ja: "彼はどうしてもニンジンを食べようとしなかった。", exp: "【過去の拒絶】「どうしても～しようとしなかった」。" },
+      { no: "T-090", en: "My grandfather <strong>will often go</strong> fishing.", ja: "祖父は日曜日によく釣りに行く。", exp: "【現在の習慣】頻繁に行われる動作。often や sometimes と相性がいい。" },
+      { no: "T-091", en: "My grandfather <strong>would often take</strong> me to the zoo.", ja: "祖父はよく動物園に連れて行ってくれたものだった。", exp: "【過去の習慣】「昔はよく～したものだ」。" },
+      { no: "T-092", en: "Teenagers <strong>will not do</strong> as they are told.", ja: "十代の若者というのは言われた通りにはしないものだ。", exp: "【核】習性。「～するものだ」。" },
+      { no: "T-093", en: "Gasoline <strong>will float</strong> on water.", ja: "ガソリンは水に浮く（ものだ）。", exp: "【核】不変の習性・性質。" },
+      { no: "T-094", en: "<strong>Will you</strong> close the window?", ja: "窓を閉めてくれませんか？", exp: "【依頼】「～してくれますか」。" },
+      { no: "T-095", en: "<strong>Would you</strong> be quiet for a minute?", ja: "少し静かにして頂けませんか？", exp: "【丁寧な依頼】Will you よりも丁寧。相手の意志を伺う。" },
+      { no: "T-096", en: "<strong>Will you try</strong> my chocolate cake?", ja: "私のチョコレートケーキを食べてみない？", exp: "【勧誘】「～しませんか」。" },
+      { no: "T-097", en: "<strong>Won't you</strong> have a seat?", ja: "座りませんか？", exp: "【勧誘】Won't you ～? の方が Will you ～? より少し丁寧。" },
+      { no: "T-098", en: "<strong>Shall I</strong> make some tea?", ja: "お茶を入れましょうか？", exp: "【申し出】「（私が）～しましょうか」。相手の意向を尋ねる。" },
+      { no: "T-099", en: "<strong>Do you want me to</strong> give Jim a call?", ja: "ジムに電話しましょうか？", exp: "【申し出】Shall I より具体的で日常的な言い回し。" },
+      { no: "T-100", en: "<strong>Shall we</strong> take a walk?", ja: "散歩しましょうか？", exp: "【提案】「～しましょう（一緒に）」。" },
+      { no: "T-101", en: "You <strong>needn't worry</strong> about me.", ja: "私のことは心配する必要はありません。", exp: "【注意】助動詞の need は否定文・疑問文のみで使用。肯定は need to。" },
+      { no: "T-102", en: "He <strong>needs to have</strong> a haircut.", ja: "彼は髪を切る必要がある。", exp: "【核】一般動詞の need to。日常的にはこちらを多用。" },
+      { no: "T-103", en: "She <strong>needed to change</strong> trains.", ja: "彼女は電車を乗り換える必要があった。", exp: "【注意】need の過去形は一般動詞 needed to を使う。" },
+      { no: "T-104", en: "<strong>Did you need to</strong> show them your ID card?", ja: "身分証を見せる必要がありましたか？", exp: "【注意】過去の疑問は Did you need to...。" },
+      { no: "T-105", en: "I <strong>didn't need to give</strong> a speech.", ja: "会議でスピーチをする必要はなかった。", exp: "【核】「必要がなかったので、しなかった」という事実。" },
+      { no: "T-106", en: "I <strong>used to go</strong> to a gym.", ja: "以前はジムに通っていたが、今は行っていない。", exp: "【重要】過去の習慣。今はやっていないという対比が重要。" },
+      { no: "T-107", en: "There <strong>used to be</strong> a post office on this corner.", ja: "以前、この角に郵便局があった。", exp: "【重要】過去の状態。would は状態（be/liveなど）には使えない。" },
+      { no: "T-108", en: "I <strong>would often go</strong> to the movies.", ja: "若い頃はよく映画に行ったものだった。", exp: "【比較】would often は「よく～したものだ」という動作の繰り返し。" },
+      { no: "T-109", en: "How <strong>dare you tell</strong> such a lie!", ja: "よくもまあそんな嘘がつけたものだ。", exp: "【核】「あえて～する」。怒りや驚きを込めた定型句。" },
+      { no: "T-110", en: "I <strong>dare say</strong> prices will rise.", ja: "おそらく物価は上がるだろう。", exp: "【核】「おそらく～だろう」。" },
+      { no: "T-111", en: "I <strong>dare not express</strong> my true feelings.", ja: "自分の本当の気持ちを言う勇気がない。", exp: "【核】否定形 daren't / dare not。「～する勇気がない」。" },
+      { no: "T-111'", en: "I <strong>am afraid to</strong> express my true feelings.", ja: "本当の気持ちを言うのが怖い。", exp: "【言い換え】dare not を一般的な形容詞で。" },
+      { no: "T-112", en: "<strong>Dare you</strong> propose to her?", ja: "彼女にプロポーズする勇気があるのか？", exp: "【疑問】助動詞扱いの dare。語順に注意。" },
+      { no: "T-113", en: "The climbers <strong>dare to climb</strong> Mt. Everest.", ja: "登山家たちは冬のエベレストに登る勇気がある。", exp: "【一般動詞】dare to ～。「あえて～する」。" },
+      { no: "T-114", en: "He <strong>dared not mention</strong> the subject.", ja: "彼はその話題に触れる勇気がなかった。", exp: "【過去】助動詞 dare の過去形 dared。" },
+      { no: "T-115", en: "You're <strong>supposed to come</strong> at eight.", ja: "あなたは 8 時に来ることになっている。", exp: "【核】社会的な約束・決まり。「～することになっている」。" },
+      { no: "T-116", en: "You're <strong>not supposed to take</strong> pictures.", ja: "ここで写真を撮ってはいけないことになっている。", exp: "【核】禁止事項。must not ほどきつくないが「ルールです」という響き。" },
+      { no: "T-117", en: "You <strong>may have heard</strong> this joke before.", ja: "以前この冗談を聞いたことがあるかもしれません。", exp: "【重要】助動詞＋have＋p.p.。「過去の推量」。「～したかもしれない」。" },
+      { no: "T-118", en: "The keys <strong>might have fallen</strong> out.", ja: "ポケットから鍵が落ちたのかもしれない。", exp: "【核】may have よりさらに控えめな推測。" },
+      { no: "T-119", en: "He <strong>could have left</strong> his umbrella.", ja: "彼はお店に傘を忘れたのかもしれない。", exp: "【核】「～だったかもしれない」という可能性。" },
+      { no: "T-120", en: "He <strong>must have told</strong> me a lie.", ja: "彼は私に嘘をついたに違いない。", exp: "【重要】過去の確信。「～したに違いない」。" },
+      { no: "T-121", en: "The game <strong>should</strong> [ought to] <strong>have started</strong>.", ja: "試合は正午に始まっていたはずだ。", exp: "【核】過去の推量。「（当然）～したはずだ」。" },
+      { no: "T-122", en: "He <strong>cannot have accepted</strong> your plan.", ja: "彼があなたの計画を受け入れたはずがない。", exp: "【重要】過去の強い否定。「～したはずがない」。" },
+      { no: "T-123", en: "She <strong>couldn't have noticed</strong> the difference.", ja: "彼女がその違いに気づいたはずがない。", exp: "【比較】cannot have とほぼ同じだが、より確信が強い。" },
+      { no: "T-124", en: "You <strong>should have got up</strong> at seven.", ja: "あなたは 7 時に起きるべきだったのに。", exp: "【最重要】後悔・非難。「～すべきだったのに（実際はしなかった）」。" },
+      { no: "T-125", en: "You <strong>needn't have bought</strong> so much meat.", ja: "そんなに肉を買う必要はなかったのに。", exp: "【最重要】「～する必要はなかったのに（実際はしてしまった）」。" },
+      { no: "T-126", en: "You <strong>didn't need to come</strong>.", ja: "来る必要はなかったですね。", exp: "【比較】「必要がなかったので、しなかった」という過去の事実。125番との違いに注意。" },
+      { no: "T-127", en: "I <strong>would like to join</strong> your team.", ja: "あなたのチームに入りたいのですが。", exp: "【丁寧】want to より丁寧な希望表現。" },
+      { no: "T-128", en: "I <strong>would rather stay</strong> home.", ja: "どちらかと言えば家にいたい。", exp: "【核】「（消極的に）むしろ～したい」。" },
+      { no: "T-129", en: "I <strong>would rather say nothing than</strong> tell a lie.", ja: "嘘をつくくらいなら何も言わないほうがいい。", exp: "【比較】would rather A than B。「BするよりむしろAしたい」。" },
+      { no: "T-130", en: "I'<strong>d rather you didn't</strong>.", ja: "（できれば）そうしないでほしいのですが。", exp: "【注意】相手の申し出を丁寧に断る決まり文句。" },
+      { no: "T-131", en: "She <strong>may well be</strong> tired.", ja: "旅行の後で彼女が疲れているのももっともだ。", exp: "【核】「～するのももっともだ」「たぶん～だろう」。" },
+      { no: "T-132", en: "She <strong>might well complain</strong>.", ja: "彼女が上司の文句を言うのも当然だ。", exp: "【核】may well と同義。" },
+      { no: "T-133", en: "You <strong>may well be</strong> angry.", ja: "弟さんに腹を立てるのももっともだ。", exp: "【慣用句】当然の感情を表す。" },
+      { no: "T-134", en: "You <strong>might as well give up</strong>.", ja: "諦めたほうがいいのでは。", exp: "【核】「（他にする事もないし）～したほうがマシだ」。消極的な提案。" },
+      { no: "T-135", en: "You <strong>may as well</strong> do it now <strong>as</strong> do it later.", ja: "後でやるくらいなら、今やったほうがいい。", exp: "【比較】may as well A as B。「BするくらいならAする方がマシだ」。" },
+      { no: "T-136", en: "You <strong>might as well throw</strong> your money away <strong>as</strong> buy such a thing.", ja: "そんなものを買うなんて、金を捨てるようなものだ。", exp: "【核】「BするのはAするようなものだ」。" },
+      { no: "T-137", en: "It is natural that he <strong>should like</strong> you.", ja: "彼があなたを好きになるのは当然だ。", exp: "【感情】It is natural/strange/surprising that ... should ～。「～するなんて」。" },
+      { no: "T-138", en: "It is a pity that she <strong>has to leave</strong>.", ja: "彼女がこの国を去らなければならないのは残念だ。", exp: "【直説法】should を使わず事実として述べることも多い。" },
+      { no: "T-139", en: "It is strange that they <strong>should have canceled</strong> the concert.", ja: "彼らがコンサートを中止したなんて不思議だ。", exp: "【過去】「～したなんて」は should have + p.p.。" },
+      { no: "T-140", en: "It is necessary that you <strong>should take</strong> this medicine.", ja: "あなたはこの薬を飲む必要がある。", exp: "【必要】necessary/important などの後で義務的に使う should。" },
+      { no: "T-141", en: "It is essential that you <strong>follow</strong> the advice.", ja: "医者の助言に従うことが不可欠だ。", exp: "【注意】米語では should が省略され動詞が原形（仮定法現在）になる。" },
+      { no: "T-142", en: "I suggest that you [<strong>should</strong>] <strong>stay</strong> at the hotel.", ja: "そのホテルに泊まることを提案します。", exp: "【重要】suggest/propose などの that 節では should または原形を使う。" },
+      { no: "T-143", en: "He insisted that I [<strong>should</strong>] <strong>come</strong>.", ja: "彼は私が会議に来るようにと強く主張した。", exp: "【要求】insist（強く要求する）のパターン。" },
+      { no: "T-144", en: "Why <strong>should</strong> anyone want to hurt you?", ja: "いったいなぜ誰かがあなたを傷つけようとするなんてことがあるのか？", exp: "【修辞疑問】「いったいなぜ～なのか」。驚きや意外性を強調。" },
+      { no: "T-145", en: "Keep quiet <strong>lest</strong> you [<strong>should</strong>] <strong>wake</strong> the baby.", ja: "赤ちゃんを起こさないように静かにしていなさい。", exp: "【文語】lest ... should ～。「～しないように（目的）」。" },
+      { no: "T-146", en: "I <strong>should say</strong> there were about 100 students.", ja: "ホールには 100 人くらいの学生がいたと思います。", exp: "【控えめ】「（ひょっとすると）～ではないかと思う」。断定を避ける響き。" }
+    ];
+
+    const container = document.getElementById('card-container');
+    
+    data.forEach((item, index) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.id = `card-${index}`;
+      card.onclick = (e) => {
+        if (!e.target.classList.contains('btn-play-single')) {
+            card.classList.toggle('open');
+        }
+      };
+      
+      card.innerHTML = `
+        <div class="card-header">
+          <span class="no">${item.no}</span>
+          <button class="btn-play-single" onclick="playSingle(${index})">🔊 再生</button>
+        </div>
+        <div class="en-text">${item.en}</div>
+        <div class="details">
+            <span class="ja-text">${item.ja}</span>
+            <div class="exp-box">${item.exp}</div>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+
+    const synth = window.speechSynthesis;
+    let currentPlayIndex = -1;
+    let isPlayingAll = false;
+
+    function stripHtmlAndBrackets(html) {
+      const tmp = document.createElement("DIV");
+      tmp.innerHTML = html;
+      let text = tmp.textContent || tmp.innerText || "";
+      // [ ] で囲まれた部分は読み飛ばすか、シンプルにする処理
+      return text.replace(/\[.*?\]/g, "");
+    }
+
+    function speakText(text, onEndCallback) {
+      synth.cancel();
+      const plainText = stripHtmlAndBrackets(text);
+      const utterance = new SpeechSynthesisUtterance(plainText);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.85;
+      utterance.onend = () => { if (onEndCallback) onEndCallback(); };
+      synth.speak(utterance);
+    }
+
+    function updateHighlights(index) {
+      document.querySelectorAll('.card').forEach((card, i) => {
+        if (i === index) {
+          card.classList.add('playing');
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          card.classList.remove('playing');
+        }
+      });
+    }
+
+    function playNext() {
+      if (!isPlayingAll) return;
+      currentPlayIndex++;
+      if (currentPlayIndex >= data.length) {
+        stopAll();
+        return;
+      }
+      updateHighlights(currentPlayIndex);
+      speakText(data[currentPlayIndex].en, playNext);
+    }
+
+    function stopAll() {
+      isPlayingAll = false;
+      synth.cancel();
+      updateHighlights(-1);
+    }
+
+    window.playSingle = function(index) {
+      stopAll();
+      updateHighlights(index);
+      speakText(data[index].en);
+    };
+
+    document.getElementById('playAllBtn').addEventListener('click', () => {
+      isPlayingAll = true;
+      currentPlayIndex = -1;
+      playNext();
+    });
+
+    document.getElementById('stopBtn').addEventListener('click', stopAll);
+  </script>
+</body>
+</html>

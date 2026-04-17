@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>関係詞完全マスター - 英文リスニング</title>
+  <style>
+    :root {
+      --primary-color: #8b5cf6; /* 関係詞編は知的なパープル */
+      --accent-color: #f59e0b;
+      --bg-color: #f5f3ff;
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-sub: #475569;
+      --radius: 16px;
+    }
+
+    body {
+      font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      margin: 0;
+      padding-top: 140px;
+      line-height: 1.6;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      z-index: 1000;
+      padding: 20px 0;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 15px 0;
+      font-size: 1.3rem;
+      color: var(--primary-color);
+      letter-spacing: 0.05em;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 0 15px;
+    }
+
+    button {
+      border: none;
+      border-radius: 50px;
+      padding: 12px 24px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-play-all { background: var(--primary-color); color: white; }
+    .btn-stop { background: #ef4444; color: white; }
+    button:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    .container {
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 0 15px 50px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .card.playing {
+      border-color: var(--primary-color);
+      background-color: #f5f3ff;
+      transform: scale(1.02);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .no {
+      font-size: 0.8rem;
+      color: #7c3aed;
+      background: #ede9fe;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .btn-play-single {
+      background: #f3e8ff;
+      color: var(--primary-color);
+      padding: 6px 12px;
+      font-size: 0.75rem;
+    }
+
+    .en-text {
+      font-size: 1.2rem;
+      font-weight: 500;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .en-text strong {
+      color: var(--primary-color);
+      border-bottom: 2px solid #ddd6fe;
+      font-weight: 700;
+    }
+
+    .details {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, opacity 0.3s ease;
+      opacity: 0;
+    }
+
+    .card.open .details {
+      max-height: 600px;
+      opacity: 1;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px dashed #e2e8f0;
+    }
+
+    .ja-text {
+      font-size: 0.95rem;
+      color: var(--text-sub);
+      font-weight: bold;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .exp-box {
+      background: #fdfaff;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: #475569;
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .hint-badge {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      text-align: center;
+      display: block;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>関係詞のまとめ (全92文)</h1>
+    <div class="controls">
+      <button class="btn-play-all" id="playAllBtn"><span>▶</span> 連続再生</button>
+      <button class="btn-stop" id="stopBtn"><span>■</span> 停止</button>
+    </div>
+    <span class="hint-badge">カードをクリックして和訳・ポイントを確認</span>
+  </header>
+
+  <main class="container" id="card-container"></main>
+
+  <script>
+    const data = [
+      { no: "T-551", en: "I have a friend <strong>who lives</strong> in Boston.", ja: "私にはボストンに住んでいる友人がいる。", exp: "【主格：人】先行詞が「人」の場合、主格には who を用いる。節内で who が主語の働きをし、「～している（人）」と訳す。" },
+      { no: "T-552", en: "They live in a house <strong>which stands</strong> on a hill.", ja: "彼らは丘の上に立つ家に住んでいる。", exp: "【主格：物】先行詞が「人以外（物・動物）」の場合、主格には which を用いる。" },
+      { no: "T-553", en: "The man <strong>whom I met</strong> on the street works at a bank.", ja: "私が通りで会った男性は銀行で働いている。", exp: "【目的格：人】先行詞が「人」の場合、目的格には whom を用いる。関係詞節内の動詞(met)の目的語になる。" },
+      { no: "T-554", en: "I'm reading a book <strong>which I borrowed</strong> from the library.", ja: "私は図書館から借りた本を読んでいる。", exp: "【目的格：物】先行詞が「人以外」の場合、目的格には which を用いる。関係詞節内の動詞(borrowed)の目的語になる。" },
+      { no: "T-555", en: "The man <strong>who I met</strong> on the street works at a bank.", ja: "私が通りで会った男性は銀行で働いている。", exp: "【目的格の代用：who】口語では、先行詞が「人」の目的格 whom の代わりに who を使うのが一般的。" },
+      { no: "T-556", en: "I'm reading a book <strong>I borrowed</strong> from the library.", ja: "私は図書館から借りた本を読んでいる。", exp: "【重要：目的格の省略】目的格の関係代名詞(whom/which/that)は頻繁に省略される（接触節）。「名詞 + S + V」の形を見抜くのがポイント。" },
+      { no: "T-557", en: "He has a friend <strong>whose wife is</strong> a singer.", ja: "彼には奥さんが歌手である友人がいる。", exp: "【所有格：人】先行詞と直後の名詞が「先行詞 \"の\" 名詞」という所有関係になる場合は whose を用いる。" },
+      { no: "T-558", en: "I'm looking for a book <strong>whose subject is</strong> jazz.", ja: "私はジャズを主題にした本を探している。", exp: "【所有格：物】先行詞が「人以外（物）」の場合でも所有格には whose を使う。「その本の主題(the subject of the book)」という関係。" },
+      { no: "T-559", en: "The house <strong>whose roof is</strong> green is mine.", ja: "屋根が緑色のその家は私のものだ。", exp: "【所有格の言い換え】whose を用いた表現は、前置詞 with (The house with a green roof) を使って書き換えられることが多い。" },
+      { no: "T-560", en: "I lent him the money <strong>that was</strong> in my pocket.", ja: "私はポケットにあったお金を彼に貸した。", exp: "【関係代名詞 that】that は who/whom/which の代わりに使える。特に「人以外」の which の代用としてよく使われる。" },
+      { no: "T-561", en: "Where is the CD <strong>that I bought</strong> yesterday?", ja: "昨日私が買った CD はどこ？", exp: "【関係代名詞 that】目的格の用法。日常会話では which よりも that が好まれる傾向がある（省略されることも多い）。" },
+      { no: "T-562", en: "I saw a woman <strong>whose hair was</strong> dyed purple.", ja: "私は髪を紫に染めた女性を見かけた。", exp: "【注意：thatの所有格はない】関係代名詞 that には所有格の形が存在しないため、whose の代わりとして that は使えない。" },
+      { no: "T-563", en: "This is <strong>the only suit that</strong> I have.", ja: "これが私が持っている唯一のスーツだ。", exp: "【thatの特別用法：強い限定】先行詞に the only, the first, the same, the very や最上級などの強い限定語句がつく場合は that を優先する。" },
+      { no: "T-564", en: "Running the marathon took <strong>all the strength that</strong> she had.", ja: "マラソンを走るのに、彼女は持てる力のすべてを使い果たした。", exp: "【thatの特別用法：不定代名詞】先行詞に all, every, any, no, ～thing などを含む場合も、which より that が好まれる。" },
+      { no: "T-565", en: "He talked about <strong>the people and the things that</strong> had fascinated him during his trip.", ja: "彼は旅行中に彼を魅了した人や物について語った。", exp: "【thatの特別用法：先行詞の混在】先行詞が「人 ＋ 人以外(物・動物)」の場合、who や which では両方を受けられないため that を用いる。" },
+      { no: "T-566", en: "<strong>Who that</strong> has seen the Pyramids can forget their beauty?", ja: "ピラミッドを見たことがある人で、誰がその美しさを忘れられようか。", exp: "【thatの特別用法：疑問詞の後】疑問詞 Who が先行詞になる場合、who ... who と音が重複するのを避けるため that を用いる。" },
+      { no: "T-567", en: "He is not <strong>the man that</strong> he was ten years ago.", ja: "彼はもう 10 年前の彼ではない。", exp: "【thatの特別用法：補語になる関係詞】先行詞が「人の性格・状態・地位」を表し、関係詞節内で補語(C)の働きをする場合は that を用いる。" },
+      { no: "T-568", en: "He is the actor <strong>who [whom]</strong> Ann sent a fan letter <strong>to</strong>.", ja: "彼はアンがファンレターを送った俳優だ。", exp: "【前置詞の目的語】関係代名詞が前置詞(to)の目的語になる場合、前置詞を関係詞節の最後に残す形。口語で非常に一般的。" },
+      { no: "T-569", en: "This is the city <strong>which</strong> I was born <strong>in</strong>.", ja: "ここは私が生まれた町だ。", exp: "【前置詞の目的語】動詞が前置詞を伴う場合(be born in)、最後に in を残す形。" },
+      { no: "T-570", en: "He is the actor <strong>to whom</strong> Ann sent a fan letter.", ja: "彼はアンがファンレターを送った俳優だ。", exp: "【重要：前置詞＋関係代名詞】前置詞を関係代名詞の直前に置く堅い表現。この位置では who や that は不可で、必ず whom か which を用いる。" },
+      { no: "T-571", en: "This is the city <strong>in which</strong> I was born.", ja: "ここは私が生まれた町だ。", exp: "【前置詞＋関係代名詞】<前置詞 + that> という形は作れない。必ず <前置詞 + which / whom> になる。関係副詞 where に書き換え可能。" },
+      { no: "T-572", en: "My mother found the key <strong>(which/that)</strong> I had been <strong>looking for</strong>.", ja: "母は私がずっと探していた鍵を見つけた。", exp: "【注意：群動詞の前置詞】look for（探す）のように動詞＋前置詞で一つの熟語（群動詞）を作る場合、前置詞を切り離して関係代名詞の前に出すことはできない。" },
+      { no: "T-573", en: "<strong>What worries me</strong> is the result of the exam.", ja: "私を不安にさせているのは試験の結果だ。", exp: "【関係代名詞 what：主語】what は先行詞(the thing)を含む関係代名詞。「～するもの/こと」と訳し、名詞節を作って文の主語(S)になる。" },
+      { no: "T-574", en: "They couldn't believe <strong>what they saw</strong>.", ja: "彼らは自分たちが見たものを信じられなかった。", exp: "【関係代名詞 what：目的語】「彼らが見たもの(こと)」という名詞節を作り、他動詞(believe)の目的語(O)の役割を果たす。" },
+      { no: "T-575", en: "This watch is just <strong>what I wanted</strong>.", ja: "この時計はまさに私が欲しかったものだ。", exp: "【関係代名詞 what：補語】「私が欲しかったもの」という名詞節を作り、be動詞の補語(C)の役割を果たす。" },
+      { no: "T-576", en: "He married <strong>a woman who</strong> he met at the hospital.", ja: "彼は病院で会った（ある）女性と結婚した。", exp: "【制限用法（コンマなし）】「病院で会った」という情報で、複数いる女性の中から「どの女性か」を特定・限定する用法。" },
+      { no: "T-577", en: "He married <strong>my sister, who</strong> he met at the hospital.", ja: "彼は私の妹と結婚したが、彼女とは病院で会ったのだ。", exp: "【非制限/継続用法（コンマあり）】先行詞(my sister)が唯一で既に特定されているため、コンマを置いて追加の補足説明を加える。「そして彼女とは～」。" },
+      { no: "T-578", en: "Our teacher<strong>, who</strong> usually comes on time<strong>,</strong> arrived late today.", ja: "私たちの先生は、普段は時間通りに来るのだが、今日は遅刻した。", exp: "【継続用法：挿入】主語と動詞の間に、コンマで挟んで補足説明を挿入する形。" },
+      { no: "T-579", en: "He gave me some chocolates<strong>, which</strong> I ate at once.", ja: "彼はチョコレートをいくつかくくれ、私はそれをすぐに食べた。", exp: "【継続用法：and it/them】文を前から後ろへ「そしてそれ(ら)を～」と訳し下す。" },
+      { no: "T-580", en: "She lent me some books<strong>, which</strong> were not so interesting.", ja: "彼女は本を何冊か貸してくれたが、それらはあまり面白くなかった。", exp: "【継続用法：but it/them】先行詞についての追加情報。文脈によっては逆接になり「しかしそれらは～」と訳し下す。" },
+      { no: "T-581", en: "I telephoned Rod<strong>, who</strong> had called while I was out.", ja: "私はロッドに電話した。私が外出中に彼から電話があったからだ。", exp: "【継続用法：理由 (because he)】文脈によって「～だったので（because he/she...）」と理由を表す補足説明になることがある。" },
+      { no: "T-582", en: "He wore a brown suit<strong>, which</strong> was made in Italy.", ja: "彼は茶色のスーツを着ていたが、それはイタリア製だった。", exp: "【先行詞：直前の名詞句】コンマ＋whichが直前の特定の名詞句(a brown suit)を先行詞として補足説明している基本形。" },
+      { no: "T-583", en: "He said he wasn't afraid of ghosts<strong>, which</strong> wasn't true.", ja: "彼は幽霊など怖くないと言ったが、それは嘘だった。", exp: "【重要：先行詞が直前の節】コンマ＋which は、直前の「節（怖くないと言ったという事実）」全体を先行詞として受けることができる。" },
+      { no: "T-584", en: "It rained all day yesterday<strong>, which</strong> I expected.", ja: "昨日は一日中雨だったが、それは予想通りだった。", exp: "【重要：先行詞が文全体】コンマ＋which が前文の内容全体(It rained all day yesterday)を受けて「そのこと(一日雨だったこと)は～だった」とする用法。" },
+      { no: "T-585", en: "This is the hospital <strong>where</strong> my aunt works.", ja: "ここは私の叔母が働いている病院だ。", exp: "【関係副詞 where：場所】先行詞が「場所」の時に使用。関係詞節内で「そこで(= in which)」という副詞の働きをする。" },
+      { no: "T-586", en: "This is the hospital <strong>at which</strong> my aunt works.", ja: "ここは私の叔母が働いている病院だ。", exp: "【前置詞＋関係代名詞への書き換え】関係副詞 where は <前置詞 + which> に書き換え可能。この場合は at the hospital なので at which となる。" },
+      { no: "T-587", en: "This is <strong>where</strong> the old ferry used to go across.", ja: "ここはかつて古いフェリーが渡っていた場所だ。", exp: "【先行詞の省略】the place where の先行詞 the place が省略された形。「～する場所だ」という名詞節になる。" },
+      { no: "T-588", en: "These are the cases <strong>where</strong> this rule does not apply.", ja: "これらはこの規則が当てはまらない事例だ。", exp: "【抽象的な場所の where】物理的な場所だけでなく、case（事例）, point（点）, situation（状況）などの抽象的な場面・状況にも where を用いる。" },
+      { no: "T-589", en: "There was a time <strong>when</strong> dinosaurs lived on the earth.", ja: "恐竜が地球上に生きていた時代があった。", exp: "【関係副詞 when：時】先行詞が「時」の時に使用。関係詞節内で「その時に」という副詞の働きをする。" },
+      { no: "T-590", en: "There was a time <strong>in which</strong> dinosaurs lived on the earth.", ja: "恐竜が地球上に生きていた時代があった。", exp: "【書き換え：in which】関係副詞 when は文脈に合わせて <前置詞 + which> に書き換えられる。時代や年号には in を用いる。" },
+      { no: "T-591", en: "He didn't smile all the time <strong>(that)</strong> I was there.", ja: "私がそこにいる間ずっと、彼は笑わなかった。", exp: "【関係副詞の代用と省略】時の関係副詞 when は、代わりに that を使ったり、口語では省略されたりすることが非常に多い。" },
+      { no: "T-592", en: "Late spring is <strong>when</strong> the rainy season begins here.", ja: "晩春はここで梅雨が始まる時期だ。", exp: "【先行詞の省略】the time when の先行詞が省略された形。when 節全体が名詞節となり、文の補語(C)「～する時期だ」になる。" },
+      { no: "T-593", en: "<strong>The day</strong> will soon come <strong>when</strong> we can enjoy space travel.", ja: "宇宙旅行を楽しめる日がすぐに来るだろう。", exp: "【先行詞と関係詞の分離】主語が長くなるのを避けるため、先行詞(The day)と関係詞節(when...)が動詞(come)を挟んで離れるパターン。" },
+      { no: "T-594", en: "Tell me <strong>the reason why</strong> you look so happy today.", ja: "今日そんなに嬉しそうな理由を教えてよ。", exp: "【関係副詞 why：理由】先行詞に the reason をとり、関係詞節内で「その理由で(for that reason)」という副詞の働きをする。" },
+      { no: "T-595", en: "I really like sweets. That is <strong>(the reason) why</strong> my teeth are bad.", ja: "私は甘いものが大好きだ。そういうわけで歯が悪い。", exp: "【最重要構文：That is why】直訳「それが～する理由だ」から「そういうわけで～だ」。the reason または why のどちらかが省略されることが多い。" },
+      { no: "T-596", en: "This is <strong>the reason I left</strong> early.", ja: "これが私が早退した理由だ。", exp: "【関係副詞 why の省略】the reason why の why を省略した形。「名詞 + S + V」の形に慣れること。" },
+      { no: "T-597", en: "<strong>That's how</strong> he succeeded in business.", ja: "そのようにして彼はビジネスで成功した。", exp: "【重要：方法の how】the way how とは決して言わない。the way か how のどちらか一方だけを使う。That is how ~ で「そのようにして～」。" },
+      { no: "T-598", en: "She moved to New York<strong>, where</strong> she studied music.", ja: "彼女はニューヨークへ引っ越し、そこで音楽を勉強した。", exp: "【関係副詞 where の継続用法】コンマを打ち、「そしてそこで（and there）」と訳し下す。" },
+      { no: "T-599", en: "I was taking a shower at seven<strong>, when</strong> the lights went out.", ja: "7 時にシャワーを浴びていると、その時明かりが消えた。", exp: "【関係副詞 when の継続用法】コンマを打ち、「そしてその時（and then）」と訳し下す。出来事が連続して起こるニュアンス。" },
+      { no: "T-600", en: "Last Monday<strong>, when</strong> we went surfing<strong>, was</strong> a national holiday.", ja: "この前の月曜日は、私たちがサーフィンに行った日だが、国民の祝日だった。", exp: "【継続用法の挿入】先行詞(Last Monday)の直後にコンマで挟んで補足情報を挿入する形。" },
+      { no: "T-601", en: "The club admits <strong>whoever</strong> pays the entry fee.", ja: "そのクラブは入会金を払う人なら誰でも入会を認めている。", exp: "【複合関係代名詞 whoever：名詞節】whoever = anyone who。「～する人は誰でも」という意味の名詞節を作り、動詞の目的語になる。" },
+      { no: "T-602", en: "Help yourself to <strong>whichever</strong> you want.", ja: "どちらでも欲しい方を自由に取ってください。", exp: "【複合関係代名詞 whichever：名詞節】whichever = any one that。選択肢がある中で「どちらでも～な方」という名詞節を作る。" },
+      { no: "T-603", en: "You can order <strong>whatever</strong> you like.", ja: "好きなものを何でも注文していいですよ。", exp: "【複合関係代名詞 whatever：名詞節】whatever = anything that。「～するものは何でも」という名詞節を作る。" },
+      { no: "T-604", en: "You can have <strong>whichever book</strong> you like.", ja: "好きな本をどちらでも取っていいですよ。", exp: "【複合関係形容詞 whichever】whichever + 名詞 の形で「～するどちらの…でも」という意味の名詞節を作る。" },
+      { no: "T-605", en: "You can watch <strong>whatever movie</strong> you want.", ja: "好きな映画を何でも見ていいですよ。", exp: "【複合関係形容詞 whatever】whatever + 名詞 の形で「～するどんな…でも」という意味の名詞節を作る。" },
+      { no: "T-606", en: "The club admits <strong>anyone who</strong> pays the entry fee.", ja: "そのクラブは入会金を払う人なら誰でも入会を認めている。", exp: "【whoever の書き換え】whoever は anyone who（～する人は誰でも）に書き換えられる。" },
+      { no: "T-607", en: "Help yourself to <strong>any one (that)</strong> you want.", ja: "欲しいものをどれでも自由に取ってください。", exp: "【whichever の書き換え】whichever は any one that（～するどれでも）に書き換えられる。" },
+      { no: "T-608", en: "You can order <strong>anything (that)</strong> you like.", ja: "好きなものを何でも注文していいですよ。", exp: "【whatever の書き換え】whatever は anything that（～する何でも）に書き換えられる。" },
+      { no: "T-609", en: "On holidays, we can get up <strong>whenever</strong> we want to.", ja: "休日には、いつでも起きたい時に起きることができる。", exp: "【複合関係副詞 whenever】「～する時はいつでも」と副詞節を作る。at any time when と書き換え可能。" },
+      { no: "T-610", en: "I visit my uncle <strong>whenever</strong> I go to Osaka.", ja: "大阪に行く時はいつも叔父を訪ねる。", exp: "【複合関係副詞 whenever：反復】「～する時はいつも（必ず）」という習慣や反復を表す副詞節を作る。" },
+      { no: "T-611", en: "Put the table <strong>wherever</strong> you like.", ja: "テーブルを好きな場所どこにでも置きなさい。", exp: "【複合関係副詞 wherever】「～する所ならどこにでも」と副詞節を作る。at any place where と書き換え可能。" },
+      { no: "T-612", en: "<strong>Whoever</strong> calls me, I don't want to answer the phone.", ja: "誰が電話してこようとも、私は出たくない。", exp: "【譲歩の副詞節 whoever】Whoever = no matter who。「たとえ誰が～しようとも」という意味の副詞節を作り、主節にかかる。" },
+      { no: "T-613", en: "<strong>Whichever</strong> you take, please return it tomorrow.", ja: "どちらを持っていっても、明日返してください。", exp: "【譲歩の副詞節 whichever】Whichever = no matter which。「たとえどちらを～しようとも」。" },
+      { no: "T-614", en: "<strong>Whatever</strong> happens, I will always love you.", ja: "何が起ころうとも、私はいつもあなたを愛しています。", exp: "【譲歩の副詞節 whatever】Whatever = no matter what。「たとえ何が～しようとも」。" },
+      { no: "T-615", en: "<strong>However tired</strong> she is, she always smiles.", ja: "どんなに疲れていても、彼女はいつも微笑んでいる。", exp: "【最重要：譲歩の however + 形容詞】however + 形容詞/副詞 + S + V で「どんなに～でも」(no matter how ~)。語順に注意。" },
+      { no: "T-616", en: "<strong>However fast</strong> I ran, I couldn't catch up with him.", ja: "どんなに速く走っても、彼には追いつけなかった。", exp: "【譲歩の however + 副詞】however は副詞(fast)を直後に伴うこともできる。「どんなに速く～しても」。" },
+      { no: "T-617", en: "<strong>However</strong> you look at it, it's a stupid thing to do.", ja: "どんなふうに見ても（どう考えても）、それは馬鹿げた行いだ。", exp: "【譲歩の however 単独】形容詞や副詞を伴わず however + S + V の形で「どんな方法で（どんなふうに）～しても」という意味になる。" },
+      { no: "T-618", en: "You can do it <strong>however</strong> you like.", ja: "好きなようにやっていいですよ。", exp: "【方法・様態の however】「～するどのようなやり方でも」。in whatever way と書き換えられる。" },
+      { no: "T-619", en: "You will be welcomed <strong>whenever</strong> you come.", ja: "いつ来ても歓迎しますよ。", exp: "【譲歩の副詞節 whenever】no matter when に書き換え可能。「たとえいつ～しようとも」。" },
+      { no: "T-620", en: "I'll be thinking of you <strong>wherever</strong> you go.", ja: "あなたがどこへ行こうとも、私はあなたのことを考えています。", exp: "【譲歩の副詞節 wherever】no matter where に書き換え可能。「たとえどこへ～しようとも」。" },
+      { no: "T-621", en: "This is <strong>the same</strong> jacket <strong>as</strong> was worn by the actor in the movie.", ja: "これは映画でその俳優が着ていたのと同じジャケットだ。", exp: "【疑似関係代名詞 as】the same A as B「Bと同じA」。as が後ろの節内で主語の役割(関係代名詞の働き)をしている。" },
+      { no: "T-622", en: "America is not <strong>the same</strong> country <strong>as</strong> it used to be.", ja: "アメリカはかつてのような国ではない。", exp: "【疑似関係代名詞 as】the same A as B。「かつてそうであったのと同じ国ではない」。as が補語の役割をしている。" },
+      { no: "T-623", en: "I want to paint <strong>such</strong> pictures <strong>as</strong> I see in museums.", ja: "私は美術館で見るような絵を描きたい。", exp: "【疑似関係代名詞 as】such A as B「BするようなA」。as が see の目的語の役割をしている。" },
+      { no: "T-624", en: "Oil and water do not mix<strong>, as</strong> we all know.", ja: "誰もが知っているように、油と水は混ざらない。", exp: "【継続用法の as】コンマの前後で文全体の内容を先行詞として受ける。「～のように」「～の通り」。which と異なり文頭にも置ける。" },
+      { no: "T-625", en: "You did <strong>more</strong> work <strong>than</strong> I had expected.", ja: "あなたは私が予想していた以上の仕事をした。", exp: "【疑似関係代名詞 than】比較級に伴う than が、関係代名詞のように後ろの節で目的語(expectedのO)の役割を果たす。" },
+      { no: "T-626", en: "You have <strong>more</strong> money <strong>than</strong> is necessary.", ja: "あなたは必要以上のお金を持っている。", exp: "【疑似関係代名詞 than】比較級に伴う than が、後ろの節で主語(isのS)の役割を果たす形。" },
+      { no: "T-627", en: "The woman <strong>who I thought</strong> was her sister was actually her mother.", ja: "彼女の姉だと思っていた女性は、実は彼女の母親だった。", exp: "【連鎖関係詞（挿入）】関係代名詞の直後に I thought などの認識を表すSVが挿入された形。I thought をカッコでくくると構造が見える。" },
+      { no: "T-628", en: "Greg is a man <strong>who I know</strong> is capable of winning.", ja: "グレッグは、私が勝てると知っている（確信している）男だ。", exp: "【連鎖関係詞（挿入）】who の直後に I know が挿入された形。who は後ろの is capable of の主語として働く主格。" },
+      { no: "T-629", en: "The house <strong>of which</strong> you can see the red roof is ours.", ja: "赤い屋根が見えるその家は私たちのものだ。", exp: "【所有格の変形 of which】whose red roof を the red roof of which とし、さらに of which を前に出した硬い文語的表現。" },
+      { no: "T-630", en: "The hotel <strong>at which</strong> I stayed last summer was wonderful.", ja: "去年の夏に泊まったホテルは素晴らしかった。", exp: "【前置詞＋関係代名詞】stay at の at が関係代名詞 which の前に出た形。関係副詞 where と同じ働き。" },
+      { no: "T-631", en: "I couldn't understand her message, <strong>most of which</strong> was in French.", ja: "彼女のメッセージが理解できなかった。その大部分はフランス語だった。", exp: "【数量表現＋関係代名詞】most of which や some of whom など、コンマの後に数量表現と結びついて「そしてそのうちの～は」と補足する。" },
+      { no: "T-632", en: "There is a woman outside <strong>who says</strong> she's your cousin.", ja: "外にあなたの従姉妹だと言う女性がいる。", exp: "【主格関係代名詞の省略】There is ~ や Here is ~ の構文に続く主格の関係代名詞(who/that)は、くだけた口語では省略されることがある。" },
+      { no: "T-633", en: "This is the only bow tie <strong>there is</strong> in this store.", ja: "これがこの店にある唯一の蝶ネクタイだ。", exp: "【主格関係代名詞の省略】先行詞に the only などの強い限定語がつく場合、後ろの there is/are の主語となる that が省略されることがある。" },
+      { no: "T-634", en: "He is not the great singer <strong>(that) he once was</strong>.", ja: "彼はかつてのような偉大な歌手ではない。", exp: "【補語となる関係代名詞の省略】「過去の人となり」などを表し、関係詞節内で補語(C)の働きをする that は、よく省略される。" },
+      { no: "T-635", en: "This music is <strong>what is called</strong> \"rap\".", ja: "この音楽はいわゆる「ラップ」だ。", exp: "【what の慣用表現】what is called（世間で呼ばれているもの）から「いわゆる」という意味になる重要表現。" },
+      { no: "T-636", en: "His father made him <strong>what he is</strong> today.", ja: "父親が彼を今日の彼にした（彼を育て上げた）。", exp: "【what の慣用表現】what S is で「現在のS（の姿・人格・地位）」を表す。「今日(現在)の彼」。" },
+      { no: "T-637", en: "He is completely different from <strong>what he used to be</strong>.", ja: "彼は以前の彼とは全く違う。", exp: "【what の慣用表現】what S used to be や what S was で「過去(以前)のSの姿」を表す。" },
+      { no: "T-638", en: "He plays the piano, and <strong>what is more</strong>, he sings very well.", ja: "彼はピアノを弾くし、さらに（おまけに）歌もとてもうまい。", exp: "【what の慣用表現】what is more（さらに大きなことには）から「そのうえ、さらに（おまけに）」という意味になる。" },
+      { no: "T-639", en: "<strong>What with</strong> working <strong>and</strong> housekeeping, I'm very busy.", ja: "仕事やら家事やらで、私はとても忙しい。", exp: "【what の慣用表現】what with A and B で「AやらBやらで」。複数の原因や理由を列挙する時に使う。" },
+      { no: "T-640", en: "Reading <strong>is to</strong> the mind <strong>what</strong> exercising <strong>is to</strong> the body.", ja: "読書の精神に対する関係は、運動の身体に対する関係と同じだ。", exp: "【最重要構文】A is to B what C is to D「AのBに対する関係は、CのDに対する関係と同じだ」。比喩を示す定番の構文。" },
+      { no: "T-641", en: "I gave him <strong>what help</strong> I could give.", ja: "私は彼にできるだけの援助を与えた。", exp: "【関係形容詞 what】what + 名詞 の形で「（少ないかもしれないが）すべての～」を表す。all the help that と同じ意味。" },
+      { no: "T-642", en: "I gave him <strong>what little food</strong> I had.", ja: "私は彼になけなしの（わずかな）食べ物をすべて与えた。", exp: "【関係形容詞 what little】what little + 抽象/物質名詞 で「なけなしの（わずかな）～すべて」を強調する表現。" }
+    ];
+
+    const container = document.getElementById('card-container');
+    
+    data.forEach((item, index) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.id = `card-${index}`;
+      card.onclick = (e) => {
+        if (!e.target.classList.contains('btn-play-single')) {
+            card.classList.toggle('open');
+        }
+      };
+      
+      card.innerHTML = `
+        <div class="card-header">
+          <span class="no">${item.no}</span>
+          <button class="btn-play-single" onclick="playSingle(${index})">🔊 再生</button>
+        </div>
+        <div class="en-text">${item.en}</div>
+        <div class="details">
+            <span class="ja-text">${item.ja}</span>
+            <div class="exp-box">${item.exp}</div>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+
+    const synth = window.speechSynthesis;
+    let currentPlayIndex = -1;
+    let isPlayingAll = false;
+
+    function stripHtml(html) {
+      const tmp = document.createElement("DIV");
+      tmp.innerHTML = html;
+      return tmp.textContent || tmp.innerText || "";
+    }
+
+    function speakText(text, onEndCallback) {
+      synth.cancel();
+      const plainText = stripHtml(text);
+      const utterance = new SpeechSynthesisUtterance(plainText);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.85;
+      utterance.onend = () => { if (onEndCallback) onEndCallback(); };
+      synth.speak(utterance);
+    }
+
+    function updateHighlights(index) {
+      document.querySelectorAll('.card').forEach((card, i) => {
+        if (i === index) {
+          card.classList.add('playing');
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          card.classList.remove('playing');
+        }
+      });
+    }
+
+    function playNext() {
+      if (!isPlayingAll) return;
+      currentPlayIndex++;
+      if (currentPlayIndex >= data.length) {
+        stopAll();
+        return;
+      }
+      updateHighlights(currentPlayIndex);
+      speakText(data[currentPlayIndex].en, playNext);
+    }
+
+    function stopAll() {
+      isPlayingAll = false;
+      synth.cancel();
+      updateHighlights(-1);
+    }
+
+    window.playSingle = function(index) {
+      stopAll();
+      updateHighlights(index);
+      speakText(data[index].en);
+    };
+
+    document.getElementById('playAllBtn').addEventListener('click', () => {
+      isPlayingAll = true;
+      currentPlayIndex = -1;
+      playNext();
+    });
+
+    document.getElementById('stopBtn').addEventListener('click', stopAll);
+  </script>
+</body>
+</html>

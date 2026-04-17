@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>01 時制のまとめ</title>
+  <style>
+    :root {
+      --primary-color: #2563eb;
+      --accent-color: #f59e0b;
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-sub: #475569;
+      --radius: 16px;
+    }
+
+    body {
+      font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      margin: 0;
+      padding-top: 140px;
+      line-height: 1.6;
+    }
+
+    /* 固定ヘッダー */
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      z-index: 1000;
+      padding: 20px 0;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 15px 0;
+      font-size: 1.3rem;
+      color: var(--primary-color);
+      letter-spacing: 0.05em;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 0 15px;
+    }
+
+    button {
+      border: none;
+      border-radius: 50px;
+      padding: 12px 24px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-play-all { background: var(--primary-color); color: white; }
+    .btn-stop { background: #ef4444; color: white; }
+    button:hover { opacity: 0.9; transform: translateY(-1px); }
+    button:active { transform: translateY(0); }
+
+    /* メインコンテンツ */
+    .container {
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 0 15px 50px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+
+    /* 再生中のハイライト */
+    .card.playing {
+      border-color: var(--primary-color);
+      background-color: #eff6ff;
+      transform: scale(1.02);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      pointer-events: none; /* ボタン以外クリック不可防止 */
+    }
+
+    .no {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      background: #f1f5f9;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .btn-play-single {
+      background: #f1f5f9;
+      color: var(--primary-color);
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      pointer-events: auto; /* ここだけクリック可能に */
+    }
+
+    .en-text {
+      font-size: 1.2rem;
+      font-weight: 500;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    /* 文法ポイントの強調 */
+    .en-text strong {
+      color: var(--primary-color);
+      border-bottom: 2px solid #bfdbfe;
+      font-weight: 700;
+    }
+
+    /* 隠し要素の制御 */
+    .details {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, opacity 0.3s ease;
+      opacity: 0;
+    }
+
+    .card.open .details {
+      max-height: 500px;
+      opacity: 1;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px dashed #e2e8f0;
+    }
+
+    .ja-text {
+      font-size: 0.95rem;
+      color: var(--text-sub);
+      font-weight: bold;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .exp-box {
+      background: #fdfaf6;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: #475569;
+      border-left: 4px solid var(--accent-color);
+    }
+
+    .hint-badge {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      text-align: center;
+      display: block;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>時制のまとめ (全47文)</h1>
+    <div class="controls">
+      <button class="btn-play-all" id="playAllBtn"><span>▶</span> 連続再生</button>
+      <button class="btn-stop" id="stopBtn"><span>■</span> 停止</button>
+    </div>
+    <span class="hint-badge">カードをクリックすると解説が表示されます</span>
+  </header>
+
+  <main class="container" id="card-container">
+    <!-- JSでカードが生成されます -->
+  </main>
+
+  <script>
+    const data = [
+      { no: "T-001", en: "I <strong>belong to</strong> the student council.", ja: "私は生徒会に所属している。", exp: "【現在形：状態】所属や居住など、今この瞬間だけでなく「昨日も今日も明日も」続く状態を表す。" },
+      { no: "T-002", en: "He <strong>visits</strong> the park and <strong>meditates</strong> <strong>every week</strong>.", ja: "彼は毎週公園を訪れ、木の下で瞑想をする。", exp: "【現在形：反復動作】every week などの副詞を伴い、繰り返し行われる習慣を表す。" },
+      { no: "T-003", en: "I <strong>always read</strong> novels after breakfast.", ja: "私は朝食後にいつも小説を読む。", exp: "【現在形：習慣】always（いつも）や usually（ふだん）と共に、現在のルーティンを表す。" },
+      { no: "T-004", en: "The earth <strong>goes around</strong> the sun.", ja: "地球は太陽の周りを回る。", exp: "【現在形：不変の真理】過去・現在・未来を通して変わることのない事実や科学的法則。" },
+      { no: "T-005", en: "Our flight <strong>leaves</strong> at 11:45.", ja: "私たちのフライトは 11 時 45 分に出発する。", exp: "【現在形：確定した未来】時刻表や公的な行事など、個人の意志で変えられない確実な予定。" },
+      { no: "T-006", en: "The birds will fly south <strong>when winter comes</strong>.", ja: "冬が来ると鳥たちは南へ飛び立つだろう。", exp: "【重要】時を表す副詞節（when ～）の中では、未来のことでも現在形を用いるルール。" },
+      { no: "T-007", en: "<strong>If it is fine</strong> tomorrow, let's go swimming.", ja: "明日晴れたら、泳ぎに行こう。", exp: "【重要】条件を表す副詞節（if ～）の中では、未来のことでも現在形を用いるルール。" },
+      { no: "T-008", en: "The store <strong>was</strong> full of young people <strong>last week</strong>.", ja: "その店は先週、若者でいっぱいだった。", exp: "【過去形：状態】過去の特定の時点（last week）における状況を表す。" },
+      { no: "T-009", en: "We <strong>went</strong> to a concert <strong>last night</strong>.", ja: "私たちは昨夜コンサートへ行った。", exp: "【過去形：動作】すでに完了した過去の具体的な動作。" },
+      { no: "T-010", en: "I <strong>usually rode</strong> my bicycle to school.", ja: "私は（当時は）たいてい自転車で通学していた。", exp: "【過去形：過去の習慣】「かつては～していた」という過去の習慣。現在はそうでないことが多い。" },
+      { no: "T-011", en: "I <strong>never went</strong> to such a beautiful island <strong>before</strong>.", ja: "これほど美しい島には以前行ったことがなかった。", exp: "【米口語】本来は現在完了形が好ましいが、口語では never/before と共に過去形を使うことがある。" },
+      { no: "T-012", en: "<strong>Did you ever see</strong> such a beautiful sunset?", ja: "これほど美しい夕日を見たことがありますか？", exp: "【米口語】疑問文で ever を使い、過去形で経験を問う表現。" },
+      { no: "T-013", en: "My brother <strong>will be</strong> twenty <strong>next year</strong>.", ja: "弟は来年 20 歳になる。", exp: "【未来形：単純未来】自分の意志とは無関係に、時の経過で自然にそうなる未来。" },
+      { no: "T-014", en: "I <strong>will give</strong> you my answer tomorrow.", ja: "明日返事をします。", exp: "【未来形：意志未来】「（今決めた）～します」という話し手のその場の意志。" },
+      { no: "T-015", en: "I <strong>am going to steer</strong> the truck back <strong>this afternoon</strong>.", ja: "今日の午後、トラックをガレージに運転して戻すつもりだ。", exp: "【未来形：意図・計画】すでに心の中で決めていた予定や計画を表す。" },
+      { no: "T-016", en: "<strong>Are you going to</strong> study abroad next year?", ja: "来年留学するつもりですか？", exp: "【未来形：意図の確認】相手がすでに持っている計画や意図を尋ねる。" },
+      { no: "T-017", en: "The sky is getting dark. It <strong>is going to rain</strong>.", ja: "空が暗くなってきた。雨が降りそうだ。", exp: "【未来形：兆候】客観的な状況（暗い空）から判断して「確実にそうなる」と予測する場合。" },
+      { no: "T-018", en: "The soccer game <strong>is about to start</strong>.", ja: "サッカーの試合がまさに始まろうとしている。", exp: "【近接未来】be about to ～：「まさに今にも～するところだ」" },
+      { no: "T-019", en: "We <strong>were on the point of giving up</strong> the game.", ja: "私たちはまさに試合を諦めようとしていた。", exp: "【近接未来（過去）】be on the point of -ing：「（間もなく）～しそうである」" },
+      { no: "T-020", en: "The prime minister <strong>is to make</strong> a speech tonight.", ja: "首相は今夜テレビで演説することになっている。", exp: "【未来の予定】be to ～：公式な予定、義務、運命などを表す硬い表現。" },
+      { no: "T-021", en: "She <strong>is scrubbing</strong> the floor <strong>now</strong>.", ja: "彼女は今、床を磨いている。", exp: "【現在進行形：動作の継続】今まさに進行中で、まだ終わっていない動作。" },
+      { no: "T-022", en: "<strong>These days</strong>, I <strong>am eating</strong> a lot of vegetables.", ja: "この頃、私は野菜をたくさん食べている。", exp: "【現在進行形：一時的な習慣】「このところ一時的に」行っている動作。" },
+      { no: "T-023", en: "I <strong>am leaving</strong> for Paris tomorrow morning.", ja: "明日の朝、パリへ向けて出発します。", exp: "【現在進行形：近い未来】準備が完了しており、実行に移る直前の確定した予定。" },
+      { no: "T-024", en: "Tom <strong>is always thinking</strong> of other people.", ja: "トムはいつも他人のことを考えてばかりいる。", exp: "【進行形：反復・非難】always と共に使い、話し手の驚きや不満などの感情を込める。" },
+      { no: "T-025", en: "The old bear in the zoo <strong>is dying</strong>.", ja: "動物園の年老いたクマは死にかけている。", exp: "【進行形：変化の過程】die（死ぬ）など一瞬で終わる動詞の進行形は「～しつつある」となる。" },
+      { no: "T-026", en: "I <strong>was preparing</strong> for my exam <strong>around noon</strong>.", ja: "正午ごろ、私は中間テストの勉強をしていた。", exp: "【過去進行形】過去のある特定の瞬間に、動作が進行中だったこと。" },
+      { no: "T-027", en: "I <strong>was coughing</strong> all night long.", ja: "私は一晩中咳き込んでいた。", exp: "【過去進行形：反復】過去の一定時間に、動作が何度も繰り返されていたこと。" },
+      { no: "T-028", en: "I thought you <strong>were coming</strong> home at six.", ja: "6 時に帰ってくると思っていたよ。", exp: "【過去進行形：過去から見た未来】過去の時点から見て、近い将来に予定されていたこと。" },
+      { no: "T-029", en: "I <strong>will be writing</strong> an essay <strong>at this time tomorrow</strong>.", ja: "明日の今頃、私は作文を書いているだろう。", exp: "【未来進行形】未来のある時点で、ある動作が進行中であるという予測。" },
+      { no: "T-030", en: "I <strong>have already spent</strong> all my money.", ja: "私はもうお金をすべて使ってしまった。", exp: "【現在完了：完了・結果】動作が完了し、その結果「今はお金がない」という今の状態に重点がある。" },
+      { no: "T-031", en: "I <strong>have worked</strong> as a pharmacist <strong>before</strong>.", ja: "以前、薬剤師として働いたことがある。", exp: "【現在完了：経験】今までに「～したことがある」という経験。" },
+      { no: "T-032", en: "I <strong>have been to</strong> several sightseeing spots.", ja: "いくつかの観光地へ行ったことがある。", exp: "【重要】have been to ～：経験「～へ行ったことがある」または完了「～へ行ってきたところだ」。" },
+      { no: "T-033", en: "My sister <strong>has gone to</strong> Africa.", ja: "姉はアフリカへ行ってしまった。", exp: "【重要】have gone to ～：結果「～へ行ってしまった（今ここにはいない）」。" },
+      { no: "T-034", en: "My parents <strong>have lived</strong> a simple life <strong>since</strong> retirement.", ja: "両親は退職後、質素な生活を送っている。", exp: "【現在完了：状態の継続】過去のある時点（退職）から現在まで、その状態が続いている。" },
+      { no: "T-035", en: "I <strong>have been playing</strong> this game <strong>for 30 minutes</strong>.", ja: "私は 30 分間このスマホゲームをし続けている。", exp: "【現在完了進行形】動作（play）が今もなお「進行中」であることを強調する。" },
+      { no: "T-036", en: "I'll go to Rome <strong>when I have finished</strong> my lessons.", ja: "イタリア語のレッスンを終えたら、ローマに行くつもりだ。", exp: "【完了の代用】時を表す副詞節内で「（未来に）～し終えたら」という完了のニュアンスを表す。" },
+      { no: "T-037", en: "I'll go shopping <strong>if it has stopped</strong> raining.", ja: "今日の午後までに雨が止んでいたら、買い物に行きます。", exp: "【条件の副詞節】未来における完了状態を条件とする場合、現在完了形を用いる。" },
+      { no: "T-038", en: "The game <strong>had already begun</strong> when we arrived.", ja: "スタジアムに着いた時、試合はすでに始まっていた。", exp: "【過去完了：完了】過去のある時点（到着）より前に、すでに動作が終わっていたこと。" },
+      { no: "T-039", en: "I <strong>had never spoken</strong> to a foreigner <strong>before</strong> college.", ja: "大学に入るまで、外国人と話したことは一度もなかった。", exp: "【過去完了：経験】過去のある時点（入学）までの経験。" },
+      { no: "T-040", en: "They <strong>had known</strong> each other <strong>for ten years</strong> when they married.", ja: "彼らが結婚した時、知り合ってから 10 年が経っていた。", exp: "【過去完了：継続】過去のある時点（結婚）まで、状態が続いていたこと。" },
+      { no: "T-041", en: "I <strong>had been driving</strong> for two hours when I found it.", ja: "見つけた時、私は 2 時間運転し続けていた。", exp: "【過去完了進行形】過去のある時点まで、動作が「進行中」だったことを強調。" },
+      { no: "T-042", en: "I realized that I <strong>had left</strong> my umbrella.", ja: "私は傘を忘れてきたことに気がついた。", exp: "【大過去】「気がついた（過去）」よりもさらに前に「忘れた」ことを表す形式。" },
+      { no: "T-043", en: "I <strong>left</strong> my mobile and I <strong>realized</strong> that just now.", ja: "車に携帯を置き忘れて、ついさっきそのことに気がついた。", exp: "【過去形並列】出来事が起きた順番通りに述べる場合は、大過去を使わず過去形のままでよい。" },
+      { no: "T-044", en: "These leaves <strong>will have turned</strong> red <strong>by next month</strong>.", ja: "来月までには、これらの葉は赤く色づいているだろう。", exp: "【未来完了：完了・結果】未来のある時点（来月）までに、動作が完了しているという予測。" },
+      { no: "T-045", en: "I <strong>will have seen</strong> the musical three times if I see it again.", ja: "もう一度見れば、そのミュージカルを 3 回見たことになる。", exp: "【未来完了：経験】未来の時点での累積経験を表す。" },
+      { no: "T-046", en: "Next month we <strong>will have been married</strong> for twenty years.", ja: "来月で私たちは結婚して 20 年になります。", exp: "【未来完了：継続】未来の時点まで、ある状態（結婚）が継続していること。" },
+      { no: "T-047", en: "Next year I <strong>will have been working</strong> here for 30 years.", ja: "来年で私はこの会社で 30 年間働き続けていることになる。", exp: "【未来完了進行形】未来の時点まで、動作がずっと継続していることを強調。" }
+    ];
+
+    const container = document.getElementById('card-container');
+    
+    data.forEach((item, index) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.id = `card-${index}`;
+      // カードクリックで詳細を開閉
+      card.onclick = (e) => {
+        if (!e.target.classList.contains('btn-play-single')) {
+            card.classList.toggle('open');
+        }
+      };
+      
+      card.innerHTML = `
+        <div class="card-header">
+          <span class="no">${item.no}</span>
+          <button class="btn-play-single" onclick="playSingle(${index})">🔊 再生</button>
+        </div>
+        <div class="en-text">${item.en}</div>
+        <div class="details">
+            <span class="ja-text">${item.ja}</span>
+            <div class="exp-box">${item.exp}</div>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+
+    const synth = window.speechSynthesis;
+    let currentPlayIndex = -1;
+    let isPlayingAll = false;
+
+    // HTMLタグを除去して読み上げるためのヘルパー
+    function stripHtml(html) {
+      const tmp = document.createElement("DIV");
+      tmp.innerHTML = html;
+      return tmp.textContent || tmp.innerText || "";
+    }
+
+    function speakText(text, onEndCallback) {
+      synth.cancel();
+      const plainText = stripHtml(text);
+      const utterance = new SpeechSynthesisUtterance(plainText);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.85;
+
+      utterance.onend = () => { if (onEndCallback) onEndCallback(); };
+      synth.speak(utterance);
+    }
+
+    function updateHighlights(index) {
+      document.querySelectorAll('.card').forEach((card, i) => {
+        if (i === index) {
+          card.classList.add('playing');
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          card.classList.remove('playing');
+        }
+      });
+    }
+
+    function playNext() {
+      if (!isPlayingAll) return;
+      currentPlayIndex++;
+      if (currentPlayIndex >= data.length) {
+        stopAll();
+        return;
+      }
+      updateHighlights(currentPlayIndex);
+      speakText(data[currentPlayIndex].en, playNext);
+    }
+
+    function stopAll() {
+      isPlayingAll = false;
+      synth.cancel();
+      updateHighlights(-1);
+    }
+
+    window.playSingle = function(index) {
+      stopAll();
+      updateHighlights(index);
+      speakText(data[index].en, () => {
+        // 単体再生後はハイライトを消すがカードは閉じない
+      });
+    };
+
+    document.getElementById('playAllBtn').addEventListener('click', () => {
+      isPlayingAll = true;
+      currentPlayIndex = -1;
+      playNext();
+    });
+
+    document.getElementById('stopBtn').addEventListener('click', stopAll);
+  </script>
+</body>
+</html>

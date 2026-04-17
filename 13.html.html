@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>接続詞のまとめ - 英文リスニング</title>
+  <style>
+    :root {
+      --primary-color: #2563eb;
+      --bg-color: #f3f4f6;
+      --card-bg: #ffffff;
+      --text-main: #1f2937;
+      --text-sub: #4b5563;
+      --radius: 12px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      margin: 0;
+      padding: 0;
+      padding-top: 130px;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      z-index: 1000;
+      padding: 15px 0;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 10px 0;
+      font-size: 1.2rem;
+      color: var(--primary-color);
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      padding: 0 15px;
+    }
+
+    button {
+      border: none;
+      border-radius: 25px;
+      padding: 12px 20px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    button:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .btn-play-all {
+      background: var(--primary-color);
+      color: white;
+      flex: 1;
+      max-width: 200px;
+      justify-content: center;
+    }
+
+    .btn-stop {
+      background: #ef4444;
+      color: white;
+      flex: 1;
+      max-width: 120px;
+      justify-content: center;
+    }
+
+    .container {
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 0 15px 50px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .card.playing {
+      border-color: var(--primary-color);
+      transform: scale(1.02);
+      box-shadow: 0 8px 16px rgba(37, 99, 235, 0.15);
+      background-color: #eff6ff;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .no {
+      font-size: 0.8rem;
+      color: #1d4ed8;
+      background: #dbeafe;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+
+    .btn-play-single {
+      background: #dbeafe;
+      color: #1d4ed8;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      box-shadow: none;
+    }
+
+    .en-text {
+      font-size: 1.25rem;
+      font-weight: 500;
+      margin-bottom: 10px;
+      line-height: 1.4;
+      color: #111827;
+    }
+
+    /* 文法ポイントの強調スタイル */
+    .en-text strong {
+      color: var(--primary-color);
+      font-weight: 800;
+      background: linear-gradient(transparent 70%, #dbeafe 70%);
+    }
+
+    /* アコーディオン部分（解説） */
+    .details {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, opacity 0.3s ease;
+      opacity: 0;
+    }
+
+    .card.open .details {
+      max-height: 600px;
+      opacity: 1;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px dashed #e5e7eb;
+    }
+
+    .ja-text {
+      font-size: 0.95rem;
+      margin-bottom: 15px;
+      color: var(--text-sub);
+      border-left: 3px solid #cbd5e1;
+      padding-left: 10px;
+      font-weight: bold;
+      display: block;
+    }
+
+    .exp-box {
+      background: #f8fafc;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: #334155;
+      line-height: 1.5;
+      border: 1px solid #e2e8f0;
+    }
+
+    .hint-badge {
+      font-size: 0.7rem;
+      color: #6b7280;
+      text-align: center;
+      display: block;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>接続詞のまとめ (全94文)</h1>
+    <div class="controls">
+      <button class="btn-play-all" id="playAllBtn">▶ 連続再生</button>
+      <button class="btn-stop" id="stopBtn">■ 停止</button>
+    </div>
+    <span class="hint-badge">カードをタップして和訳・ポイントを確認</span>
+  </header>
+
+  <main class="container" id="card-container"></main>
+
+  <script>
+    const data = [
+      { no: "730", en: "Gary arrived <strong>and</strong> we started the game.", ja: "ゲイリーが到着して、そして私たちは試合を始めた。", exp: "【1.等位接続詞：and(並列)】「〜して、そして…」。2つの事柄（文と文）を並列に結びつける。" },
+      { no: "731", en: "I bought a cheeseburger <strong>and</strong> French fries.", ja: "私はチーズバーガーとフライドポテトを買った。", exp: "【1.等位接続詞：and(並列)】「AとB」。語と語を結びつける。" },
+      { no: "732", en: "<strong>Come and see</strong> me tomorrow morning.", ja: "明日の朝、私に会いに来てください。", exp: "【1.等位接続詞：and(目的・結果)】<動詞＋and＋動詞>で、<動詞＋to不定詞>（〜しに来る/行く）の意味を表す慣用表現。" },
+      { no: "733", en: "I thought the story was true, <strong>but</strong> it wasn't.", ja: "私はその話は本当だと思ったが、そうではなかった。", exp: "【1.等位接続詞：but(逆接)】「…だが〜」。前後の文を逆接で結ぶ。" },
+      { no: "734", en: "<strong>It is true that</strong> used cars are cheap, <strong>but</strong> they're not always reliable.", ja: "中古車は安いのは本当だが、常に信頼できるわけではない。", exp: "【1.等位接続詞：譲歩の but】<It is true ... but 〜>「確かに…だが、〜だ」。相手の言い分を認めた上で、自分の主張（but以降）を述べる。" },
+      { no: "735", en: "Pet cats <strong>may</strong> be cute, <strong>but</strong> they're difficult to look after.", ja: "ペットの猫は可愛いかもしれないが、世話をするのは難しい。", exp: "【1.等位接続詞：譲歩の but】<may ... but 〜>「…かもしれないが、しかし〜」。It is true〜同様、譲歩から主張へつなぐ。" },
+      { no: "736", en: "I want to go to Hong Kong <strong>or</strong> Singapore this summer.", ja: "今年の夏は香港かシンガポールへ行きたい。", exp: "【1.等位接続詞：or(選択)】「AかB」。選択の対象を述べる。" },
+      { no: "737", en: "Shall we go shopping <strong>or</strong> stay at home?", ja: "買い物に行きましょうか、それとも家にいましょうか？", exp: "【1.等位接続詞：or(選択)】疑問文で「Aするか、それともBするか」と選択を促す。" },
+      { no: "738", en: "The road was <strong>not</strong> very wide <strong>or</strong> easy to find.", ja: "その道はあまり広くもなく、見つけるのも簡単ではなかった。", exp: "【1.等位接続詞：否定の or】否定文で使われる or。<not A or B>で「AでもBでもない」という意味になる。" },
+      { no: "739", en: "I'm majoring in psychology, <strong>or</strong> the science of the mind.", ja: "私は心理学、すなわち心の科学を専攻している。", exp: "【1.等位接続詞：or(言い換え)】「すなわち／言い換えれば」。直前の名詞を別の言葉で説明する。" },
+      { no: "740", en: "Steve can <strong>both</strong> speak <strong>and</strong> write Japanese.", ja: "スティーブは日本語を話すことも書くこともできる。", exp: "【1.等位接続詞：both A and B】「AとBの両方とも」。" },
+      { no: "741", en: "I think she is <strong>either</strong> a president <strong>or</strong> a director.", ja: "彼女は社長か重役のどちらかだと思う。", exp: "【1.等位接続詞：either A or B】「AかBのどちらか」。" },
+      { no: "742", en: "The boy <strong>neither</strong> admits <strong>nor</strong> denies that he told a lie.", ja: "その少年は嘘をついたことを認めもしなければ、否定もしなかった。", exp: "【1.等位接続詞：neither A nor B】「AでもBでもない」。両方を否定する。" },
+      { no: "743", en: "<strong>Get up</strong> early tomorrow, <strong>and</strong> you'll have time to eat breakfast.", ja: "明日早く起きなさい、そうすれば朝食を食べる時間があるだろう。", exp: "【1.等位接続詞：命令文＋and】<命令文, and ...>「〜しなさい、そうすれば…」。条件と肯定的な結果を表す。" },
+      { no: "744", en: "<strong>Drive</strong> more slowly, <strong>or</strong> you'll have an accident.", ja: "もっとゆっくり運転しなさい、さもないと事故を起こしますよ。", exp: "【1.等位接続詞：命令文＋or】<命令文, or ...>「〜しなさい、さもないと…」。条件と否定的な結果（警告）を表す。" },
+      { no: "745", en: "You <strong>had better</strong> take a taxi, <strong>or</strong> you'll miss your train.", ja: "タクシーに乗ったほうがいい、さもないと電車に乗り遅れますよ。", exp: "【1.等位接続詞：条件＋or】<must/had better, or ...> 命令文だけでなく、「〜すべきだ」という文に続けて「さもないと」とつなぐこともできる。" },
+      { no: "746", en: "He has <strong>not</strong> one <strong>but</strong> two computers.", ja: "彼にはコンピューターが 1 台ではなく 2 台ある。", exp: "【1.等位接続詞：not A but B】「AではなくB」。" },
+      { no: "747", en: "The question is <strong>not</strong> how he did it, <strong>but</strong> why he did it.", ja: "問題は彼がそれをどうやったかではなく、なぜやったかだ。", exp: "【1.等位接続詞：not A but B】語句だけでなく、名詞節（how / why）どうしをつなぐこともできる。" },
+      { no: "748", en: "He speaks <strong>not only</strong> English <strong>but (also)</strong> Spanish.", ja: "彼は英語だけでなくスペイン語も話せる。", exp: "【1.等位接続詞：not only A but also B】「AだけでなくBも」。Bの方に重点が置かれる。" },
+      { no: "749", en: "I was fascinated <strong>not only</strong> by his smile, <strong>but (also)</strong> by his voice.", ja: "私は彼の笑顔だけでなく、声にも魅了された。", exp: "【1.等位接続詞：not only A but also B】前置詞句（by〜）どうしを対比させてつなぐ形。" },
+      { no: "750", en: "He speaks Spanish <strong>as well as</strong> English.", ja: "彼は英語はもちろんスペイン語も話せる。", exp: "【1.等位接続詞：B as well as A】「AだけでなくBも」。not only A but also B と同じ意味だが、AとBの語順が逆になる。" },
+      { no: "751", en: "What I need is <strong>not</strong> fame, <strong>nor</strong> money.", ja: "私に必要なのは名声ではなく、お金だ。", exp: "【1.等位接続詞：nor】<not A, nor B>「Aもないし、Bもない」。前の否定文を受けて「Bもまたない」と追加する。" },
+      { no: "752", en: "I don't want to see a snake, <strong>nor do I</strong> want to touch one.", ja: "私はヘビを見たくないし、触りたくもない。", exp: "【1.等位接続詞：nor＋倒置】<否定文, nor＋V＋S>「そしてまた〜ない」。nor の後ろには疑問文の語順（倒置）が続く。" },
+      { no: "753", en: "You broke the speed limit, <strong>so</strong> you'll have to pay a fine.", ja: "あなたは速度制限を破った。だから罰金を払わなければならない。", exp: "【1.等位接続詞：so(結果)】「だから／その結果〜」。原因・理由（前）から結果（後）へとつなぐ。" },
+      { no: "754", en: "I got up at five, <strong>for</strong> I wanted to watch the sunrise.", ja: "私は 5 時に起きた。なぜなら日の出を見たかったからだ。", exp: "【1.等位接続詞：for(理由)】「というのは〜だからだ」。前で結果を述べ、後から補足的な理由を追加する（文頭には置けない）。" },
+      { no: "755", en: "Tom <strong>and</strong> Jerry <strong>are</strong> good friends.", ja: "トムとジェリーは仲の良い友達だ。", exp: "【2.主語と動詞の一致：A and B】接続詞 and でつながれている主語は、原則として「複数扱い」になる。" },
+      { no: "756", en: "<strong>To say and to do</strong> <strong>are</strong> different things.", ja: "言うことと実行することは違うことだ。", exp: "【2.主語と動詞の一致：A and B】不定詞などが並列された主語も、別々の事柄であれば「複数扱い」。" },
+      { no: "757", en: "<strong>The actor and singer is</strong> very popular among young people.", ja: "その俳優兼歌手は若い人々の間でとても人気がある。", exp: "【2.主語と動詞の一致：同一人物】冠詞が1つ（The actor and singer）の場合、同一人物（俳優兼歌手）を表すため「単数扱い」。" },
+      { no: "758", en: "Either you or <strong>your brother has</strong> to apologize to him.", ja: "君か君の弟のどちらかが彼に謝らなければならない。", exp: "【2.主語と動詞の一致：either A or B】動詞に近い方の主語（your brother）に形を一致させる。" },
+      { no: "759", en: "Neither you nor <strong>he is</strong> right.", ja: "君も彼も正しいとは言えない。", exp: "【2.主語と動詞の一致：neither A nor B】動詞に近い方の主語（he）に形を一致させる。" },
+      { no: "760", en: "Not only you but also <strong>I was</strong> wrong.", ja: "君だけでなく私も間違っていた。", exp: "【2.主語と動詞の一致：not only A but also B】動詞に近い方の主語（I）に形を一致させる。" },
+      { no: "761", en: "<strong>I</strong> as well as you <strong>was</strong> wrong.", ja: "君と同じように私も間違っていた。", exp: "【2.主語と動詞の一致：B as well as A】意味上の主語であるB（前に出ている語＝I）に形を一致させる。" },
+      { no: "762", en: "<strong>It is</strong> true <strong>that</strong> Bill passed the entrance exam.", ja: "ビルが入学試験に合格したのは事実だ。", exp: "【3.名詞節：that節(形式主語)】<It is ... that S V>「〜ということは…だ」。that節が真の主語。" },
+      { no: "763", en: "The problem <strong>is that</strong> you never learn from your mistakes.", ja: "問題は、君が決して過ちから学ばないことだ。", exp: "【3.名詞節：that節(補語)】<S is that S V>「問題は〜ということだ」。be動詞の直後に置いて補語になる。" },
+      { no: "764", en: "I can't <strong>believe that</strong> he is an artist.", ja: "彼が芸術家であるなんて信じられない。", exp: "【3.名詞節：that節(目的語)】<V that S V>「〜ということを信じられない」。動詞の目的語になる（thatは省略可能）。" },
+      { no: "765", en: "I'm <strong>sure (that)</strong> he will succeed in business.", ja: "彼はきっとビジネスで成功するだろう。", exp: "【3.名詞節：that節(形容詞の後)】<be sure that S V>「〜ということを確信している」。確信を表す形容詞の後に続く。" },
+      { no: "766", en: "He was <strong>disappointed (that)</strong> you didn't call him.", ja: "彼はあなたが電話しなかったことに失望した。", exp: "【3.名詞節：that節(感情の原因)】<be disappointed that S V>「〜して失望した」。感情を表す形容詞の後に続き、その原因を示す。" },
+      { no: "767", en: "I'm lucky <strong>in that</strong> I have three children.", ja: "3 人の子供がいるという点で、私は幸運だ。", exp: "【3.名詞節：in that】「〜という点で／〜であるから」。前置詞 in の目的語として that節をとる例外的な表現。" },
+      { no: "768", en: "We heard the <strong>news that</strong> she won the gold medal in judo.", ja: "私たちは彼女が柔道で金メダルを取ったという知らせを聞いた。", exp: "【3.名詞節：同格のthat】「〜という（ニュース）」。news, fact, idea などの名詞の直後に置き、具体的な内容を説明する。" },
+      { no: "769", en: "<strong>It is</strong> unknown <strong>whether</strong> there is life on that planet.", ja: "その惑星に生物がいるかどうかは知られていない。", exp: "【3.名詞節：whether(主語)】「〜かどうかは知られていない」。whether節（〜かどうか）が真の主語になっている。" },
+      { no: "770", en: "The question <strong>is whether</strong> the voters will elect her.", ja: "問題は有権者が彼女を選出するかどうかだ。", exp: "【3.名詞節：whether(補語)】「問題は〜かどうかだ」。be動詞の後に置いて補語になる。" },
+      { no: "771", en: "She <strong>asked</strong> us <strong>if[whether]</strong> we wanted something to drink.", ja: "彼女は私たちに何か飲み物が欲しいかどうか尋ねた。", exp: "【3.名詞節：if / whether(目的語)】「〜かどうか（を尋ねた）」。動詞の目的語になる場合、if も whether も使える。" },
+      { no: "772", en: "I used to go swimming in the river <strong>when</strong> I was a child.", ja: "子供の頃、私はよく川へ泳ぎに行ったものだ。", exp: "【4.副詞節：when】「〜する時に」。時を表す。" },
+      { no: "773", en: "I found a wallet <strong>while</strong> I was jogging in the park.", ja: "公園をジョギングしている間に、私は財布を見つけた。", exp: "【4.副詞節：while(期間)】「〜する間に」。ある動作が行われている期間を表す。" },
+      { no: "774", en: "<strong>While</strong> I like the color of the shirt, I don't like its shape.", ja: "そのシャツの色は好きだが（その一方で）、形は気に入らない。", exp: "【4.副詞節：while(対比・譲歩)】「〜だが一方で…」。前後の内容を対比させる。" },
+      { no: "775", en: "You need to get a visa <strong>before</strong> you enter that country.", ja: "その国に入る前に、ビザを取得する必要がある。", exp: "【4.副詞節：before】「〜する前に」。" },
+      { no: "776", en: "I learned German <strong>after</strong> I moved to Berlin.", ja: "ベルリンに引っ越した後に、私はドイツ語を学んだ。", exp: "【4.副詞節：after】「〜した後に」。" },
+      { no: "777", en: "I've lived here <strong>since</strong> I was five years old.", ja: "私は 5 歳の時からずっとここに住んでいる。", exp: "【4.副詞節：since】「〜して以来（ずっと）」。過去の起点を示し、主節は現在完了形になることが多い。" },
+      { no: "778", en: "Wait here <strong>until[till]</strong> I get back.", ja: "私が戻るまでここで待っていなさい。", exp: "【4.副詞節：until / till】「〜するまで（ずっと）」。ある時点まで動作・状態が継続することを表す。" },
+      { no: "779", en: "The ship had sunk <strong>by the time</strong> the rescue helicopter arrived.", ja: "救助ヘリが到着する時までに（は既に完了している）、船は沈んでしまっていた。", exp: "【4.副詞節：by the time】「〜する時までに（は既に完了している）」。期限を表す。接続詞のカタマリとして働く。" },
+      { no: "780", en: "My dog started to bark <strong>as soon as</strong> he heard my voice.", ja: "私の声を聞くとすぐに、私の犬は吠え始めた。", exp: "【4.副詞節：as soon as】「〜するとすぐに」。前後の動作がほぼ同時に起きることを表す。" },
+      { no: "781", en: "<strong>The moment[instance]</strong> he stood up, he felt dizzy.", ja: "立ち上がった瞬間に、彼はめまいがした。", exp: "【4.副詞節：The moment/instance】「〜した瞬間に（〜するとすぐに）」。名詞句だが、接続詞として働く。" },
+      { no: "782", en: "<strong>Once</strong> you get a car, you can go anywhere you want.", ja: "いったん車を手に入れれば、行きたいところどこへでも行ける。", exp: "【4.副詞節：once】「いったん〜すると」。条件を含んだ時を表す。" },
+      { no: "783", en: "Mr. Brown was very angry <strong>because</strong> I didn't tell the truth.", ja: "私が本当のことを言わなかったので、ブラウン先生はとても怒っていた。", exp: "【4.副詞節：because】「〜なので」。直接的な原因・理由を表す（相手が知らない新情報）。" },
+      { no: "784", en: "<strong>Since</strong> you have a fever, you should stay home tonight.", ja: "熱があるのだから、今夜は家にいたほうがいい。", exp: "【4.副詞節：since】「〜なのだから」。相手も既に知っている明白な原因・理由を表す。文頭に出ることが多い。" },
+      { no: "785", en: "<strong>As</strong> he was not in his office, we had to wait in the lobby.", ja: "彼がオフィスにいなかったので、私たちはロビーで待たなければならなかった。", exp: "【4.副詞節：as】「〜なので」。since と同様に相手が知っている理由や、軽い付帯的な理由を表す。" },
+      { no: "786", en: "<strong>Now (that)</strong> we have children, we don't go out very much.", ja: "今や子供がいるので（からには）、私たちはあまり外出しない。", exp: "【4.副詞節：now that】「今や〜だから（状況が変わったから）」。状況の変化に基づく理由を表す。" },
+      { no: "787", en: "The lecture was <strong>so</strong> boring <strong>that</strong> half the students fell asleep.", ja: "その講義はとても退屈だったので、学生の半分が眠ってしまった。", exp: "【4.副詞節：so ... that】<so 形容詞/副詞 that S V>「とても…なので〜だ」。程度や結果を表す。" },
+      { no: "788", en: "He spoke <strong>so</strong> clearly <strong>that</strong> we could understand him.", ja: "彼はとてもはっきりと話したので、私たちは彼の言うことが理解できた。", exp: "【4.副詞節：so ... that】so が副詞（clearly）を強調しているパターン。" },
+      { no: "789", en: "It was <strong>so boring a lecture that</strong> half the students fell asleep.", ja: "それはとても退屈な講義だったので、学生の半分が眠ってしまった。", exp: "【4.副詞節：so＋形容詞＋a＋名詞＋that】<such a 形容詞 名詞>と同じ意味を表すが、語順が <so 形容詞 a 名詞> になる点に注意。" },
+      { no: "790", en: "It was <strong>such a boring lecture that</strong> half the students fell asleep.", ja: "それはとても退屈な講義だったので、学生の半分が眠ってしまった。", exp: "【4.副詞節：such ... that】<such a 形容詞 名詞 that S V>「とても…な名詞なので〜だ」。名詞を伴う場合は such を使う。" },
+      { no: "791", en: "<strong>So boring was</strong> the lecture <strong>that</strong> half the students fell asleep.", ja: "その講義はあまりに退屈だったので…（強調倒置）。", exp: "【4.副詞節：so ... that の倒置】so の部分を強調して文頭に出すと、主節が疑問文の語順（倒置）になる。" },
+      { no: "792", en: "Her astonishment was <strong>such that</strong> she nearly fell over.", ja: "彼女の驚きはとても大きかったので、倒れそうになるほどだった。", exp: "【4.副詞節：such that】<S is such that ...>「S（事態・程度）がとても大きいので〜」。" },
+      { no: "793", en: "Lock the door <strong>so (that)</strong> no one can get in.", ja: "誰も入れないようにドアに鍵をかけなさい。", exp: "【4.副詞節：so that〜can】「〜するために」。目的を表す。後に can, may, will を伴うことが多い。" },
+      { no: "794", en: "Talk louder <strong>so</strong> I can hear you.", ja: "私に聞こえるようにもっと大きな声で話して。", exp: "【4.副詞節：so (that)】目的を表す場合、口語では that が省略されて so だけになることが多い。" },
+      { no: "795", en: "She spoke loudly <strong>in order that</strong> the people in the back might hear.", ja: "後ろの人たちにも聞こえるように、彼女は大声で話した。", exp: "【4.副詞節：in order that】「〜するために」。so that よりも堅い表現で目的を表す。" },
+      { no: "796", en: "Please read my report <strong>if</strong> you have time.", ja: "もし時間があれば、私の報告書を読んでください。", exp: "【4.副詞節：if】「もし〜ならば」。仮定や条件を表す。" },
+      { no: "797", en: "He'll be here at six <strong>unless</strong> his flight is delayed.", ja: "飛行機が遅れない限り、彼は 6 時にここに来るでしょう。", exp: "【4.副詞節：unless】「〜でない限り」。if ... not と似ているが、「〜という例外的な場合を除いて」という強い除外条件を表す。" },
+      { no: "798", en: "<strong>Though[Although]</strong> she can speak Chinese, she can't write it.", ja: "彼女は中国語を話せるけれども、書くことはできない。", exp: "【4.副詞節：though / although】「〜ではあるけれども」。譲歩（逆接的な内容）を表す。" },
+      { no: "799", en: "<strong>Even though</strong> I don't like comedies, I watched the movie with friends.", ja: "私はコメディが好きではないが（それでも）、友達とその映画を見た。", exp: "【4.副詞節：even though】「（実際に）〜だけれども」。事実に基づいた譲歩を強調する。" },
+      { no: "800", en: "Never give up <strong>even if</strong> you make mistakes.", ja: "たとえ間違いをしたとしても、決してあきらめるな。", exp: "【4.副詞節：even if】「たとえ（仮に）〜だとしても」。まだ起きていない仮定の譲歩を表す。" },
+      { no: "801", en: "You can watch TV <strong>as(so) long as</strong> you do your homework first.", ja: "最初に宿題をやりさえすれば、テレビを見てもいいよ。", exp: "【4.副詞節：as(so) long as(条件)】「〜しさえすれば」。条件（〜というルールの範囲内であれば）を表す。" },
+      { no: "802", en: "You can swim <strong>as(so) long as</strong> I'm here.", ja: "私がここにいるあいだは、泳いでもいいよ。", exp: "【4.副詞節：as(so) long as(期間)】「〜するあいだは（ずっと）」。期間（〜している間中）を表す。" },
+      { no: "803", en: "<strong>As far as</strong> I know, he is not guilty.", ja: "私の知る限り（範囲では）、彼は無実だ。", exp: "【4.副詞節：as far as】「（私の知る）限りでは」。知識や見解の「範囲」を限定する。" },
+      { no: "804", en: "<strong>In case</strong> I'm late, start without me.", ja: "私が遅れた場合は、私なしで始めてください。", exp: "【4.副詞節：in case(条件)】「〜の場合は」。if に近い条件を表す（主にアメリカ英語）。" },
+      { no: "805", en: "I'll take an umbrella <strong>in case</strong> it rains.", ja: "雨が降るといけないから、傘を持っていこう。", exp: "【4.副詞節：in case(備え)】「〜するといけないから／〜する場合に備えて」。念のための備えを表す。" },
+      { no: "806", en: "I'll buy a flashlight <strong>in case</strong> there <strong>should</strong> be a power cut.", ja: "停電になるといけないから、懐中電灯を買っておこう。", exp: "【4.副詞節：in case ... should】「万が一〜するといけないから」。in case 節の中で should（万が一）が使われることもある。" },
+      { no: "807", en: "We hid in the basement <strong>for fear (that)</strong> the hurricane would destroy the house.", ja: "ハリケーンが家を破壊するといけないから、私たちは地下室に隠れた。", exp: "【4.副詞節：for fear that】「〜するといけないから／〜するのを恐れて」。懸念や否定の目的を表す。" },
+      { no: "808", en: "Speak quietly <strong>lest</strong> they <strong>(should)</strong> hear us.", ja: "彼らに聞かれないように（聞くとといけないから）、静かに話しなさい。", exp: "【4.副詞節：lest ... should】「〜が…しないように」。lest 自身に否定の意味が含まれるため、節内に not は置かない。" },
+      { no: "809", en: "I'll write it down <strong>so that</strong> I <strong>won't</strong> forget.", ja: "忘れないように、それを書き留めておこう。", exp: "【4.副詞節：so that ... not】「〜しないように」。so that の節を否定形にして否定の目的を表す。" },
+      { no: "810", en: "I'll write it down <strong>so as not to</strong> forget.", ja: "忘れないように、それを書き留めておこう。", exp: "【4.副詞節：so as not to】「〜しないように」。接続詞ではなく不定詞の副詞的用法を使った目的表現。" },
+      { no: "811", en: "You must eat the carrots <strong>whether</strong> you like them <strong>or not</strong>!", ja: "好きであろうと嫌いであろうと、ニンジンを食べなさい！", exp: "【4.副詞節：whether A or B】「AであろうとBであろうと」。名詞節だけでなく、副詞節として「譲歩」を表すことができる。" },
+      { no: "812", en: "I don't care <strong>whether</strong> you win <strong>or</strong> lose.", ja: "君が勝とうが負けようが私は気にしない。", exp: "【4.副詞節：whether A or B】名詞節「勝つか負けるか（を気にしない）」とも取れるし、副詞節「勝とうが負けようが（気にしない）」とも取れる構造。" },
+      { no: "813", en: "<strong>Suppose[Supposing] (that)</strong> it was fifty dollars cheaper, would you buy it?", ja: "もしそれが50 ドル安かったとしたら、買いますか？", exp: "【4.副詞節：suppose/supposing】「（仮に）…だとしたら」。if の代用として仮定を表す（主に文頭で使う）。" },
+      { no: "814", en: "You can go to the party <strong>providing (that)</strong> you promise to return by 11:00.", ja: "11 時までに戻ると約束するなら、パーティーに行ってもいいよ。", exp: "【4.副詞節：providing/provided】「…という条件で／〜するなら」。if の代用として条件を表す。" },
+      { no: "815", en: "<strong>Provided (that)</strong> it doesn't rain next week, let's climb Mt. Fuji.", ja: "来週雨が降らなければ、富士山に登ろう。", exp: "【4.副詞節：provided】「もし〜ならば」。条件を示す。" },
+      { no: "816", en: "I saw Judy <strong>as</strong> I was getting off the train.", ja: "電車を降りている時に、私はジュディを見かけた。", exp: "【5.as：時】「〜する時／〜しながら」。同時進行の動作を表す。" },
+      { no: "817", en: "<strong>As</strong> time went by, she became more beautiful.", ja: "時が経つにつれて、彼女はより美しくなった。", exp: "【5.as：比例】「〜につれて」。比較級や変化を表す動詞と共に使われ、比例的な変化を表す。" },
+      { no: "818", en: "Why don't you behave <strong>as</strong> I've always told you to?", ja: "なぜ私がいつも言っているように振る舞わないの？", exp: "【5.as：様態】「〜（する）ように／〜（する）とおりに」。" },
+      { no: "819", en: "<strong>As</strong> it was getting late, he decided to check into a hotel.", ja: "遅くなってきたので、彼はホテルに泊まることにした。", exp: "【5.as：理由】「〜なので」。since と同様に理由を表す。" },
+      { no: "820", en: "<strong>Angry as</strong> she was, she couldn't help smiling.", ja: "彼女は怒っていたけれども、微笑まずにはいられなかった。", exp: "【5.as：譲歩】<形容詞/副詞/無冠詞名詞＋as＋S＋V>「〜だけれども」。強調倒置の形で譲歩を表す。" },
+      { no: "821", en: "Her father regards her <strong>as</strong> a genius.", ja: "彼女の父親は彼女を天才だとみなしている。", exp: "【5.as：前置詞(補語)】<regard A as B>「AをBとみなす」。動詞の目的格補語を導く。" },
+      { no: "822", en: "She works <strong>as</strong> a cook at the restaurant.", ja: "彼女はそのレストランで料理人として働いている。", exp: "【5.as：前置詞(資格・役割)】「〜として」。" },
+      { no: "823", en: "<strong>As</strong> a child, he lived in Ireland.", ja: "子供の頃（子供として）、彼はアイルランドに住んでいた。", exp: "【5.as：前置詞(時)】「〜の時に／〜のころ」。As he was a child の省略形とも考えられる。" }
+    ];
+
+    const container = document.getElementById('card-container');
+    
+    data.forEach((item, index) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.id = `card-${index}`;
+      
+      // カードタップでアコーディオン開閉 (再生ボタン以外)
+      card.onclick = (e) => {
+        if (!e.target.classList.contains('btn-play-single')) {
+            card.classList.toggle('open');
+        }
+      };
+      
+      // < と > をエスケープ処理（HTMLタグとして消えるのを防ぐ）
+      const escapedExp = item.exp.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      
+      card.innerHTML = `
+        <div class="card-header">
+          <span class="no">${item.no}</span>
+          <button class="btn-play-single" onclick="playSingle(${index})">🔊 再生</button>
+        </div>
+        <div class="en-text">${item.en}</div>
+        <div class="details">
+            <span class="ja-text">${item.ja}</span>
+            <div class="exp-box">${escapedExp}</div>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+
+    const synth = window.speechSynthesis;
+    let currentPlayIndex = -1;
+    let isPlayingAll = false;
+
+    // HTMLタグ（<strong>など）を除去してプレーンテキストにする
+    function stripHtml(html) {
+      const tmp = document.createElement("DIV");
+      tmp.innerHTML = html;
+      return tmp.textContent || tmp.innerText || "";
+    }
+
+    function speakText(text, onEndCallback) {
+      synth.cancel();
+      const plainText = stripHtml(text);
+      const utterance = new SpeechSynthesisUtterance(plainText);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.9;
+      
+      utterance.onend = function() {
+        if (onEndCallback) onEndCallback();
+      };
+      utterance.onerror = function(e) {
+        console.error('Speech error', e);
+        if (onEndCallback) onEndCallback();
+      };
+      synth.speak(utterance);
+    }
+
+    function updateHighlights(index) {
+      document.querySelectorAll('.card').forEach((card, i) => {
+        if (i === index) {
+          card.classList.add('playing');
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          card.classList.remove('playing');
+        }
+      });
+    }
+
+    function playNext() {
+      if (!isPlayingAll) return;
+      currentPlayIndex++;
+      
+      if (currentPlayIndex >= data.length) {
+        isPlayingAll = false;
+        currentPlayIndex = -1;
+        updateHighlights(-1);
+        return;
+      }
+      
+      updateHighlights(currentPlayIndex);
+      speakText(data[currentPlayIndex].en, playNext);
+    }
+
+    window.playSingle = function(index) {
+      isPlayingAll = false;
+      synth.cancel();
+      currentPlayIndex = index;
+      updateHighlights(index);
+      
+      speakText(data[index].en, () => {
+        updateHighlights(-1);
+      });
+    };
+
+    document.getElementById('playAllBtn').addEventListener('click', () => {
+      isPlayingAll = true;
+      currentPlayIndex = -1;
+      playNext();
+    });
+
+    document.getElementById('stopBtn').addEventListener('click', () => {
+      isPlayingAll = false;
+      synth.cancel();
+      updateHighlights(-1);
+    });
+  </script>
+</body>
+</html>

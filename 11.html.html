@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>名詞構文・無生物主語完全マスター - 英文リスニング</title>
+  <style>
+    :root {
+      --primary-color: #0d9488; /* 知的で構造的なティール(青緑) */
+      --accent-color: #f59e0b;
+      --bg-color: #f0fdfa;
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-sub: #475569;
+      --radius: 16px;
+    }
+
+    body {
+      font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      margin: 0;
+      padding-top: 140px;
+      line-height: 1.6;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      z-index: 1000;
+      padding: 20px 0;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 15px 0;
+      font-size: 1.3rem;
+      color: var(--primary-color);
+      letter-spacing: 0.05em;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 0 15px;
+    }
+
+    button {
+      border: none;
+      border-radius: 50px;
+      padding: 12px 24px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-play-all { background: var(--primary-color); color: white; }
+    .btn-stop { background: #ef4444; color: white; }
+    button:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    .container {
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 0 15px 50px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .card.playing {
+      background-color: #e6fffa;
+      transform: scale(1.02);
+      box-shadow: 0 8px 15px -3px rgba(13, 148, 136, 0.2);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .no {
+      font-size: 0.8rem;
+      color: #0f766e;
+      background: #ccfbf1;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+
+    .btn-play-single {
+      background: #ccfbf1;
+      color: #0f766e;
+      padding: 6px 12px;
+      font-size: 0.75rem;
+    }
+
+    .en-text {
+      font-size: 1.2rem;
+      font-weight: 500;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .en-text strong {
+      color: var(--primary-color);
+      font-weight: 700;
+    }
+
+    .details {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, opacity 0.3s ease;
+      opacity: 0;
+    }
+
+    .card.open .details {
+      max-height: 600px;
+      opacity: 1;
+      margin-top: 15px;
+      padding-top: 15px;
+    }
+
+    .ja-text {
+      font-size: 0.95rem;
+      color: var(--text-sub);
+      font-weight: bold;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .exp-box {
+      background: #f8fafc;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: #475569;
+    }
+
+    .hint-badge {
+      font-size: 0.7rem;
+      color: #94a3b8;
+      text-align: center;
+      display: block;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>名詞構文・無生物主語 (全36文)</h1>
+    <div class="controls">
+      <button class="btn-play-all" id="playAllBtn"><span>▶</span> 連続再生</button>
+      <button class="btn-stop" id="stopBtn"><span>■</span> 停止</button>
+    </div>
+    <span class="hint-badge">カードをクリックして和訳・ポイントを確認</span>
+  </header>
+
+  <main class="container" id="card-container"></main>
+
+  <script>
+    const data = [
+      { "no": "T-389", "en": "We are pleased with the news of <strong>his success</strong> in business.", "ja": "私たちは彼がビジネスで成功したという知らせを聞いて喜んでいる。", "exp": "【名詞構文：主語＋動詞】<所有格＋名詞>。his success = he succeeded（彼が成功したこと）と、文のように意味をとらえる。" },
+      { "no": "T-390", "en": "The <strong>judgment of the committee</strong> was accepted by the cabinet.", "ja": "委員会の判定は内閣によって受け入れられた。", "exp": "【名詞構文：主語＋動詞】<名詞A of 名詞B>。judgment of the committee = the committee judged（委員会が判定したこと）。" },
+      { "no": "T-391", "en": "The scientist reported <strong>his discovery of</strong> a new virus.", "ja": "その科学者は新しいウイルスを発見したことを報告した。", "exp": "【名詞構文：動詞＋目的語】<所有格＋名詞＋of＋目的語>。his discovery of A = he discovered A（彼がAを発見したこと）。" },
+      { "no": "T-392", "en": "We are looking forward to <strong>your attendance at</strong> the meeting.", "ja": "会議へのご出席をお待ちしております。", "exp": "【名詞構文：動詞＋前置詞句】your attendance at A = you attend A。他動詞 attend が名詞化すると at などの前置詞を伴う点に注意。" },
+      { "no": "T-393", "en": "This is <strong>my first visit to</strong> Spain.", "ja": "私がスペインを訪れるのはこれが初めてだ。", "exp": "【名詞構文：動詞＋前置詞句】my visit to A = I visit A（私がAを訪れること）。" },
+      { "no": "T-394", "en": "The doctor made a careful <strong>examination of</strong> my eyes.", "ja": "医者は私の目を注意深く診察した。", "exp": "【名詞構文：主語の省略】文の主語(The doctor)が行為者と同じ場合、所有格は省略される。examination of A = examine A。" },
+      { "no": "T-395", "en": "We are opposed to the historic <strong>building's destruction</strong>.", "ja": "私たちはその歴史的建造物が取り壊されることに反対している。", "exp": "【名詞構文：目的格の所有格化】<目的語の所有格＋名詞>。building's destruction = destroy the building（建物を壊すこと）。受動的な意味合いになる。" },
+      { "no": "T-396", "en": "Nobody noticed <strong>my absence from</strong> the club meeting.", "ja": "私がクラブの会合を欠席したことに誰も気づかなかった。", "exp": "【名詞構文：主語＋be＋形容詞】my absence from A = I was absent from A（私がAを欠席していたこと）。形容詞派生の名詞の用法。" },
+      { "no": "T-397", "en": "We didn't expect <strong>his refusal to sign</strong> the contract.", "ja": "彼が契約への署名を拒否するとは思っていなかった。", "exp": "【名詞構文：名詞＋to不定詞】his refusal to do = he refused to do（彼が～することを拒否したこと）。" },
+      { "no": "T-398", "en": "She showed <strong>a willingness to work</strong> overtime.", "ja": "彼女は残業する意志（やぶさかではないこと）を見せた。", "exp": "【名詞構文：名詞＋to不定詞】willingness to do = be willing to do（～しても構わないと思うこと）。" },
+      { "no": "T-399", "en": "My father is <strong>a safe driver</strong>.", "ja": "父は安全運転をする（安全な運転手だ）。", "exp": "【名詞中心の表現：動詞の名詞化】a safe driver = drives safely（安全に運転する）。" },
+      { "no": "T-400", "en": "Let me <strong>have a look at</strong> the photo.", "ja": "その写真を見せて（見させて）ください。", "exp": "【名詞中心の表現：動詞＋名詞】have a look at = look at。<have / make / take + 名詞> の形で動詞の働きをする。" },
+      { "no": "T-401", "en": "We <strong>made the decision to accept</strong> his plan.", "ja": "私たちは彼の計画を受け入れる決定をした。", "exp": "【名詞中心の表現：動詞＋名詞】make a decision = decide（決定する）。" },
+      { "no": "T-402", "en": "The bad weather <strong>made us cancel</strong> the game.", "ja": "悪天候のため、私たちは試合を中止せざるを得なかった。", "exp": "【無生物主語：強制 make】<S make O do>「S（原因）によって O は～させられる」。無生物主語は副詞的に（～のせいで）訳すと自然。" },
+      { "no": "T-403", "en": "His failure in business <strong>caused him to start</strong> a new life.", "ja": "ビジネスでの失敗が原因で、彼は新しい生活を始めることになった。", "exp": "【無生物主語：原因 cause】<S cause O to do>「S が原因で O は～する」。" },
+      { "no": "T-404", "en": "A bad headache <strong>forced me to stay</strong> in bed.", "ja": "ひどい頭痛のせいで、私は寝ていなければならなかった。", "exp": "【無生物主語：強制 force】<S force O to do>「S のせいで O は無理やり～させられる（余儀なくされる）」。" },
+      { "no": "T-405", "en": "My part-time job <strong>allows me to save</strong> a lot of money.", "ja": "アルバイトのおかげで、私はたくさん貯金ができている。", "exp": "【無生物主語：許可・可能 allow】<S allow O to do>「S のおかげで O は～できる（O が～するのを許す）」。" },
+      { "no": "T-406", "en": "His advice <strong>enabled me to overcome</strong> the hardship.", "ja": "彼の助言のおかげで、私はその困難を乗り越えることができた。", "exp": "【無生物主語：可能 enable】<S enable O to do>「S のおかげで O は～できる」。" },
+      { "no": "T-407", "en": "This song <strong>reminds me of</strong> my holiday in Greece.", "ja": "この歌を聞くと、ギリシャでの休暇を思い出す。", "exp": "【無生物主語：想起 remind】<S remind O of A>「S は O に A を思い出させる」。" },
+      { "no": "T-408", "en": "That woman <strong>reminded me of</strong> your mother.", "ja": "あの女性を見て、君のお母さんを思い出した。", "exp": "【無生物主語：想起 remind】「（人）を見ると A を思い出す」という自然な訳し方。" },
+      { "no": "T-409", "en": "<strong>Remind me to buy</strong> some soy sauce.", "ja": "醤油を買うのを忘れさせないで（思い出させて）ね。", "exp": "【無生物主語：想起 to不定詞】<S remind O to do>「O に～することを思い出させる（忘れさせない）」。" },
+      { "no": "T-410", "en": "A helmet <strong>keeps you from hurting</strong> your head.", "ja": "ヘルメットをかぶれば、頭の怪我を防げる。", "exp": "【無生物主語：妨害・抑制 keep】<S keep O from doing>「S は O が～するのを防ぐ」。" },
+      { "no": "T-411", "en": "The traffic jam <strong>prevented us from arriving</strong> on time.", "ja": "交通渋滞のせいで、私たちは時間通りに到着できなかった。", "exp": "【無生物主語：妨害・抑制 prevent】<S prevent O from doing>「S のせいで O は～できない」。" },
+      { "no": "T-412", "en": "The knee injury <strong>robbed her of</strong> her speed.", "ja": "膝の怪我のせいで、彼女はスピードが出せなくなった。", "exp": "【無生物主語：剥奪 rob】<S rob A of B>「S は A から B（能力・資質など）を奪う」。" },
+      { "no": "T-413", "en": "The knee injury <strong>deprived her of</strong> the chance to play in the final game.", "ja": "膝の怪我のせいで、彼女は決勝戦に出る機会を奪われた。", "exp": "【無生物主語：剥奪 deprive】<S deprive A of B>「S は A から B（機会・権利など）を奪う」。" },
+      { "no": "T-414", "en": "This meter <strong>tells you</strong> the temperature in Fahrenheit.", "ja": "このメーターは華氏で温度を表示している。", "exp": "【無生物主語：情報源 tell】「S（メーター・看板など）は～を示す／何と書いてある」。" },
+      { "no": "T-415", "en": "The graph <strong>shows</strong> a sharp rise in prices.", "ja": "グラフは物価の急激な上昇を示している。", "exp": "【無生物主語：情報源 show】「S は～を明らかにする／示す」。" },
+      { "no": "T-416", "en": "His smile <strong>shows that</strong> he is in love with Lucy.", "ja": "彼の笑顔は、彼がルーシーに恋していることを証明している。", "exp": "【無生物主語：情報源 show that】「S を見れば～ということがわかる」。" },
+      { "no": "T-417", "en": "The sign <strong>says</strong> (that) smoking here is not permitted.", "ja": "標識には、ここは禁煙だと書いてある。", "exp": "【無生物主語：情報源 say】「S（本・手紙・標識など）に～と書いてある」。" },
+      { "no": "T-418", "en": "This road <strong>takes you to</strong> the station.", "ja": "この道を行けば駅に出る。", "exp": "【無生物主語：移動・誘導 take】<S take O to A>「S（道・乗り物など）は O を A へ連れて行く」。" },
+      { "no": "T-419", "en": "The number 21 bus <strong>takes you to</strong> the zoo.", "ja": "21 番のバスに乗れば動物園に行ける。", "exp": "【無生物主語：移動・誘導 take】「S に乗れば…へ行ける」という頻出表現。" },
+      { "no": "T-420", "en": "His curiousness <strong>led him to leave</strong> this country.", "ja": "好奇心から、彼はこの国を去ることになった（好奇心が彼をそうさせた）。", "exp": "【無生物主語：移動・誘導 lead】<S lead O to do>「S（感情・事実など）は O を～する気にさせる／～するよう導く」。" },
+      { "no": "T-421", "en": "The dunes <strong>bring lots of tourists to</strong> Tottori.", "ja": "砂丘のおかげで、鳥取には多くの観光客が来る。", "exp": "【無生物主語：移動・誘導 bring】<S bring O to A>「S のおかげで O は A に来る（連れてくる）」。" },
+      { "no": "T-422", "en": "The hard work <strong>cost him</strong> his health.", "ja": "激務が原因で彼は健康を損なった（激務は彼に健康という代償を払わせた）。", "exp": "【無生物主語：代償・損失 cost】<S cost O A>「S（主語）のせいで O（人）は A（犠牲）を払う／失う」。" },
+      { "no": "T-423", "en": "Computers <strong>save us</strong> a lot of time and troubles.", "ja": "コンピューターのおかげで、多くの時間と手間が省ける。", "exp": "【無生物主語：節約・省略 save】<S save O A>「S は O（人）の A（労力・時間）を省く」。" },
+      { "no": "T-424", "en": "The next morning <strong>found us</strong> on our way to Italy.", "ja": "翌朝、私たちはイタリアへ向かっていた。", "exp": "【無生物主語：時＋find】<Time find O C>「（時）が来ると O は C の状態にあった（文語的表現）」。" }
+    ];
+
+    const container = document.getElementById('card-container');
+    
+    data.forEach((item, index) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.id = `card-${index}`;
+      card.onclick = (e) => {
+        if (!e.target.classList.contains('btn-play-single')) {
+            card.classList.toggle('open');
+        }
+      };
+      
+      // 修正ポイント：item.exp の `<` と `>` をエスケープしてHTMLタグとして誤認されないようにしました
+      const escapedExp = item.exp.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      
+      card.innerHTML = `
+        <div class="card-header">
+          <span class="no">${item.no}</span>
+          <button class="btn-play-single" onclick="playSingle(${index})">🔊 再生</button>
+        </div>
+        <div class="en-text">${item.en}</div>
+        <div class="details">
+            <span class="ja-text">${item.ja}</span>
+            <div class="exp-box">${escapedExp}</div>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+
+    const synth = window.speechSynthesis;
+    let currentPlayIndex = -1;
+    let isPlayingAll = false;
+
+    function stripHtml(html) {
+      const tmp = document.createElement("DIV");
+      tmp.innerHTML = html;
+      return tmp.textContent || tmp.innerText || "";
+    }
+
+    function speakText(text, onEndCallback) {
+      synth.cancel();
+      const plainText = stripHtml(text);
+      const utterance = new SpeechSynthesisUtterance(plainText);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.85;
+      utterance.onend = () => { if (onEndCallback) onEndCallback(); };
+      synth.speak(utterance);
+    }
+
+    function updateHighlights(index) {
+      document.querySelectorAll('.card').forEach((card, i) => {
+        if (i === index) {
+          card.classList.add('playing');
+          card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          card.classList.remove('playing');
+        }
+      });
+    }
+
+    function playNext() {
+      if (!isPlayingAll) return;
+      currentPlayIndex++;
+      if (currentPlayIndex >= data.length) {
+        stopAll();
+        return;
+      }
+      updateHighlights(currentPlayIndex);
+      speakText(data[currentPlayIndex].en, playNext);
+    }
+
+    function stopAll() {
+      isPlayingAll = false;
+      synth.cancel();
+      updateHighlights(-1);
+    }
+
+    window.playSingle = function(index) {
+      stopAll();
+      updateHighlights(index);
+      speakText(data[index].en);
+    };
+
+    document.getElementById('playAllBtn').addEventListener('click', () => {
+      isPlayingAll = true;
+      currentPlayIndex = -1;
+      playNext();
+    });
+
+    document.getElementById('stopBtn').addEventListener('click', stopAll);
+  </script>
+</body>
+</html>
