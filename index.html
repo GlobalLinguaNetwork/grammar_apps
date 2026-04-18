@@ -81,16 +81,6 @@
   </main>
 
 <script>
-/* ══════════════════════════════════════════
-   GLN Portal 連携スクリプト
-   【動作フロー】
-   1. 学生がプリントをタップ → recordSection() がプリント名を sessionStorage に保存 → 各ページへ遷移
-   2. 各ページ（01.html等）で学習完了 → localStorage に書き込む
-      キー: 'gln_grammar_result'
-      値: JSON { section, correctCount, totalCount, timestamp }
-   3. index.html 復帰時 → 結果を読み取り → window.opener.postMessage() で GLN Portal へ送信
-   ══════════════════════════════════════════ */
-
 var RESULT_KEY = 'gln_grammar_result';
 
 function recordSection(el) {
@@ -115,19 +105,27 @@ function checkAndSendResult() {
     });
   }
 
-  if (window.opener && !window.opener.closed) {
-    var detail = result.section || '（プリント不明）';
-    if (result.correctCount !== undefined && result.totalCount !== undefined) {
-      detail += ' — ' + result.correctCount + '/' + result.totalCount + '問正解';
-    }
-    window.opener.postMessage({
-      type:   'GLN_COMPLETE',
-      title:  '文法プリント',
-      cat:    'Grammar',
-      detail: detail,
-      words:  600
-    }, '*');
+  var detail = result.section || '（プリント不明）';
+  if (result.correctCount !== undefined && result.totalCount !== undefined) {
+    detail += ' — ' + result.correctCount + '/' + result.totalCount + '問正解';
   }
+
+  var payload = {
+    type:   'GLN_COMPLETE',
+    title:  '文法プリント',
+    cat:    'Grammar',
+    detail: detail,
+    words:  600,
+    timestamp: Date.now()
+  };
+
+  // 1. 通常の postMessage
+  if (window.opener && !window.opener.closed) {
+    window.opener.postMessage(payload, '*');
+  }
+  
+  // 2. LocalStorage 経由の強力なフォールバック（iOSタブ切断対策）
+  try { localStorage.setItem('GLN_SYNC_PAYLOAD', JSON.stringify(payload)); } catch(e) {}
 }
 
 window.addEventListener('pageshow', function() { checkAndSendResult(); });
