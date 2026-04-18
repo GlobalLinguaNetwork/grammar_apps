@@ -166,6 +166,26 @@
       display: block;
       margin-top: 5px;
     }
+
+    /* 完了ボタン用スタイル */
+    .btn-finish-study {
+      background: #10b981;
+      color: white;
+      width: 100%;
+      max-width: 300px;
+      margin: 30px auto 0;
+      padding: 16px;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      transition: opacity 0.2s;
+    }
+    .btn-finish-study:hover { opacity: 0.9; }
   </style>
 </head>
 <body>
@@ -179,7 +199,10 @@
     <span class="hint-badge">カードをクリックして和訳・ポイントを確認</span>
   </header>
 
-  <main class="container" id="card-container"></main>
+  <main class="container" id="card-container">
+    <!-- 追加：完了ボタン -->
+    <button class="btn-finish-study" onclick="finishStudy()">✓ 学習を完了する</button>
+  </main>
 
   <script>
     const data = [
@@ -224,7 +247,7 @@
       { no: "297", en: "<strong>Accepting</strong> that he may be right, I still don't like it.", ja: "彼が正しいかもしれないと認めるが、私は好きではない。", exp: "【譲歩】文脈から「～だけれども」と訳す分詞構文。" },
       { no: "298", en: "<strong>It being</strong> Monday, the shop was closed.", ja: "月曜日だったので、理髪店は休みだった。", exp: "【重要：独立分詞構文】意味上の主語(It)が主節(shop)と異なるため、Itを消さずに残す。" },
       { no: "299", en: "<strong>There being</strong> no bridge, we had to swim.", ja: "橋がなかったので、私たちは泳いで渡らなければならなかった。", exp: "【独立分詞構文】There is 構文の分詞化。There being...の形になる。" },
-      { no: "-", en: "<strong>frankly speaking / speaking of... / generally speaking / strictly speaking / judging from...</strong>", ja: "率直に言って / …と言えば / 一般的に言って / 厳密に言って / …から判断すると", exp: "【超重要：定型句】慣用的に使われる独立分詞構文。熟語として丸暗記。" },
+      { no: "-", en: "<strong>frankly speaking / speaking of... / generally speaking / strictly speaking / judging from...</strong>", ja: "率直に言って / …と言えば / 一般的に言って / 厳密に言って / …から判断すると", exp: "【超重要：定型句】慣用的に使われる独立分詞構文. 熟語として丸暗記。" },
       { no: "300", en: "The dog sat there <strong>with his tongue hanging out</strong>.", ja: "その犬は舌を出しっぱなしにしてそこに座っていた。", exp: "【付帯状況のwith】with O -ing。「Oが～している状態で」。能動関係。" },
       { no: "301", en: "He stood <strong>with his arms folded</strong>.", ja: "彼は腕を組んで立っていた。", exp: "【付帯状況のwith】with O p.p.。「Oが～された状態で」。受動関係（腕は組まれるもの）。" },
       { no: "302", en: "Some people sleep <strong>with their eyes open</strong>.", ja: "目を開けたまま眠る人もいる。", exp: "【付帯状況のwith】分詞の代わりに形容詞(open)を使った形。" },
@@ -240,6 +263,7 @@
     ];
 
     const container = document.getElementById('card-container');
+    const finishBtn = document.querySelector('.btn-finish-study');
     
     data.forEach((item, index) => {
       const card = document.createElement('div');
@@ -262,7 +286,8 @@
             <div class="exp-box">${item.exp}</div>
         </div>
       `;
-      container.appendChild(card);
+      // 完了ボタンの前にカードを挿入
+      container.insertBefore(card, finishBtn);
     });
 
     const synth = window.speechSynthesis;
@@ -326,6 +351,38 @@
     });
 
     document.getElementById('stopBtn').addEventListener('click', stopAll);
+
+    // ==========================================
+    // 追加：ポータルへデータを送信する処理
+    // ==========================================
+    function finishStudy() {
+      if (typeof stopAll === 'function') stopAll(); // 再生機能があれば止める
+      
+      var sectionName = sessionStorage.getItem('gln_grammar_current_section') || '文法プリント 学習完了';
+      
+      var payload = {
+        type:   'GLN_COMPLETE',
+        title:  '文法プリント',
+        cat:    'Grammar',
+        detail: sectionName,
+        words:  600,
+        timestamp: Date.now()
+      };
+
+      if (window.opener && !window.opener.closed) {
+        window.opener.postMessage(payload, '*');
+      }
+      try { 
+        localStorage.setItem('GLN_SYNC_PAYLOAD', JSON.stringify(payload)); 
+        localStorage.setItem('gln_grammar_result', JSON.stringify({
+          section: sectionName,
+          timestamp: Date.now()
+        }));
+      } catch(e) {}
+      
+      alert('「' + sectionName + '」の学習完了を記録しました！');
+      window.location.href = 'index.html';
+    }
   </script>
 </body>
 </html>

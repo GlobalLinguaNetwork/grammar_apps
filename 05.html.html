@@ -167,6 +167,26 @@
       display: block;
       margin-top: 5px;
     }
+
+    /* 完了ボタン用スタイル */
+    .btn-finish-study {
+      background: #10b981;
+      color: white;
+      width: 100%;
+      max-width: 300px;
+      margin: 30px auto 0;
+      padding: 16px;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      transition: opacity 0.2s;
+    }
+    .btn-finish-study:hover { opacity: 0.9; }
   </style>
 </head>
 <body>
@@ -180,7 +200,10 @@
     <span class="hint-badge">カードをクリックして和訳・ポイントを確認</span>
   </header>
 
-  <main class="container" id="card-container"></main>
+  <main class="container" id="card-container">
+    <!-- 追加：完了ボタン -->
+    <button class="btn-finish-study" onclick="finishStudy()">✓ 学習を完了する</button>
+  </main>
 
   <script>
     const data = [
@@ -197,7 +220,7 @@
       { no: "T-651", en: "<strong>Seeing</strong> is <strong>believing</strong>.", ja: "百聞は一見に如かず（見ることは信じることだ）。", exp: "【一般論】意味上の主語が「誰でも」の場合は明示しない。" },
       { no: "T-652", en: "His hobby is <strong>collecting</strong> stamps.", ja: "彼の趣味は切手を集めることだ。", exp: "【文脈】文脈から明らかな場合も意味上の主語は示さない。" },
       { no: "T-653", en: "My brother doesn't like <strong>my playing</strong> games.", ja: "弟は私がゲームをするのを好まない。", exp: "【重要】意味上の主語。「所有格」または「目的格」を動名詞の直前に置く。" },
-      { no: "T-654", en: "I can't stand <strong>him shouting</strong>.", ja: "私は彼が大声を出すのには我慢できない。", exp: "【重要】口語では目的格（him/meなど）が意味上の主語として好まれる。" },
+      { no: "T-654", en: "I can't stand <strong>him shouting</strong>.", ja: "私は彼が大声を出すのには習慣できない。", exp: "【重要】口語では目的格（him/meなど）が意味上の主語として好まれる。" },
       { no: "T-655", en: "I'm sure of <strong>our team winning</strong> the game.", ja: "私たちのチームが試合に勝つと確信している。", exp: "【名詞の主語】名詞を置く場合はそのままの形。所有格'sを付けることもある。" },
       { no: "T-656", en: "<strong>Not saying</strong> \"thank you\" is rude.", ja: "「ありがとう」と言わないのは失礼だ。", exp: "【否定】否定語 not は動名詞の直前に置く。" },
       { no: "T-657", en: "I believe in <strong>never telling</strong> lies.", ja: "私は嘘を一度もつかないことが大切だと信じている。", exp: "【否定】never を使って「決して～しないこと」と強調する。" },
@@ -222,6 +245,7 @@
     ];
 
     const container = document.getElementById('card-container');
+    const finishBtn = document.querySelector('.btn-finish-study');
     
     data.forEach((item, index) => {
       const card = document.createElement('div');
@@ -244,7 +268,8 @@
             <div class="exp-box">${item.exp}</div>
         </div>
       `;
-      container.appendChild(card);
+      // カードを完了ボタンの前に挿入
+      container.insertBefore(card, finishBtn);
     });
 
     const synth = window.speechSynthesis;
@@ -308,6 +333,38 @@
     });
 
     document.getElementById('stopBtn').addEventListener('click', stopAll);
+
+    // ==========================================
+    // 追加：ポータルへデータを送信する処理
+    // ==========================================
+    function finishStudy() {
+      if (typeof stopAll === 'function') stopAll(); // 再生機能があれば止める
+      
+      var sectionName = sessionStorage.getItem('gln_grammar_current_section') || '文法プリント 学習完了';
+      
+      var payload = {
+        type:   'GLN_COMPLETE',
+        title:  '文法プリント',
+        cat:    'Grammar',
+        detail: sectionName,
+        words:  600,
+        timestamp: Date.now()
+      };
+
+      if (window.opener && !window.opener.closed) {
+        window.opener.postMessage(payload, '*');
+      }
+      try { 
+        localStorage.setItem('GLN_SYNC_PAYLOAD', JSON.stringify(payload)); 
+        localStorage.setItem('gln_grammar_result', JSON.stringify({
+          section: sectionName,
+          timestamp: Date.now()
+        }));
+      } catch(e) {}
+      
+      alert('「' + sectionName + '」の学習完了を記録しました！');
+      window.location.href = 'index.html';
+    }
   </script>
 </body>
 </html>

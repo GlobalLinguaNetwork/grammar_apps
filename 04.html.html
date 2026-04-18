@@ -164,6 +164,26 @@
       display: block;
       margin-top: 5px;
     }
+
+    /* 完了ボタン用スタイル */
+    .btn-finish-study {
+      background: #10b981;
+      color: white;
+      width: 100%;
+      max-width: 300px;
+      margin: 30px auto 0;
+      padding: 16px;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      transition: opacity 0.2s;
+    }
+    .btn-finish-study:hover { opacity: 0.9; }
   </style>
 </head>
 <body>
@@ -177,7 +197,10 @@
     <span class="hint-badge">カードをクリックして和訳・ポイントを確認</span>
   </header>
 
-  <main class="container" id="card-container"></main>
+  <main class="container" id="card-container">
+    <!-- 追加：完了ボタン -->
+    <button class="btn-finish-study" onclick="finishStudy()">✓ 学習を完了する</button>
+  </main>
 
   <script>
     const data = [
@@ -270,11 +293,12 @@
       { no: "T-637", en: "decide <strong>whether to accept</strong> his request.", ja: "彼の要求を受け入れるべきかどうか決められない。", exp: "【形】whether to do「～すべきかどうか」。" },
       { no: "T-638", en: "<strong>To tell the truth</strong>, that doesn suit you.", ja: "実を言うと、そのジャケットは君には似合っていないよ。", exp: "【独立不定詞】慣用句。to tell the truth「実を言うと」。" },
       { no: "T-639", en: "<strong>Strange to say</strong>, the plane was never found.", ja: "奇妙なことに、その行方不明機は二度と見つからなかった。", exp: "【独立不定詞】strange to say「奇妙なことに」。" },
-      { no: "T-640", en: "Would you like to go? I'<strong>d love to</strong>.", ja: "「映画に行きませんか？」「ぜひ行きたいです。」", exp: "【代不定詞】toの後ろの重複（go）を省略。toだけを残す。" }
+      { no: "T-640", en: "Would you like to go? I'd love to.", ja: "「映画に行きませんか？」「ぜひ行きたいです。」", exp: "【代不定詞】toの後ろの重複（go）を省略。toだけを残す。" }
     ];
 
     const container = document.getElementById('card-container');
-    
+    const finishBtn = document.querySelector('.btn-finish-study');
+
     data.forEach((item, index) => {
       const card = document.createElement('div');
       card.className = 'card';
@@ -296,7 +320,8 @@
             <div class="exp-box">${item.exp}</div>
         </div>
       `;
-      container.appendChild(card);
+      // カードを完了ボタンの前に挿入
+      container.insertBefore(card, finishBtn);
     });
 
     const synth = window.speechSynthesis;
@@ -360,6 +385,38 @@
     });
 
     document.getElementById('stopBtn').addEventListener('click', stopAll);
+
+    // ==========================================
+    // 追加：ポータルへデータを送信する処理
+    // ==========================================
+    function finishStudy() {
+      if (typeof stopAll === 'function') stopAll(); // 再生機能があれば止める
+      
+      var sectionName = sessionStorage.getItem('gln_grammar_current_section') || '文法プリント 学習完了';
+      
+      var payload = {
+        type:   'GLN_COMPLETE',
+        title:  '文法プリント',
+        cat:    'Grammar',
+        detail: sectionName,
+        words:  600,
+        timestamp: Date.now()
+      };
+
+      if (window.opener && !window.opener.closed) {
+        window.opener.postMessage(payload, '*');
+      }
+      try { 
+        localStorage.setItem('GLN_SYNC_PAYLOAD', JSON.stringify(payload)); 
+        localStorage.setItem('gln_grammar_result', JSON.stringify({
+          section: sectionName,
+          timestamp: Date.now()
+        }));
+      } catch(e) {}
+      
+      alert('「' + sectionName + '」の学習完了を記録しました！');
+      window.location.href = 'index.html';
+    }
   </script>
 </body>
 </html>

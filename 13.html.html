@@ -194,6 +194,26 @@
       display: block;
       margin-top: 8px;
     }
+
+    /* 完了ボタン用スタイル */
+    .btn-finish-study {
+      background: #10b981;
+      color: white;
+      width: 100%;
+      max-width: 300px;
+      margin: 30px auto 0;
+      padding: 16px;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      transition: opacity 0.2s;
+    }
+    .btn-finish-study:hover { opacity: 0.9; }
   </style>
 </head>
 <body>
@@ -304,7 +324,7 @@
       { no: "820", en: "<strong>Angry as</strong> she was, she couldn't help smiling.", ja: "彼女は怒っていたけれども、微笑まずにはいられなかった。", exp: "【5.as：譲歩】<形容詞/副詞/無冠詞名詞＋as＋S＋V>「〜だけれども」。強調倒置の形で譲歩を表す。" },
       { no: "821", en: "Her father regards her <strong>as</strong> a genius.", ja: "彼女の父親は彼女を天才だとみなしている。", exp: "【5.as：前置詞(補語)】<regard A as B>「AをBとみなす」。動詞の目的格補語を導く。" },
       { no: "822", en: "She works <strong>as</strong> a cook at the restaurant.", ja: "彼女はそのレストランで料理人として働いている。", exp: "【5.as：前置詞(資格・役割)】「〜として」。" },
-      { no: "823", en: "<strong>As</strong> a child, he lived in Ireland.", ja: "子供の頃（子供として）、彼はアイルランドに住んでいた。", exp: "【5.as：前置詞(時)】「〜の時に／〜のころ」。As he was a child の省略形とも考えられる。" }
+      { no: "823", en: "<strong>As</strong> a child, he lived in Ireland.", ja: "子供の頃（子供として）、彼はアランドに住んでいた。", exp: "【5.as：前置詞(時)】「〜の時に／〜のころ」。As he was a child の省略形とも考えられる。" }
     ];
 
     const container = document.getElementById('card-container');
@@ -337,6 +357,13 @@
       `;
       container.appendChild(card);
     });
+
+    // 完了ボタンを追加
+    const finishBtn = document.createElement('button');
+    finishBtn.className = 'btn-finish-study';
+    finishBtn.innerHTML = '✓ 学習を完了する';
+    finishBtn.onclick = finishStudy;
+    container.appendChild(finishBtn);
 
     const synth = window.speechSynthesis;
     let currentPlayIndex = -1;
@@ -382,14 +409,18 @@
       currentPlayIndex++;
       
       if (currentPlayIndex >= data.length) {
-        isPlayingAll = false;
-        currentPlayIndex = -1;
-        updateHighlights(-1);
+        stopAllPlayback();
         return;
       }
       
       updateHighlights(currentPlayIndex);
       speakText(data[currentPlayIndex].en, playNext);
+    }
+
+    function stopAllPlayback() {
+      isPlayingAll = false;
+      synth.cancel();
+      updateHighlights(-1);
     }
 
     window.playSingle = function(index) {
@@ -409,11 +440,39 @@
       playNext();
     });
 
-    document.getElementById('stopBtn').addEventListener('click', () => {
-      isPlayingAll = false;
-      synth.cancel();
-      updateHighlights(-1);
-    });
+    document.getElementById('stopBtn').addEventListener('click', stopAllPlayback);
+
+    // ==========================================
+    // 追加：ポータルへデータを送信する処理
+    // ==========================================
+    function finishStudy() {
+      if (typeof stopAllPlayback === 'function') stopAllPlayback(); // 再生機能を止める
+      
+      var sectionName = sessionStorage.getItem('gln_grammar_current_section') || '文法プリント 学習完了';
+      
+      var payload = {
+        type:   'GLN_COMPLETE',
+        title:  '文法プリント',
+        cat:    'Grammar',
+        detail: sectionName,
+        words:  600,
+        timestamp: Date.now()
+      };
+
+      if (window.opener && !window.opener.closed) {
+        window.opener.postMessage(payload, '*');
+      }
+      try { 
+        localStorage.setItem('GLN_SYNC_PAYLOAD', JSON.stringify(payload)); 
+        localStorage.setItem('gln_grammar_result', JSON.stringify({
+          section: sectionName,
+          timestamp: Date.now()
+        }));
+      } catch(e) {}
+      
+      alert('「' + sectionName + '」の学習完了を記録しました！');
+      window.location.href = 'index.html';
+    }
   </script>
 </body>
 </html>

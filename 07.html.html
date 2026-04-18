@@ -164,6 +164,26 @@
       display: block;
       margin-top: 5px;
     }
+
+    /* 完了ボタン用スタイル */
+    .btn-finish-study {
+      background: #10b981;
+      color: white;
+      width: 100%;
+      max-width: 300px;
+      margin: 30px auto 0;
+      padding: 16px;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      transition: opacity 0.2s;
+    }
+    .btn-finish-study:hover { opacity: 0.9; }
   </style>
 </head>
 <body>
@@ -177,7 +197,10 @@
     <span class="hint-badge">カードをクリックして和訳・ポイントを確認</span>
   </header>
 
-  <main class="container" id="card-container"></main>
+  <main class="container" id="card-container">
+    <!-- 追加：完了ボタン -->
+    <button class="btn-finish-study" onclick="finishStudy()">✓ 学習を完了する</button>
+  </main>
 
   <script>
     const data = [
@@ -212,7 +235,7 @@
       { no: "T-175", en: "This is the most interesting book <strong>I have ever read</strong>.", ja: "これは私が今までに読んだ中で一番面白い本だ。", exp: "【定番】最上級 ＋ that S have ever p.p.。「今までに～した中で最も…だ」。" },
       { no: "T-176", en: "This is <strong>the least expensive</strong> computer.", ja: "これは店内で最も値段が高くない（一番安い）コンピューターだ。", exp: "【最小】the least [原級]。「最も～でない」。" },
       { no: "T-177", en: "This is <strong>one of the nicest rooms</strong>.", ja: "ここはホテルで最も素敵な部屋の一つだ。", exp: "【最重要】one of the [最上級] ＋ [複数名詞]。最後が複数形になる点に注意。" },
-      { no: "T-178", en: "Henry is <strong>the second tallest</strong> student.", ja: "ヘンリーはこのクラスで 2 番目に背が高い学生だ。", exp: "【順序】the [序数詞] ＋ [最上級]。「X番目に～だ」。" },
+      { no: "T-178", en: "Henry is <strong>the second tallest</strong> student.", ja: "ヘンリーはこのクラスで 2 番目に背が高い学生だ。", exp: "【序数】the [序数詞] ＋ [最上級]。「X番目に～だ」。" },
       { no: "T-179", en: "<strong>No other</strong> state <strong>is as large as</strong> Alaska.", ja: "アラスカほど大きな州は合衆国には他にない。", exp: "【最上級相当】No (other) A is as ～ as B。「Bほど～なAはない」。" },
       { no: "T-180", en: "<strong>No other</strong> state <strong>is larger than</strong> Alaska.", ja: "アラスカより大きな州は合衆国には他にない。", exp: "【最上級相当】No (other) A is [比較級] than B。「Bより～なAはない」。" },
       { no: "T-181", en: "Alaska is <strong>larger than any other state</strong>.", ja: "アラスカは合衆国の他のどの州よりも大きい。", exp: "【最上級相当】[比較級] than any other [単数名詞]。最後が単数形になる点に注意。" },
@@ -296,7 +319,8 @@
     ];
 
     const container = document.getElementById('card-container');
-    
+    const finishBtn = document.querySelector('.btn-finish-study');
+
     data.forEach((item, index) => {
       const card = document.createElement('div');
       card.className = 'card';
@@ -318,7 +342,8 @@
             <div class="exp-box">${item.exp}</div>
         </div>
       `;
-      container.appendChild(card);
+      // カードを完了ボタンの前に挿入
+      container.insertBefore(card, finishBtn);
     });
 
     const synth = window.speechSynthesis;
@@ -382,6 +407,38 @@
     });
 
     document.getElementById('stopBtn').addEventListener('click', stopAll);
+
+    // ==========================================
+    // 追加：ポータルへデータを送信する処理
+    // ==========================================
+    function finishStudy() {
+      if (typeof stopAll === 'function') stopAll(); // 再生機能があれば止める
+      
+      var sectionName = sessionStorage.getItem('gln_grammar_current_section') || '文法プリント 学習完了';
+      
+      var payload = {
+        type:   'GLN_COMPLETE',
+        title:  '文法プリント',
+        cat:    'Grammar',
+        detail: sectionName,
+        words:  600,
+        timestamp: Date.now()
+      };
+
+      if (window.opener && !window.opener.closed) {
+        window.opener.postMessage(payload, '*');
+      }
+      try { 
+        localStorage.setItem('GLN_SYNC_PAYLOAD', JSON.stringify(payload)); 
+        localStorage.setItem('gln_grammar_result', JSON.stringify({
+          section: sectionName,
+          timestamp: Date.now()
+        }));
+      } catch(e) {}
+      
+      alert('「' + sectionName + '」の学習完了を記録しました！');
+      window.location.href = 'index.html';
+    }
   </script>
 </body>
 </html>

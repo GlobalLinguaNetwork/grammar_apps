@@ -173,6 +173,19 @@
       display: block;
       margin-top: 5px;
     }
+    
+    /* 完了ボタン用スタイル */
+    .btn-finish-study {
+      background: #10b981;
+      color: white;
+      width: 100%;
+      max-width: 300px;
+      margin: 30px auto 0;
+      padding: 16px;
+      font-size: 1.1rem;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
   </style>
 </head>
 <body>
@@ -186,12 +199,17 @@
     <span class="hint-badge">カードをクリックすると解説が表示されます</span>
   </header>
 
-  <main class="container" id="card-container">
-    <!-- JSでカードが生成されます -->
+  <main class="container">
+    <div id="card-container">
+      <!-- JSでカードが生成されます -->
+    </div>
+    
+    <!-- 追加：完了ボタン -->
+    <button class="btn-finish-study" onclick="finishStudy()">✓ 学習を完了する</button>
   </main>
 
   <script>
-    const data = [
+    const data =[
       { no: "T-001", en: "I <strong>belong to</strong> the student council.", ja: "私は生徒会に所属している。", exp: "【現在形：状態】所属や居住など、今この瞬間だけでなく「昨日も今日も明日も」続く状態を表す。" },
       { no: "T-002", en: "He <strong>visits</strong> the park and <strong>meditates</strong> <strong>every week</strong>.", ja: "彼は毎週公園を訪れ、木の下で瞑想をする。", exp: "【現在形：反復動作】every week などの副詞を伴い、繰り返し行われる習慣を表す。" },
       { no: "T-003", en: "I <strong>always read</strong> novels after breakfast.", ja: "私は朝食後にいつも小説を読む。", exp: "【現在形：習慣】always（いつも）や usually（ふだん）と共に、現在のルーティンを表す。" },
@@ -333,6 +351,46 @@
     });
 
     document.getElementById('stopBtn').addEventListener('click', stopAll);
+    
+    // ==========================================
+    // 追加：ポータルへデータを送信する処理
+    // ==========================================
+    function finishStudy() {
+      // 連続再生中なら止める
+      stopAll();
+      
+      // index.htmlの目次でセットされたセクション名（時制のまとめ など）を取得
+      var sectionName = sessionStorage.getItem('gln_grammar_current_section') || '01. 時制のまとめ';
+      
+      var payload = {
+        type:   'GLN_COMPLETE',
+        title:  '文法プリント',
+        cat:    'Grammar',
+        detail: sectionName, // これがスプレッドシートのdetailに入ります
+        words:  600,
+        timestamp: Date.now()
+      };
+
+      // 1. 通常の postMessage (ポータルと通信)
+      if (window.opener && !window.opener.closed) {
+        window.opener.postMessage(payload, '*');
+      }
+      
+      // 2. LocalStorage 経由の強力なフォールバック（iOSタブ切断対策）
+      try { 
+        localStorage.setItem('GLN_SYNC_PAYLOAD', JSON.stringify(payload)); 
+        
+        // 目次ページで「✓ 完了」マークを付けるためのフラグも保存（既存機能の復活）
+        localStorage.setItem('gln_grammar_result', JSON.stringify({
+          section: sectionName,
+          timestamp: Date.now()
+        }));
+      } catch(e) {}
+      
+      // 送信完了のアラートを出し、目次へ戻る
+      alert('「' + sectionName + '」の学習完了を記録しました！');
+      window.location.href = 'index.html';
+    }
   </script>
 </body>
 </html>

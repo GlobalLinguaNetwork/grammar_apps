@@ -164,6 +164,26 @@
       display: block;
       margin-top: 5px;
     }
+
+    /* 完了ボタン用スタイル */
+    .btn-finish-study {
+      background: #10b981;
+      color: white;
+      width: 100%;
+      max-width: 300px;
+      margin: 30px auto 0;
+      padding: 16px;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      transition: opacity 0.2s;
+    }
+    .btn-finish-study:hover { opacity: 0.9; }
   </style>
 </head>
 <body>
@@ -177,7 +197,10 @@
     <span class="hint-badge">カードをクリックして和訳・ポイントを確認</span>
   </header>
 
-  <main class="container" id="card-container"></main>
+  <main class="container" id="card-container">
+    <!-- 追加：完了ボタン -->
+    <button class="btn-finish-study" onclick="finishStudy()">✓ 学習を完了する</button>
+  </main>
 
   <script>
     const data = [
@@ -200,7 +223,7 @@
       { no: "T-063", en: "I <strong>must go</strong> on a diet.", ja: "ダイエットしなきゃ！", exp: "【核】自分に対する強い決意。" },
       { no: "T-064", en: "I <strong>had to get</strong> an international driver's license.", ja: "国際免許証を取らなければならなかった。", exp: "【過去の義務】must に過去形はないので、必ず had to を使う。" },
       { no: "T-065", en: "You <strong>will have to</strong> replace this light bulb.", ja: "この電球を取り替えなければならないだろう。", exp: "【未来の義務】「これから～しなくてはならなくなる」という予測。" },
-      { no: "T-066", en: "You'<strong>ve got to</strong> be more patient.", ja: "君はもっと我慢強くならなきゃいけないよ。", exp: "【口語】have to の強調・カジュアル版。発音は「ガッタ」に近い。" },
+      { no: "T-066", en: "You''ve got to</strong> be more patient.", ja: "君はもっと我慢強くならなきゃいけないよ。", exp: "【口語】have to の強調・カジュアル版。発音は「ガッタ」に近い。" },
       { no: "T-067", en: "You <strong>must come</strong> and visit me.", ja: "ぜひ遊びに来てください。", exp: "【強い勧誘】「～しなければならない」を転じて「ぜひ～して！」という熱意を表す。" },
       { no: "T-068", en: "You <strong>must not use</strong> a cellphone in class.", ja: "授業中に携帯電話を使ってはいけません。", exp: "【強い禁止】命令や規則でよく使われる。" },
       { no: "T-069", en: "You <strong>don't have to</strong> take off your shoes here.", ja: "ここで靴を脱ぐ必要はありません。", exp: "【超重要】don't have to は「～しなくてもいい（不必要）」。禁止(must not)ではない。" },
@@ -210,14 +233,14 @@
       { no: "T-073", en: "You <strong>had better not</strong> tell this secret.", ja: "この秘密は誰にも言わないほうがいい。", exp: "【注意】否定形は had better not。警告の意味が含まれる。" },
       { no: "T-074", en: "Anybody <strong>can make</strong> mistakes.", ja: "誰にだって間違いはありうる。", exp: "【核】潜在的可能性。「～することがある」「～しうる」。" },
       { no: "T-075", en: "The light <strong>could be</strong> a plane.", ja: "空のあの光は飛行機かもしれない。", exp: "【核】控えめな推量。can より可能性が低く「～もありえる」程度。" },
-      { no: "T-076", en: "<strong>Can</strong> his story <strong>be</strong> true?", ja: "彼の話は本当だろうか？（いや、ありえない）", exp: "【核】強い疑念。「一体～なんてことがありうるだろうか」。" },
+      { no: "T-076", en: "<strong>Can</strong> his story <strong>be</strong> true?", ja: "彼の話は本当だろうか？（いや、ありえない）", exp: "【核】強い疑念。「いったい～なんてことがありうるだろうか」。" },
       { no: "T-077", en: "We <strong>may have</strong> some rain tomorrow.", ja: "明日はいくらか雨が降るかもしれない。", exp: "【核】推量。50%程度の可能性。「～かもしれない」。" },
       { no: "T-078", en: "He <strong>might come</strong> to the party.", ja: "彼はパーティーに来るかもしれない。", exp: "【核】ひょっとすると～かもしれない。may よりさらに可能性が低い。" },
       { no: "T-079", en: "That <strong>will be</strong> my father.", ja: "たぶん父だろう。", exp: "【核】現在の推測。確信度は高め。「（今あそこにいるのは）たぶん～だ」。" },
-      { no: "T-080", en: "That <strong>would be</strong> the best solution.", ja: "それが最善の解決策でしょう。", exp: "【核】控えめな推測。will より「おそらく～ではないか」と和らげる。" },
+      { no: "T-080", en: "That <strong>would be</strong> the best solution.", ja: "それが最善の解決策でしょう。", exp: "【核】控えめな推測. will より「おそらく～ではないか」と和らげる。" },
       { no: "T-081", en: "She <strong>must be</strong> Bobby's sister.", ja: "彼女はボビーのお姉さんに違いない。", exp: "【重要】「～に違いない」。強い確信を表す推量。" },
       { no: "T-082", en: "Karen <strong>can't</strong> be home now.", ja: "カレンが今、家にいるはずがない。", exp: "【重要】must be（～に違いない）の否定。「～のはずがない」。" },
-      { no: "T-083", en: "You'<strong>ve got to</strong> be kidding.", ja: "冗談でしょう。", exp: "【口語】must be の代わり。「～してるに違いない」。" },
+      { no: "T-083", en: "You've got to be kidding.", ja: "冗談でしょう。", exp: "【口語】must be の代わり。「～してるに違いない」。" },
       { no: "T-084", en: "My parents <strong>should be</strong> in Boston by now.", ja: "両親は今頃ボストンにいるはずだ。", exp: "【核】当然の推量。当然そうなっているはずだという期待。" },
       { no: "T-085", en: "Our guests <strong>ought to be</strong> here in a few minutes.", ja: "ゲストは数分でここに到着するはずだ。", exp: "【核】should be と同様、当然の推量。" },
       { no: "T-086", en: "I <strong>will do</strong> my best in my new job.", ja: "新しい仕事で全力を尽くします。", exp: "【核】意志。「（絶対に）～する」。" },
@@ -261,11 +284,11 @@
       { no: "T-123", en: "She <strong>couldn't have noticed</strong> the difference.", ja: "彼女がその違いに気づいたはずがない。", exp: "【比較】cannot have とほぼ同じだが、より確信が強い。" },
       { no: "T-124", en: "You <strong>should have got up</strong> at seven.", ja: "あなたは 7 時に起きるべきだったのに。", exp: "【最重要】後悔・非難。「～すべきだったのに（実際はしなかった）」。" },
       { no: "T-125", en: "You <strong>needn't have bought</strong> so much meat.", ja: "そんなに肉を買う必要はなかったのに。", exp: "【最重要】「～する必要はなかったのに（実際はしてしまった）」。" },
-      { no: "T-126", en: "You <strong>didn't need to come</strong>.", ja: "来る必要はなかったですね。", exp: "【比較】「必要がなかったので、しなかった」という過去の事実。125番との違いに注意。" },
+      { no: "T-126", en: "You <strong>didn't need to come</strong>.", ja: "来る必要はなかったですね。", exp: "【比較】「必要がなかったので、しなかった」という過去の事実. 125番との違いに注意。" },
       { no: "T-127", en: "I <strong>would like to join</strong> your team.", ja: "あなたのチームに入りたいのですが。", exp: "【丁寧】want to より丁寧な希望表現。" },
       { no: "T-128", en: "I <strong>would rather stay</strong> home.", ja: "どちらかと言えば家にいたい。", exp: "【核】「（消極的に）むしろ～したい」。" },
       { no: "T-129", en: "I <strong>would rather say nothing than</strong> tell a lie.", ja: "嘘をつくくらいなら何も言わないほうがいい。", exp: "【比較】would rather A than B。「BするよりむしろAしたい」。" },
-      { no: "T-130", en: "I'<strong>d rather you didn't</strong>.", ja: "（できれば）そうしないでほしいのですが。", exp: "【注意】相手の申し出を丁寧に断る決まり文句。" },
+      { no: "T-130", en: "I'd rather you didn't.", ja: "（できれば）そうしないでほしいのですが。", exp: "【注意】相手の申し出を丁寧に断る決まり文句。" },
       { no: "T-131", en: "She <strong>may well be</strong> tired.", ja: "旅行の後で彼女が疲れているのももっともだ。", exp: "【核】「～するのももっともだ」「たぶん～だろう」。" },
       { no: "T-132", en: "She <strong>might well complain</strong>.", ja: "彼女が上司の文句を言うのも当然だ。", exp: "【核】may well と同義。" },
       { no: "T-133", en: "You <strong>may well be</strong> angry.", ja: "弟さんに腹を立てるのももっともだ。", exp: "【慣用句】当然の感情を表す。" },
@@ -286,6 +309,9 @@
 
     const container = document.getElementById('card-container');
     
+    // 完了ボタンが一番下に来るように、ボタンの前にカードを挿入
+    const finishBtn = document.querySelector('.btn-finish-study');
+
     data.forEach((item, index) => {
       const card = document.createElement('div');
       card.className = 'card';
@@ -307,7 +333,7 @@
             <div class="exp-box">${item.exp}</div>
         </div>
       `;
-      container.appendChild(card);
+      container.insertBefore(card, finishBtn);
     });
 
     const synth = window.speechSynthesis;
@@ -373,6 +399,38 @@
     });
 
     document.getElementById('stopBtn').addEventListener('click', stopAll);
+
+    // ==========================================
+    // 追加：ポータルへデータを送信する処理
+    // ==========================================
+    function finishStudy() {
+      if (typeof stopAll === 'function') stopAll(); // 再生機能があれば止める
+      
+      var sectionName = sessionStorage.getItem('gln_grammar_current_section') || '文法プリント 学習完了';
+      
+      var payload = {
+        type:   'GLN_COMPLETE',
+        title:  '文法プリント',
+        cat:    'Grammar',
+        detail: sectionName,
+        words:  600,
+        timestamp: Date.now()
+      };
+
+      if (window.opener && !window.opener.closed) {
+        window.opener.postMessage(payload, '*');
+      }
+      try { 
+        localStorage.setItem('GLN_SYNC_PAYLOAD', JSON.stringify(payload)); 
+        localStorage.setItem('gln_grammar_result', JSON.stringify({
+          section: sectionName,
+          timestamp: Date.now()
+        }));
+      } catch(e) {}
+      
+      alert('「' + sectionName + '」の学習完了を記録しました！');
+      window.location.href = 'index.html';
+    }
   </script>
 </body>
 </html>
