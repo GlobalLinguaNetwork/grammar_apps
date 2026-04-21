@@ -201,10 +201,8 @@
 
   <main class="container">
     <div id="card-container">
-      <!-- JSでカードが生成されます -->
-    </div>
+      </div>
     
-    <!-- 追加：完了ボタン -->
     <button class="btn-finish-study" onclick="finishStudy()">✓ 学習を完了する</button>
   </main>
 
@@ -360,9 +358,9 @@
       stopAll();
       
       // index.htmlの目次でセットされたセクション名（時制のまとめ など）を取得
-      var sectionName = sessionStorage.getItem('gln_grammar_current_section') || '01. 時制のまとめ';
+      const sectionName = sessionStorage.getItem('gln_grammar_current_section') || '01. 時制のまとめ';
       
-      var payload = {
+      const payload = {
         type:   'GLN_COMPLETE',
         title:  '文法プリント',
         cat:    'Grammar',
@@ -372,8 +370,11 @@
       };
 
       // 1. 通常の postMessage (ポータルと通信)
+      // window.opener (別タブ) に加え、念のため iframe (window.parent) にも対応
       if (window.opener && !window.opener.closed) {
         window.opener.postMessage(payload, '*');
+      } else if (window.parent && window.parent !== window) {
+        window.parent.postMessage(payload, '*');
       }
       
       // 2. LocalStorage 経由の強力なフォールバック（iOSタブ切断対策）
@@ -385,7 +386,9 @@
           section: sectionName,
           timestamp: Date.now()
         }));
-      } catch(e) {}
+      } catch(e) {
+        console.error('LocalStorageの保存に失敗しました', e);
+      }
       
       // 送信完了のアラートを出し、目次へ戻る
       alert('「' + sectionName + '」の学習完了を記録しました！');

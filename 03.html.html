@@ -206,15 +206,15 @@
   </main>
 
   <script>
-    const data = [
+    const data =[
       { no: "T-686", en: "This car <strong>was repaired</strong> by my brother.", ja: "この車は私の兄によって修理された。", exp: "【形】be動詞＋過去分詞。受動態の基本構造。「～される（された）」。" },
       { no: "T-687", en: "This temple <strong>was built</strong> about 500 years ago.", ja: "この寺は約 500 年前に建てられた。", exp: "【核】行為者が不明、あるいは重要でない場合は by ～ を省略する。" },
       { no: "T-688", en: "The newspapers <strong>are delivered</strong> around 5 a.m.", ja: "新聞は午前 5 時ごろに配達される。", exp: "【核】行為者が明白（配達員など）な場合も by ～ は省略される。" },
       { no: "T-689", en: "The book <strong>can be borrowed</strong> from the library.", ja: "その本は図書館から借りることができる。", exp: "【形】助動詞＋be＋過去分詞。助動詞の後は常に原形の be。" },
-      { no: "T-690", en: "The results <strong>will be announced</strong> soon.", ja: "選挙の結果はまもなく発表されるだろう。", exp: "【未来の受動態】will be＋過去分詞。「～されるだろう」。" },
+      { no: "T-690", en: "The results of the election <strong>will be announced</strong> soon.", ja: "選挙の結果はまもなく発表されるだろう。", exp: "【未来の受動態】will be＋過去分詞。「～されるだろう」。" },
       { no: "T-691", en: "His new book <strong>is going to be published</strong> next week.", ja: "彼の新しい本は来週出版されることになっている。", exp: "【予定の受動態】be going to be＋過去分詞。「～される予定だ」。" },
       { no: "T-692", en: "The stadium <strong>is being built</strong> now.", ja: "そのスタジアムは現在建設中だ。", exp: "【進行形の受動態】be＋being＋過去分詞。「今まさに～されているところだ」。" },
-      { no: "T-693", en: "My brother <strong>was being scolded</strong> when I came home.", ja: "私が帰宅した時、弟は母に叱られているところだった。", exp: "【過去進行形の受動態】was/were＋being＋過去分詞。「その時～されているところだった」。" },
+      { no: "T-693", en: "My brother <strong>was being scolded by our mother</strong> when I came home.", ja: "私が帰宅した時、弟は母に叱られているところだった。", exp: "【過去進行形の受動態】was/were＋being＋過去分詞。「その時～されているところだった」。" },
       { no: "T-694", en: "This song <strong>has been sung</strong> by a lot of singers.", ja: "この歌は多くの歌手によって歌われてきた。", exp: "【完了形の受動態】have/has＋been＋過去分詞。「（ずっと）～されている」。" },
       { no: "T-695", en: "The thief <strong>had already been arrested</strong> when we arrived.", ja: "私たちが到着した時、泥棒はすでに逮捕されていた。", exp: "【過去完了の受動態】had＋been＋過去分詞。過去のある時点までに動作が完了していた状態。" },
       { no: "T-696", en: "His name <strong>was not found</strong> on the list.", ja: "彼の名前はリストに見当たらなかった。", exp: "【否定】be動詞の直後に not を置く。" },
@@ -246,7 +246,7 @@
       { no: "T-722", en: "The driver <strong>was killed in</strong> the accident.", ja: "運転手はその事故で亡くなった。", exp: "【前置詞】事故や戦争で亡くなる場合は be killed in を用いる。" },
       { no: "T-723", en: "She <strong>was shocked at</strong> the news.", ja: "彼女はその知らせにショックを受けた。", exp: "【感情】感情・心理の受動態。be shocked at/by ～。" },
       { no: "T-724", en: "He <strong>was disappointed at</strong> the news.", ja: "彼はその知らせにがっかりした。", exp: "【感情】be disappointed at/with ～（～に失望する）。" },
-      { no: "T-725", en: "They <strong>were confused with</strong> the news.", ja: "彼らはその知らせに困惑した。", exp: "【感情】be confused with/by ～（～に当惑する）。" },
+      { no: "T-725", en: "They <strong>were confused by</strong> the news.", ja: "彼らはその知らせに困惑した。", exp: "【感情】be confused by/about ～（～に当惑する）。" },
       { no: "T-726", en: "Our new products <strong>are selling</strong> very well.", ja: "我が社の新製品はとてもよく売れている。", exp: "【最重要】能動受動態。sell（売れる）などは能動態で受動の意味を表すことがある。" },
       { no: "T-727", en: "This tough steak <strong>doesn't cut</strong> easily.", ja: "この硬いステーキは簡単には切れない。", exp: "【能動受動態】cut（切れる）。主語の性質について述べる。" },
       { no: "T-728", en: "Red wine stains <strong>don't wash out</strong> easily.", ja: "赤ワインのシミは簡単には落ちない。", exp: "【能動受動態】wash out（洗って落ちる）。" },
@@ -266,6 +266,9 @@
         }
       };
       
+      // HTMLタグとして誤認されないようにエスケープ処理を追加
+      const escapedExp = item.exp.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      
       card.innerHTML = `
         <div class="card-header">
           <span class="no">${item.no}</span>
@@ -274,7 +277,7 @@
         <div class="en-text">${item.en}</div>
         <div class="details">
             <span class="ja-text">${item.ja}</span>
-            <div class="exp-box">${item.exp}</div>
+            <div class="exp-box">${escapedExp}</div>
         </div>
       `;
       // カードを完了ボタンの前に挿入

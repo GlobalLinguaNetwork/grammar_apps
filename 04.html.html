@@ -1,3 +1,6 @@
+
+
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -103,6 +106,7 @@
       background: #fef3c7;
       padding: 2px 8px;
       border-radius: 4px;
+      font-weight: bold;
     }
 
     .btn-play-single {
@@ -203,7 +207,7 @@
   </main>
 
   <script>
-    const data = [
+    const data =[
       { no: "T-551", en: "Our plan <strong>is to climb</strong> the mountain tomorrow.", ja: "私たちの計画は、明日その山に登ることです。", exp: "【名詞的：補語】be動詞の後ろで「～することだ」と説明する。" },
       { no: "T-552", en: "My dream <strong>is to become</strong> a doctor.", ja: "私の夢は医者になることです。", exp: "【名詞的：補語】主語(My dream)の内容を説明。" },
       { no: "T-553", en: "<strong>To own</strong> a house is a dream of many Japanese.", ja: "家を持つことは、多くの日本人の夢だ。", exp: "【名詞的：主語】文頭で「～すること（は）」と主語になる形。※It is...to doに書き換え可能。" },
@@ -215,8 +219,8 @@
       { no: "T-559", en: "I have a lot of <strong>homework to do</strong>.", ja: "やるべき宿題がたくさんある。", exp: "【形容詞的】名詞(homework)が不定詞の目的語の関係。「やるべき～」。" },
       { no: "T-560", en: "Do you have <strong>anything to write with</strong>?", ja: "何か書くもの（ペンなど）を持っていますか？", exp: "【超重要】前置詞の残し。write with a pen の関係なので with が必須。" },
       { no: "T-561", en: "They were <strong>the first men to land</strong> on the moon.", ja: "彼らは月面に着陸した最初の人間だった。", exp: "【形容詞的】the first/only 等が先行する名詞を修飾する形。" },
-      { no: "T-562", en: "surprise at her <strong>decision to become</strong> an actress.", ja: "彼女が女優になるという決断に驚いた。", exp: "【同格的】名詞(decision)の内容を不定詞で説明。「～するという決断」。" },
-      { no: "T-563", en: "Whales have the <strong>ability to communicate</strong>.", ja: "クジラはお互いに意思疎通をする能力を持っている。", exp: "【同格的】ability to do「～する能力」。" },
+      { no: "T-562", en: "I was surprised at her <strong>decision to become</strong> an actress.", ja: "彼女が女優になるという決断に驚いた。", exp: "【同格的】名詞(decision)の内容を不定詞で説明。「～するという決断」。" },
+      { no: "T-563", en: "Whales have the <strong>ability to communicate</strong> with each other.", ja: "クジラはお互いに意思疎通をする能力を持っている。", exp: "【同格的】ability to do「～する能力」。" },
       { no: "T-564", en: "It's <strong>time to go</strong>.", ja: "もう行く時間だ。", exp: "【定番】time to do「～する時間」。" },
       { no: "T-565", en: "What is the <strong>best way to prevent</strong> cancer?", ja: "癌を予防する最良の方法は何ですか？", exp: "【定番】way to do「～する方法」。" },
       { no: "T-566", en: "She is working hard <strong>to buy</strong> a car.", ja: "彼女は車を買うために一生懸命働いている。", exp: "【副詞的：目的】「～するために」。最もよく使われる不定詞の役割。" },
@@ -239,7 +243,7 @@
       { no: "T-583", en: "I <strong>was told</strong> by him <strong>to sign</strong> the contract.", ja: "私は彼に契約書に署名するように言われた。", exp: "【受動態】tell O to do の受動態。be told to do で「～するように言われる」。" },
       { no: "T-584", en: "My father <strong>allowed me to study</strong> abroad.", ja: "父は私が留学するのを許してくれた。", exp: "【超重要】allow O to do「Oが～するのを許す」。" },
       { no: "T-585", en: "I <strong>suggest that</strong> you should stay at that hotel.", ja: "そのホテルに泊まることをお勧めします。", exp: "【注意】suggest は [V O to do] を取れない。that節を使う。" },
-      { no: "T-586", en: "I <strong>hope that</strong> your dreams come true.", ja: "あなたの夢が叶うことを望みます。", exp: "【注意】hope は [hope O to do] の形を取れない。that節か hope for... を使う。" },
+      { no: "T-586", en: "I <strong>hope that</strong> your dreams come true.", ja: "あなたの夢が叶うことを望みます。", exp: "【注意】hope は[hope O to do] の形を取れない。that節か hope for... を使う。" },
       { no: "T-587", en: "I <strong>believe him to be</strong> a genius.", ja: "私は彼が天才だと信じている。", exp: "【形】believe O to be C「Oが～だと信じる」。" },
       { no: "T-588", en: "She went to the airport <strong>to meet</strong> her friends.", ja: "彼女は友人を出迎えるために空港へ行った。", exp: "【意味上の主語】不定詞の主語が文全体の主語(She)と一致する場合は示さない。" },
       { no: "T-589", en: "It is difficult <strong>to find</strong> a good job.", ja: "よい仕事を見つけるのは難しい。", exp: "【意味上の主語】一般の人（誰にとっても）の場合は示さない。" },
@@ -247,13 +251,13 @@
       { no: "T-591", en: "It is necessary <strong>for you to see</strong> a doctor.", ja: "あなたは医者に診てもらう必要がある。", exp: "【重要】for 人 to do。不定詞の主語を明示する標準的な形。" },
       { no: "T-592", en: "It is kind <strong>of you to show</strong> me around.", ja: "案内してくれるなんて、あなたは親切ですね。", exp: "【復習】性質形容詞の後は for ではなく of 人。" },
       { no: "T-593", en: "He promised <strong>not to be</strong> late again.", ja: "彼は二度と遅刻しないと約束した。", exp: "【否定】not は to の直前に置く。" },
-      { no: "T-594", en: "I studied hard <strong>in order not to fail</strong>.", ja: "私は試験に落ちないように一生懸命勉強した。", exp: "【否定】in order not to do「～しないように（目的の否定）」。" },
+      { no: "T-594", en: "I studied hard <strong>in order not to fail</strong> the exam.", ja: "私は試験に落ちないように一生懸命勉強した。", exp: "【否定】in order not to do「～しないように（目的の否定）」。" },
       { no: "T-595", en: "I hurried up <strong>so as not to miss</strong> the train.", ja: "私は電車に乗り遅れないように急いだ。", exp: "【否定】so as not to do「～しないように」。" },
-      { no: "T-596", en: "My mother <strong>made me wait</strong> outside.", ja: "母は私を店の外で待たせた。", exp: "【使役：強制】make O 原形「（無理やり）Oに～させる」。" },
+      { no: "T-596", en: "My mother <strong>made me wait</strong> outside the store.", ja: "母は私を店の外で待たせた。", exp: "【使役：強制】make O 原形「（無理やり）Oに～させる」。" },
       { no: "T-597", en: "<strong>Let me explain</strong> my plan.", ja: "私の計画を説明させてください。", exp: "【使役：許可】let O 原形「Oに（やりたいことを）させてやる」。" },
       { no: "T-598", en: "He <strong>had the doctor examine</strong> my back.", ja: "彼は医者に腰を診てもらった。", exp: "【使役：依頼】have O 原形「Oに～してもらう（当然の依頼）」。" },
       { no: "T-599", en: "I <strong>got him to repair</strong> my bicycle.", ja: "私は彼に自転車を修理してもらった。", exp: "【注意】get O to do。「～してもらう」だが、getは原形ではなく to不定詞 を取る。" },
-      { no: "T-600", en: "I <strong>was made to wait</strong> outside.", ja: "私は母に店の外で待たされた。", exp: "【重要】使役の受動態。受動態になると、消えていた to が復活する。" },
+      { no: "T-600", en: "I <strong>was made to wait</strong> outside the store by my mother.", ja: "私は母に店の外で待たされた。", exp: "【重要】使役の受動態。受動態になると、消えていた to が復活する。" },
       { no: "T-601", en: "Can you <strong>help me (to) put up</strong> the tent?", ja: "テントを張るのを手伝ってくれませんか？", exp: "【特異】help O (to) do。to はあってもなくてもよい。" },
       { no: "T-602", en: "I <strong>felt my house shake</strong>.", ja: "家が揺れるのを感じた。", exp: "【知覚】feel O 原形「Oが～するのを感じる」。動作の一部始終。" },
       { no: "T-603", en: "I <strong>observed the object move</strong> across the sky.", ja: "私はその飛行物体が空を横切って動くのを観察した。", exp: "【知覚】observe O 原形。知覚動詞は to を付けない。" },
@@ -261,39 +265,39 @@
       { no: "T-605", en: "My dog <strong>seems to understand</strong> English.", ja: "うちの犬は英語を理解しているようだ。", exp: "【推量】seem to do「～のようだ」。現在の状態に対する推量。" },
       { no: "T-606", en: "The children <strong>appeared to be</strong> happy.", ja: "子供たちは幸せそうに見えた。", exp: "【推量】appear to do も seem to do とほぼ同じ意味。" },
       { no: "T-607", en: "The Romans <strong>seem to have built</strong> this castle.", ja: "ローマ人がこの城を建てたようだ。", exp: "【完了不定詞】to have p.p.。文の動詞(seem)よりも「前のこと」を表す。" },
-      { no: "T-608", en: "The boy <strong>appeared to have been hurt</strong>.", ja: "その少年は事故で怪我をしたようだった。", exp: "【完了受動】to have been p.p.。「怪我をした（さらに過去）」＋「ようだ（過去）」。" },
-      { no: "T-609", en: "The tourists <strong>seem to have lost</strong> their way.", ja: "この観光客たちは道に迷ってしまったようだ。", exp: "【完了形】「～してしまったようだ」という現在完了の意味を含む。" },
+      { no: "T-608", en: "The boy <strong>appeared to have been hurt</strong> in the accident.", ja: "その少年は事故で怪我をしたようだった。", exp: "【完了受動】to have been p.p.。「怪我をした（さらに過去）」＋「ようだ（過去）」。" },
+      { no: "T-609", en: "These tourists <strong>seem to have lost</strong> their way.", ja: "この観光客たちは道に迷ってしまったようだ。", exp: "【完了形】「～してしまったようだ」という現在完了の意味を含む。" },
       { no: "T-610", en: "His mother <strong>is said to be</strong> an actress.", ja: "彼の母は女優だと言われている。", exp: "【定型】It is said that... の書き換え。S is said to do。" },
       { no: "T-611", en: "His mother <strong>is said to have been</strong> an actress.", ja: "彼の母は（以前）女優だったと言われている。", exp: "【定型＋完了】「（以前）～だった」と過去のことを言う場合は完了不定詞。" },
       { no: "T-612", en: "The ship <strong>seems to be sinking</strong>!", ja: "船が沈みかけているようだ！", exp: "【進行不定詞】to be -ing「（今まさに）～しているようだ」。" },
       { no: "T-613", en: "I want <strong>to be left</strong> alone.", ja: "私は一人にしておいてほしい。", exp: "【受動不定詞】to be p.p.「～されたい」。" },
-      { no: "T-614", en: "I <strong>happened to see</strong> Jim.", ja: "本屋で偶然ジムに会った。", exp: "【定型】happen to do「偶然～する」。" },
+      { no: "T-614", en: "I <strong>happened to see</strong> Jim at the bookstore.", ja: "本屋で偶然ジムに会った。", exp: "【定型】happen to do「偶然～する」。" },
       { no: "T-615", en: "His story <strong>turned out to be</strong> true.", ja: "彼の話は本当だとわかった。", exp: "【定型】turn out to be...「～だと判明する」。" },
       { no: "T-616", en: "The theory <strong>proved</strong> (to be) correct.", ja: "その理論は正しいとわかった。", exp: "【定型】prove (to be)...「～だと判明する」。" },
       { no: "T-617", en: "I <strong>came to like</strong> the small town.", ja: "私はその小さな町が好きになった。", exp: "【変化】come to do / get to do「～するようになる」。" },
       { no: "T-618", en: "They will soon <strong>get to know</strong> each other.", ja: "彼らはすぐに知り合いになるだろう。", exp: "【変化】get to know「知り合うようになる」。" },
       { no: "T-619", en: "The next meeting <strong>is to take place</strong> in HK.", ja: "次の会議は香港で行われる予定だ。", exp: "【be to：予定】公式な予定や計画。「～することになっている」。" },
-      { no: "T-620", en: "You <strong>are to show</strong> your card.", ja: "入口で学生証を見せなければならない。", exp: "【be to：義務】「～すべきだ／～しなければならない」。" },
+      { no: "T-620", en: "You <strong>are to show</strong> your student ID card at the entrance.", ja: "入口で学生証を見せなければならない。", exp: "【be to：義務】「～すべきだ／～しなければならない」。" },
       { no: "T-621", en: "Not a sound <strong>was to be heard</strong>.", ja: "物音ひとつ聞こえなかった。", exp: "【be to：可能】否定文で受動態と共に使い「～できる」。" },
-      { no: "T-622", en: "He <strong>was never to return</strong>.", ja: "彼は二度と故郷に戻ることはなかった。", exp: "【be to：運命】過去形で「～する運命だった」。" },
-      { no: "T-623", en: "If you <strong>are to pass</strong>, study hard.", ja: "もし試験に受かりたいのなら、一生懸命勉強しなさい。", exp: "【be to：意図】If節内で「～したいと思うなら」。" },
+      { no: "T-622", en: "He <strong>was never to return</strong> to his hometown.", ja: "彼は二度と故郷に戻ることはなかった。", exp: "【be to：運命】過去形で「～する運命だった」。" },
+      { no: "T-623", en: "If you <strong>are to pass</strong> the exam, study hard.", ja: "もし試験に受かりたいのなら、一生懸命勉強しなさい。", exp: "【be to：意図】If節内で「～したいと思うなら」。" },
       { no: "T-624", en: "Poetry is <strong>hard to translate</strong>.", ja: "詩は翻訳するのが難しい。", exp: "【難易】形容詞＋to do。「～するのが（難しい）」。" },
       { no: "T-625", en: "Our teacher is <strong>easy to talk with</strong>.", ja: "私たちの先生は話しやすい。", exp: "【難易】talk with the teacher の関係なので with を落とさない。" },
-      { no: "T-626", en: "This park is <strong>dangerous to walk in</strong>.", ja: "この公園は夜歩くのが危険だ。", exp: "【難易】walk in the park の関係なので in が必要。" },
+      { no: "T-626", en: "This park is <strong>dangerous to walk in</strong> at night.", ja: "この公園は夜歩くのが危険だ。", exp: "【難易】walk in the park の関係なので in が必要。" },
       { no: "T-627", en: "This curry is <strong>too spicy for me to eat</strong>.", ja: "このカレーは私には辛すぎて食べられない。", exp: "【最重要】too...to ～「あまりに…なので～できない」。" },
       { no: "T-628", en: "She was <strong>kind enough to carry</strong> my baggage.", ja: "彼女は親切にも私の荷物を運んでくれた。", exp: "【最重要】...enough to ～「～するほど…／とても…なので～する」。" },
       { no: "T-629", en: "She was <strong>so kind as to carry</strong> my baggage.", ja: "彼女は親切にも私の荷物を運んでくれた。", exp: "【重要】so...as to ～「～するほど…」。enough to とほぼ同じ。" },
       { no: "T-630", en: "I left early <strong>so as to avoid</strong> traffic.", ja: "私は渋滞を避けるために早く出発した。", exp: "【目的】so as to / in order to は、単なる to よりも「目的」を強調する。" },
       { no: "T-631", en: "I hurried <strong>in order not to miss</strong> the train.", ja: "私は電車に乗り遅れないように急いだ。", exp: "【否定目的】in order not to do「～しないように」。" },
-      { no: "T-632", en: "teach your children <strong>how to swim</strong>.", ja: "子供たちに泳ぎ方を教えるべきだ。", exp: "【重要】疑問詞＋to do「～のしかた／どうやって～するか」。名詞の塊になる。" },
-      { no: "T-633", en: "I thought about <strong>who to invite</strong>.", ja: "パーティーに誰を招待すべきか考えた。", exp: "【形】who(m) to do「誰を～すべきか」。" },
+      { no: "T-632", en: "You should teach your children <strong>how to swim</strong>.", ja: "子供たちに泳ぎ方を教えるべきだ。", exp: "【重要】疑問詞＋to do「～のしかた／どうやって～するか」。名詞の塊になる。" },
+      { no: "T-633", en: "I thought about <strong>who to invite</strong> to the party.", ja: "パーティーに誰を招待すべきか考えた。", exp: "【形】who(m) to do「誰を～すべきか」。" },
       { no: "T-634", en: "Do you know <strong>where to buy</strong> the tickets?", ja: "どこでチケットを買えばいいか知っていますか？", exp: "【形】where to do「どこで～すべきか」。" },
       { no: "T-635", en: "I don't know <strong>what to do</strong>.", ja: "何をすべきかわからない。", exp: "【形】what to do「何を～すべきか」。" },
       { no: "T-636", en: "Ask your teacher <strong>when to start</strong>.", ja: "いつ始めるべきか先生に聞きなさい。", exp: "【形】when to do「いつ～すべきか」。" },
-      { no: "T-637", en: "decide <strong>whether to accept</strong> his request.", ja: "彼の要求を受け入れるべきかどうか決められない。", exp: "【形】whether to do「～すべきかどうか」。" },
-      { no: "T-638", en: "<strong>To tell the truth</strong>, that doesn suit you.", ja: "実を言うと、そのジャケットは君には似合っていないよ。", exp: "【独立不定詞】慣用句。to tell the truth「実を言うと」。" },
-      { no: "T-639", en: "<strong>Strange to say</strong>, the plane was never found.", ja: "奇妙なことに、その行方不明機は二度と見つからなかった。", exp: "【独立不定詞】strange to say「奇妙なことに」。" },
-      { no: "T-640", en: "Would you like to go? I'd love to.", ja: "「映画に行きませんか？」「ぜひ行きたいです。」", exp: "【代不定詞】toの後ろの重複（go）を省略。toだけを残す。" }
+      { no: "T-637", en: "I can't decide <strong>whether to accept</strong> his request.", ja: "彼の要求を受け入れるべきかどうか決められない。", exp: "【形】whether to do「～すべきかどうか」。" },
+      { no: "T-638", en: "<strong>To tell the truth</strong>, that jacket doesn't suit you.", ja: "実を言うと、そのジャケットは君には似合っていないよ。", exp: "【独立不定詞】慣用句。to tell the truth「実を言うと」。" },
+      { no: "T-639", en: "<strong>Strange to say</strong>, the missing plane was never found.", ja: "奇妙なことに、その行方不明機は二度と見つからなかった。", exp: "【独立不定詞】strange to say「奇妙なことに」。" },
+      { no: "T-640", en: "\"Would you like to go to the movies?\" \"I'd love to.\"", ja: "「映画に行きませんか？」「ぜひ行きたいです。」", exp: "【代不定詞】toの後ろの重複（go）を省略。toだけを残す。" }
     ];
 
     const container = document.getElementById('card-container');
@@ -309,6 +313,9 @@
         }
       };
       
+      // HTMLタグとして誤認されないようにエスケープ処理を追加
+      const escapedExp = item.exp.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      
       card.innerHTML = `
         <div class="card-header">
           <span class="no">${item.no}</span>
@@ -317,7 +324,7 @@
         <div class="en-text">${item.en}</div>
         <div class="details">
             <span class="ja-text">${item.ja}</span>
-            <div class="exp-box">${item.exp}</div>
+            <div class="exp-box">${escapedExp}</div>
         </div>
       `;
       // カードを完了ボタンの前に挿入

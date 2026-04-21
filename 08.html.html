@@ -204,7 +204,7 @@
   </main>
 
   <script>
-    const data = [
+    const data =[
       { no: "T-551", en: "I have a friend <strong>who lives</strong> in Boston.", ja: "私にはボストンに住んでいる友人がいる。", exp: "【主格：人】先行詞が「人」の場合、主格には who を用いる。節内で who が主語の働きをし、「～している（人）」と訳す。" },
       { no: "T-552", en: "They live in a house <strong>which stands</strong> on a hill.", ja: "彼らは丘の上に立つ家に住んでいる。", exp: "【主格：物】先行詞が「人以外（物・動物）」の場合、主格には which を用いる。" },
       { no: "T-553", en: "The man <strong>whom I met</strong> on the street works at a bank.", ja: "私が通りで会った男性は銀行で働いている。", exp: "【目的格：人】先行詞が「人」の場合、目的格には whom を用いる。関係詞節内の動詞(met)の目的語になる。" },
@@ -233,7 +233,7 @@
       { no: "T-706", en: "He married <strong>a woman who</strong> he met at the hospital.", ja: "彼は病院で会った（ある）女性と結婚した。", exp: "【制限用法（コンマなし）】「病院で会った」という情報で、複数いる女性の中から「どの女性か」を特定・限定する用法。" },
       { no: "T-707", en: "He married <strong>my sister, who</strong> he met at the hospital.", ja: "彼は私の妹と結婚したが、彼女とは病院で会ったのだ。", exp: "【非制限/継続用法（コンマあり）】先行詞(my sister)が唯一で既に特定されているため、コンマを置いて追加の補足説明を加える。「そして彼女とは～」。" },
       { no: "T-708", en: "Our teacher<strong>, who</strong> usually comes on time<strong>,</strong> arrived late today.", ja: "私たちの先生は、普段は時間通りに来るのだが、今日は遅刻した。", exp: "【継続用法：挿入】主語と動詞の間に、コンマで挟んで補足情報を挿入する形。" },
-      { no: "T-709", en: "He gave me some chocolates<strong>, which</strong> I ate at once.", ja: "彼はチョコレートをいくつかくくれ、私はそれをすぐに食べた。", exp: "【継続用法：and it/them】文を前から後ろへ「そしてそれ(ら)を～」と訳し下す。" },
+      { no: "T-709", en: "He gave me some chocolates<strong>, which</strong> I ate at once.", ja: "彼はチョコレートをいくつかくれ、私はそれをすぐに食べた。", exp: "【継続用法：and it/them】文を前から後ろへ「そしてそれ(ら)を～」と訳し下す。" },
       { no: "T-710", en: "She lent me some books<strong>, which</strong> were not so interesting.", ja: "彼女は本を何冊か貸してくれたが、それらはあまり面白くなかった。", exp: "【継続用法：but it/them】先行詞についての追加情報。文脈によっては逆接になり「しかしそれらは～」と訳し下す。" },
       { no: "T-711", en: "I telephoned Rod<strong>, who</strong> had called while I was out.", ja: "私はロッドに電話した。私が外出中に彼から電話があったからだ。", exp: "【継続用法：理由 (because he)】文脈によって「～だったので（because he/she...）」と理由を表す補足説明になることがある。" },
       { no: "T-712", en: "He wore a brown suit<strong>, which</strong> was made in Italy.", ja: "彼は茶色のスーツを着ていたが、それはイタリア製だった。", exp: "【先行詞：直前の名詞句】コンマ＋whichが直前の特定の名詞句(a brown suit)を先行詞として補足説明している基本形。" },
@@ -246,7 +246,7 @@
       { no: "T-719", en: "There was a time <strong>when</strong> dinosaurs lived on the earth.", ja: "恐竜が地球上に生きていた時代があった。", exp: "【関係副詞 when：時】先行詞が「時」の時に使用。関係詞節内で「その時に」という副詞の働きをする。" },
       { no: "T-720", en: "There was a time <strong>in which</strong> dinosaurs lived on the earth.", ja: "恐竜が地球上に生きていた時代があった。", exp: "【書き換え：in which】関係副詞 when は文脈に合わせて <前置詞 + which> に書き換えられる。時代や年号には in を用いる。" },
       { no: "T-721", en: "He didn't smile all the time <strong>(that)</strong> I was there.", ja: "私がそこにいる間ずっと、彼は笑わなかった。", exp: "【関係副詞の代用と省略】時の関係副詞 when は、代わりに that を使ったり、口語では省略されたりすることが非常に多い。" },
-      { no: "T-722", en: "Late spring is <strong>when</strong> the rainy season begins here.", ja: "晩春はここで梅雨が始まる時期だ。", exp: "【先行詞の省略】the time when の先行詞が省略された形. when 節全体が名詞節となり、文の補語(C)「～する時期だ」になる。" },
+      { no: "T-722", en: "Late spring is <strong>when</strong> the rainy season begins here.", ja: "晩春はここで梅雨が始まる時期だ。", exp: "【先行詞の省略】the time when の先行詞が省略された形。when 節全体が名詞節となり、文の補語(C)「～する時期だ」になる。" },
       { no: "T-723", en: "<strong>The day</strong> will soon come <strong>when</strong> we can enjoy space travel.", ja: "宇宙旅行を楽しめる日がすぐに来るだろう。", exp: "【先行詞と関係詞の分離】主語が長くなるのを避けるため、先行詞(The day)と関係詞節(when...)が動詞(come)を挟んで離れるパターン。" },
       { no: "T-724", en: "Tell me <strong>the reason why</strong> you look so happy today.", ja: "今日そんなに嬉しそうな理由を教えてよ。", exp: "【関係副詞 why：理由】先行詞に the reason をとり、関係詞節内で「その理由で(for that reason)」という副詞の働きをする。" },
       { no: "T-725", en: "I really like sweets. That is <strong>(the reason) why</strong> my teeth are bad.", ja: "私は甘いものが大好きだ。そういうわけで歯が悪い。", exp: "【最重要構文：That is why】直訳「それが～する理由だ」から「そういうわけで～だ」。the reason または why のどちらかが省略されることが多い。" },
@@ -281,22 +281,22 @@
       { no: "T-754", en: "Oil and water do not mix<strong>, as</strong> we all know.", ja: "誰もが知っているように、油と水は混ざらない。", exp: "【継続用法の as】コンマの前後で文全体の内容を先行詞として受ける。「～のように」「～の通り」。which と異なり文頭にも置ける。" },
       { no: "T-755", en: "You did <strong>more</strong> work <strong>than</strong> I had expected.", ja: "あなたは私が予想していた以上の仕事をした。", exp: "【疑似関係代名詞 than】比較級に伴う than が、関係代名詞のように後ろの節で目的語(expectedのO)の役割を果たす。" },
       { no: "T-756", en: "You have <strong>more</strong> money <strong>than</strong> is necessary.", ja: "あなたは必要以上のお金を持っている。", exp: "【疑似関係代名詞 than】比較級に伴う than が、後ろの節で主語(isのS)の役割を果たす形。" },
-      { no: "T-727", en: "The woman <strong>who I thought</strong> was her sister was actually her mother.", ja: "彼女の姉だと思っていた女性は、実は彼女の母親だった。", exp: "【連鎖関係詞（挿入）】関係代名詞の直後に I thought などの認識を表すSVが挿入された形。I thought をカッコでくくると構造が見える。" },
-      { no: "T-728", en: "Greg is a man <strong>who I know</strong> is capable of winning.", ja: "グレッグは、私が勝てると知っている（確信している）男だ。", exp: "【連鎖関係詞（挿入）】who の直後に I know が挿入された形。who は後ろの is capable of の主語として働く主格。" },
-      { no: "T-729", en: "The house <strong>of which</strong> you can see the red roof is ours.", ja: "赤い屋根が見えるその家は私たちのものだ。", exp: "【所有格の変形 of which】whose red roof を the red roof of which とし、さらに of which を前に出した硬い文語的表現。" },
-      { no: "T-730", en: "The hotel <strong>at which</strong> I stayed last summer was wonderful.", ja: "去年の夏に泊まったホテルは素晴らしかった。", exp: "【前置詞＋関係代名詞】stay at の at が関係代名詞 which の前に出た形。関係副詞 where と同じ働き。" },
-      { no: "T-731", en: "I couldn't understand her message, <strong>most of which</strong> was in French.", ja: "彼女のメッセージが理解できなかった。その大部分はフランス語だった。", exp: "【数量表現＋関係代名詞】most of which や some of whom など、コンマの後に数量表現と結びついて「そしてそのうちの～は」と補足する。" },
-      { no: "T-732", en: "There is a woman outside <strong>who says</strong> she's your cousin.", ja: "外にあなたの従姉妹だと言う女性がいる。", exp: "【主格関係代名詞の省略】There is ~ や Here is ~ の構文に続く主格の関係代名詞(who/that)は、くだけた口語では省略されることがある。" },
-      { no: "T-733", en: "This is the only bow tie <strong>there is</strong> in this store.", ja: "これがこの店にある唯一の蝶ネクタイだ。", exp: "【主格関係代名詞の省略】先行詞に the only などの強い限定語がつく場合、後ろの there is/are の主語となる that が省略されることがある。" },
-      { no: "T-734", en: "He is not the great singer <strong>(that) he once was</strong>.", ja: "彼はかつてのような偉大な歌手ではない。", exp: "【補語となる関係代名詞の省略】「過去の人となり」などを表し、関係詞節内で補語(C)の働きをする that は、よく省略される。" },
-      { no: "T-735", en: "This music is <strong>what is called</strong> \"rap\".", ja: "この音楽はいわゆる「ラップ」だ。", exp: "【what の慣用表現】what is called（世間で呼ばれているもの）から「いわゆる」という意味になる重要表現。" },
-      { no: "T-736", en: "His father made him <strong>what he is</strong> today.", ja: "父親が彼を今日の彼にした（彼を育て上げた）。", exp: "【what の慣用表現】what S is で「現在のS（の姿・人格・地位）」を表す。「今日(現在)の彼」。" },
-      { no: "T-737", en: "He is completely different from <strong>what he used to be</strong>.", ja: "彼は以前の彼とは全く違う。", exp: "【what の慣用表現】what S used to be や what S was で「過去(以前)のSの姿」を表す。" },
-      { no: "T-738", en: "He plays the piano, and <strong>what is more</strong>, he sings very well.", ja: "彼はピアノを弾くし、さらに（おまけに）歌もとてもうまい。", exp: "【what の慣用表現】what is more（さらに大きなことには）から「そのうえ、さらに（おまけに）」という意味になる。" },
-      { no: "T-739", en: "<strong>What with</strong> working <strong>and</strong> housekeeping, I'm very busy.", ja: "仕事やら家事やらで、私はとても忙しい。", exp: "【what の慣用表現】what with A and B で「AやらBやらで」。複数の原因や理由を列挙する時に使う。" },
-      { no: "T-740", en: "Reading <strong>is to</strong> the mind <strong>what</strong> exercising <strong>is to</strong> the body.", ja: "読書の精神に対する関係は、運動の身体に対する関係と同じだ。", exp: "【最重要構文】A is to B what C is to D「AのBに対する関係は、CのDに対する関係と同じだ」。比喩を示す定番の構文。" },
-      { no: "T-741", en: "I gave him <strong>what help</strong> I could give.", ja: "私は彼にできるだけの援助を与えた。", exp: "【関係形容詞 what】what + 名詞 の形で「（少ないかもしれないが）すべての～」を表す。all the help that と同じ意味。" },
-      { no: "T-742", en: "I gave him <strong>what little food</strong> I had.", ja: "私は彼になけなしの（わずかな）食べ物をすべて与えた。", exp: "【関係形容詞 what little】what little + 抽象/物質名詞 で「なけなしの（わずかな）～すべて」を強調する表現。" }
+      { no: "T-757", en: "The woman <strong>who I thought</strong> was her sister was actually her mother.", ja: "彼女の姉だと思っていた女性は、実は彼女の母親だった。", exp: "【連鎖関係詞（挿入）】関係代名詞の直後に I thought などの認識を表すSVが挿入された形。I thought をカッコでくくると構造が見える。" },
+      { no: "T-758", en: "Greg is a man <strong>who I know</strong> is capable of winning.", ja: "グレッグは、私が勝てると知っている（確信している）男だ。", exp: "【連鎖関係詞（挿入）】who の直後に I know が挿入された形。who は後ろの is capable of の主語として働く主格。" },
+      { no: "T-759", en: "The house <strong>of which</strong> you can see the red roof is ours.", ja: "赤い屋根が見えるその家は私たちのものだ。", exp: "【所有格の変形 of which】whose red roof を the red roof of which とし、さらに of which を前に出した硬い文語的表現。" },
+      { no: "T-760", en: "The hotel <strong>at which</strong> I stayed last summer was wonderful.", ja: "去年の夏に泊まったホテルは素晴らしかった。", exp: "【前置詞＋関係代名詞】stay at の at が関係代名詞 which の前に出た形。関係副詞 where と同じ働き。" },
+      { no: "T-761", en: "I couldn't understand her message, <strong>most of which</strong> was in French.", ja: "彼女のメッセージが理解できなかった。その大部分はフランス語だった。", exp: "【数量表現＋関係代名詞】most of which や some of whom など、コンマの後に数量表現と結びついて「そしてそのうちの～は」と補足する。" },
+      { no: "T-762", en: "There is a woman outside <strong>who says</strong> she's your cousin.", ja: "外にあなたの従姉妹だと言う女性がいる。", exp: "【主格関係代名詞の省略】There is ~ や Here is ~ の構文に続く主格の関係代名詞(who/that)は、くだけた口語では省略されることがある。" },
+      { no: "T-763", en: "This is the only bow tie <strong>there is</strong> in this store.", ja: "これがこの店にある唯一の蝶ネクタイだ。", exp: "【主格関係代名詞の省略】先行詞に the only などの強い限定語がつく場合、後ろの there is/are の主語となる that が省略されることがある。" },
+      { no: "T-764", en: "He is not the great singer <strong>(that) he once was</strong>.", ja: "彼はかつてのような偉大な歌手ではない。", exp: "【補語となる関係代名詞の省略】「過去の人となり」などを表し、関係詞節内で補語(C)の働きをする that は、よく省略される。" },
+      { no: "T-765", en: "This music is <strong>what is called</strong> \"rap\".", ja: "この音楽はいわゆる「ラップ」だ。", exp: "【what の慣用表現】what is called（世間で呼ばれているもの）から「いわゆる」という意味になる重要表現。" },
+      { no: "T-766", en: "His father made him <strong>what he is</strong> today.", ja: "父親が彼を今日の彼にした（彼を育て上げた）。", exp: "【what の慣用表現】what S is で「現在のS（の姿・人格・地位）」を表す。「今日(現在)の彼」。" },
+      { no: "T-767", en: "He is completely different from <strong>what he used to be</strong>.", ja: "彼は以前の彼とは全く違う。", exp: "【what の慣用表現】what S used to be や what S was で「過去(以前)のSの姿」を表す。" },
+      { no: "T-768", en: "He plays the piano, and <strong>what is more</strong>, he sings very well.", ja: "彼はピアノを弾くし、さらに（おまけに）歌もとてもうまい。", exp: "【what の慣用表現】what is more（さらに大きなことには）から「そのうえ、さらに（おまけに）」という意味になる。" },
+      { no: "T-769", en: "<strong>What with</strong> working <strong>and</strong> housekeeping, I'm very busy.", ja: "仕事やら家事やらで、私はとても忙しい。", exp: "【what の慣用表現】what with A and B で「AやらBやらで」。複数の原因や理由を列挙する時に使う。" },
+      { no: "T-770", en: "Reading <strong>is to</strong> the mind <strong>what</strong> exercising <strong>is to</strong> the body.", ja: "読書の精神に対する関係は、運動の身体に対する関係と同じだ。", exp: "【最重要構文】A is to B what C is to D「AのBに対する関係は、CのDに対する関係と同じだ」。比喩を示す定番の構文。" },
+      { no: "T-771", en: "I gave him <strong>what help</strong> I could give.", ja: "私は彼にできるだけの援助を与えた。", exp: "【関係形容詞 what】what + 名詞 の形で「（少ないかもしれないが）すべての～」を表す。all the help that と同じ意味。" },
+      { no: "T-772", en: "I gave him <strong>what little food</strong> I had.", ja: "私は彼になけなしの（わずかな）食べ物をすべて与えた。", exp: "【関係形容詞 what little】what little + 抽象/物質名詞 で「なけなしの（わずかな）～すべて」を強調する表現。" }
     ];
 
     const container = document.getElementById('card-container');
@@ -312,6 +312,9 @@
         }
       };
       
+      // HTMLタグとして誤認されないようにエスケープ処理を追加
+      const escapedExp = item.exp.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      
       card.innerHTML = `
         <div class="card-header">
           <span class="no">${item.no}</span>
@@ -320,7 +323,7 @@
         <div class="en-text">${item.en}</div>
         <div class="details">
             <span class="ja-text">${item.ja}</span>
-            <div class="exp-box">${item.exp}</div>
+            <div class="exp-box">${escapedExp}</div>
         </div>
       `;
       // カードを完了ボタンの前に挿入
