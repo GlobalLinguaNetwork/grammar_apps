@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -340,19 +338,39 @@
     document.getElementById('stopBtn').addEventListener('click', stopAll);
 
     // ==========================================
-    // 追加：ポータルへデータを送信する処理
+    // 追加：ページ内の全単語数を計算する関数
+    // ==========================================
+    function calculateTotalWords() {
+      let total = 0;
+      data.forEach(item => {
+        // HTMLタグ（<strong>など）を除去して純粋なテキストにする
+        const plainText = item.en.replace(/<\/?[^>]+(>|$)/g, " ");
+        // 空白で分割して単語数をカウント
+        const words = plainText.trim().split(/\s+/);
+        if (words[0] !== "") {
+          total += words.length;
+        }
+      });
+      return total;
+    }
+
+    // ==========================================
+    // 修正：ポータルへデータを送信する処理
     // ==========================================
     function finishStudy() {
       if (typeof stopAll === 'function') stopAll(); // 再生機能があれば止める
       
       var sectionName = sessionStorage.getItem('gln_grammar_current_section') || '文法プリント 学習完了';
       
+      // ★実際の単語数を動的に計算
+      var actualWordCount = calculateTotalWords();
+      
       var payload = {
         type:   'GLN_COMPLETE',
         title:  '文法プリント',
         cat:    'Grammar',
         detail: sectionName,
-        words:  600,
+        words:  actualWordCount, // 固定値600から計算値に変更
         timestamp: Date.now()
       };
 
@@ -367,7 +385,7 @@
         }));
       } catch(e) {}
       
-      alert('「' + sectionName + '」の学習完了を記録しました！');
+      alert('「' + sectionName + '」の学習完了を記録しました！\n（カウント語数: ' + actualWordCount + '語）');
       window.location.href = 'index.html';
     }
   </script>

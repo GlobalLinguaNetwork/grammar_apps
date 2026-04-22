@@ -1,6 +1,3 @@
-
-
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -281,7 +278,7 @@
       { no: "T-621", en: "Not a sound <strong>was to be heard</strong>.", ja: "物音ひとつ聞こえなかった。", exp: "【be to：可能】否定文で受動態と共に使い「～できる」。" },
       { no: "T-622", en: "He <strong>was never to return</strong> to his hometown.", ja: "彼は二度と故郷に戻ることはなかった。", exp: "【be to：運命】過去形で「～する運命だった」。" },
       { no: "T-623", en: "If you <strong>are to pass</strong> the exam, study hard.", ja: "もし試験に受かりたいのなら、一生懸命勉強しなさい。", exp: "【be to：意図】If節内で「～したいと思うなら」。" },
-      { no: "T-624", en: "Poetry is <strong>hard to translate</strong>.", ja: "詩は翻訳するのが難しい。", exp: "【難易】形容詞＋to do。「～するのが（難しい）」。" },
+      { no: "T-624", en: "Poetry is <strong>hard to translate</strong>.", ja: "詩は翻訳するのが難しい。", exp: "【難易】形容詞＋to do。「～するのが（難しい）。" },
       { no: "T-625", en: "Our teacher is <strong>easy to talk with</strong>.", ja: "私たちの先生は話しやすい。", exp: "【難易】talk with the teacher の関係なので with を落とさない。" },
       { no: "T-626", en: "This park is <strong>dangerous to walk in</strong> at night.", ja: "この公園は夜歩くのが危険だ。", exp: "【難易】walk in the park の関係なので in が必要。" },
       { no: "T-627", en: "This curry is <strong>too spicy for me to eat</strong>.", ja: "このカレーは私には辛すぎて食べられない。", exp: "【最重要】too...to ～「あまりに…なので～できない」。" },
@@ -313,7 +310,6 @@
         }
       };
       
-      // HTMLタグとして誤認されないようにエスケープ処理を追加
       const escapedExp = item.exp.replace(/</g, '&lt;').replace(/>/g, '&gt;');
       
       card.innerHTML = `
@@ -327,7 +323,6 @@
             <div class="exp-box">${escapedExp}</div>
         </div>
       `;
-      // カードを完了ボタンの前に挿入
       container.insertBefore(card, finishBtn);
     });
 
@@ -394,19 +389,39 @@
     document.getElementById('stopBtn').addEventListener('click', stopAll);
 
     // ==========================================
-    // 追加：ポータルへデータを送信する処理
+    // 追加：ページ内の全単語数を計算する関数
+    // ==========================================
+    function calculateTotalWords() {
+      let total = 0;
+      data.forEach(item => {
+        // HTMLタグ（<strong>など）を除去して純粋なテキストにする
+        const plainText = item.en.replace(/<\/?[^>]+(>|$)/g, " ");
+        // 空白で分割して単語数をカウント
+        const words = plainText.trim().split(/\s+/);
+        if (words[0] !== "") {
+          total += words.length;
+        }
+      });
+      return total;
+    }
+
+    // ==========================================
+    // 修正：ポータルへデータを送信する処理
     // ==========================================
     function finishStudy() {
-      if (typeof stopAll === 'function') stopAll(); // 再生機能があれば止める
+      if (typeof stopAll === 'function') stopAll(); 
       
       var sectionName = sessionStorage.getItem('gln_grammar_current_section') || '文法プリント 学習完了';
+      
+      // ★実際の単語数を動的に計算
+      var actualWordCount = calculateTotalWords();
       
       var payload = {
         type:   'GLN_COMPLETE',
         title:  '文法プリント',
         cat:    'Grammar',
         detail: sectionName,
-        words:  600,
+        words:  actualWordCount, // 固定値600から計算値に変更
         timestamp: Date.now()
       };
 
@@ -421,7 +436,7 @@
         }));
       } catch(e) {}
       
-      alert('「' + sectionName + '」の学習完了を記録しました！');
+      alert('「' + sectionName + '」の学習完了を記録しました！\n（カウント語数: ' + actualWordCount + '語）');
       window.location.href = 'index.html';
     }
   </script>

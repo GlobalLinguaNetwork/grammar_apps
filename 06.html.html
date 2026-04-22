@@ -1,6 +1,3 @@
-
-
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -217,8 +214,8 @@
       { no: "264", en: "I saw a lot of <strong>excited</strong> supporters.", ja: "私はたくさんの興奮したサポーターたちを見た。", exp: "【分詞形容詞】過去分詞。人が主語で「（感情を）与えられた＝興奮した」。" },
       { no: "265", en: "He <strong>kept saying</strong> that he loved me.", ja: "彼は私を愛していると言い続けた。", exp: "【第2文型(SVC)】keep -ing「～し続ける」。主語の動作の継続。" },
       { no: "266", en: "His eyes <strong>remain closed</strong>.", ja: "彼の目は閉じられたままだ。", exp: "【第2文型(SVC)】remain p.p.「～されたままである」。主語の状態の継続。" },
-      { no: "267", en: "They <strong>walked laughing</strong> into the room.", ja: "彼らは笑いながら部屋に入ってきた。", exp: "【付帯状況】V... -ing。「～しながら（歩いた）」。" },
-      { no: "268", en: "The teacher <strong>sat surrounded</strong> by his students.", ja: "その先生は生徒たちに囲まれて座っていた。", exp: "【付帯状況】V... p.p.。「～されて（座っていた）」。" },
+      { no: "267", en: "They <strong>walked laughing</strong> into the room.", ja: "彼らは笑いながら部屋に入ってきた。", exp: "【付帯状況】V... -ing。「～しながら（歩いた）。" },
+      { no: "268", en: "The teacher <strong>sat surrounded</strong> by his students.", ja: "その先生は生徒たちに囲まれて座っていた。", exp: "【付帯状況】V... p.p.。「～されて（座っていた）。" },
       { no: "269", en: "He <strong>kept me waiting</strong> for forty minutes.", ja: "彼は私を 40 分間待たせたままにした。", exp: "【第5文型(SVOC)】keep O -ing。「Oを～している状態にしておく」。" },
       { no: "270", en: "I <strong>found my brother using</strong> my computer.", ja: "私は弟が私のコンピューターを使っているのを見つけた。", exp: "【第5文型(SVOC)】find O -ing。「Oが～しているのを見つける」。" },
       { no: "271", en: "We usually <strong>keep the window locked</strong>.", ja: "私たちはたいていその窓の鍵を掛けておく。", exp: "【第5文型(SVOC)】keep O p.p.。「Oが～された状態を保つ」。" },
@@ -256,7 +253,7 @@
       { no: "302", en: "Some people sleep <strong>with their eyes open</strong>.", ja: "目を開けたまま眠る人もいる。", exp: "【付帯状況のwith】分詞の代わりに形容詞(open)を使った形。" },
       { no: "303", en: "Did you interview her <strong>with the recorder on</strong>?", ja: "レコーダーを回したままインタビューしましたか？", exp: "【付帯状況のwith】分詞の代わりに副詞(on)を使った形。" },
       { no: "304", en: "He apologized for his mistake <strong>with tears in his eyes</strong>.", ja: "彼は目に涙を浮かべて自分の過ちを詫びた。", exp: "【付帯状況のwith】分詞の代わりに前置詞句を使った形。" },
-      { no: "305", en: "<strong>There is a car coming</strong>.", ja: "車がやって来る。", exp: "【形】There is S -ing。「Sが～している（のが見える）」。" },
+      { no: "305", en: "<strong>There is a car coming</strong>.", ja: "車がやって来る。", exp: "【形】There is S -ing。「Sが～している（のが見える）。" },
       { no: "306", en: "<strong>There was no time left</strong> to explain.", ja: "説明するために残された時間はなかった。", exp: "【形】There is S p.p.。「～されたSがある」。" },
       { no: "307", en: "I'm going to <strong>go skiing</strong>.", ja: "私はスキーをしに行くつもりだ。", exp: "【定型】go -ing「～しに行く（娯楽・スポーツ）」。" },
       { no: "308", en: "They <strong>went to the station talking</strong> loudly.", ja: "彼らは大声で話しながら駅まで行った。", exp: "【形】V... -ing。「～しながら行く」。" },
@@ -359,19 +356,39 @@
     document.getElementById('stopBtn').addEventListener('click', stopAll);
 
     // ==========================================
-    // 追加：ポータルへデータを送信する処理
+    // 追加：ページ内の全単語数を計算する関数
+    // ==========================================
+    function calculateTotalWords() {
+      let total = 0;
+      data.forEach(item => {
+        // HTMLタグ（<strong>など）を除去して純粋なテキストにする
+        const plainText = item.en.replace(/<\/?[^>]+(>|$)/g, " ");
+        // 空白で分割して単語数をカウント
+        const words = plainText.trim().split(/\s+/);
+        if (words[0] !== "") {
+          total += words.length;
+        }
+      });
+      return total;
+    }
+
+    // ==========================================
+    // 修正：ポータルへデータを送信する処理
     // ==========================================
     function finishStudy() {
       if (typeof stopAll === 'function') stopAll(); // 再生機能があれば止める
       
       var sectionName = sessionStorage.getItem('gln_grammar_current_section') || '文法プリント 学習完了';
       
+      // ★実際の単語数を動的に計算
+      var actualWordCount = calculateTotalWords();
+      
       var payload = {
         type:   'GLN_COMPLETE',
         title:  '文法プリント',
         cat:    'Grammar',
         detail: sectionName,
-        words:  600,
+        words:  actualWordCount, // 固定値600から計算値に変更
         timestamp: Date.now()
       };
 
@@ -386,7 +403,7 @@
         }));
       } catch(e) {}
       
-      alert('「' + sectionName + '」の学習完了を記録しました！');
+      alert('「' + sectionName + '」の学習完了を記録しました！\n（カウント語数: ' + actualWordCount + '語）');
       window.location.href = 'index.html';
     }
   </script>

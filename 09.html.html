@@ -1,6 +1,3 @@
-
-
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -214,10 +211,10 @@
       { no: "T-428", en: "<strong>If I had</strong> enough time and money, I <strong>would travel</strong> around the world.", ja: "時間とお金が十分にあれば、世界中を旅行するのになあ。", exp: "【仮定法過去（実現可能性が低い願望）】現在の事実の反対だけでなく、現実に起こる可能性が著しく低いことへの願望にも仮定法過去を用いる。" },
       { no: "T-429", en: "<strong>If he had</strong> time, he <strong>might come</strong> to see us.", ja: "もし彼に時間があれば、会いに来るかもしれないのに。", exp: "【仮定法過去：might】主節の助動詞に might を使うと、「（ひょっとすると）～かもしれないのに」という推量の意味が加わる。" },
       { no: "T-430", en: "<strong>If I were</strong> handsome, I <strong>could work</strong> as a model.", ja: "もし僕がハンサムなら、モデルとして働けるのに。", exp: "【仮定法過去：could】主節の助動詞に could を使うと、「～できるのに」という能力や可能性の意味が加わる。" },
-      { no: "T-431", en: "<strong>If I had</strong> wings, I <strong>should fly</strong> to you.", ja: "もし翼があったなら、君のもとへ飛んでいくのに。", exp: "【仮定法過去：should】主語が一人称（I, we）の場合、主節の would の代わりに should が使われることがある。やや古風で文語的な表現。" },
+      { no: "T-431", en: "<strong>If I had</strong> wings, I <strong>should fly</strong> to you.", ja: "もし翼があったなら, 君のもとへ飛んでいくのに。", exp: "【仮定法過去：should】主語が一人称（I, we）の場合、主節の would の代わりに should が使われることがある。やや古風で文語的な表現。" },
       { no: "T-432", en: "<strong>If I had left</strong> ten minutes earlier, I <strong>would not have missed</strong> the train.", ja: "10分早く家を出ていれば、電車に乗り遅れることはなかっただろうに。", exp: "【仮定法過去完了（過去の反実仮想）】<If S 過去完了(had p.p.), S would/could/might have p.p.>。「もし（あの時）～だったら、…だっただろうに」。過去の事実と逆の仮定。" },
       { no: "T-433", en: "<strong>She would have died if</strong> the climber <strong>had not found</strong> her.", ja: "もし登山者が彼女を見つけていなかったら、彼女は死んでいただろう。", exp: "【仮定法過去完了】if 節が後ろにくるパターン。過去の事実（見つけてくれたから生きている）とは逆の仮定を表す。" },
-      { no: "T-434", en: "<strong>If I had taken</strong> the medicine <strong>then</strong>, I <strong>might be</strong> fine <strong>now</strong>.", ja: "あの時薬を飲んでいたら、今ごろ元気になっているかもしれないのに。", exp: "【混合仮定法（時制のズレ）】if 節は過去の事実に反する仮定（過去完了）、主節は現在の事実に反する仮定（過去形）。then と now などの副詞がヒントになる。" },
+      { no: "T-434", en: "<strong>If I had taken</strong> the medicine <strong>then</strong>, I <strong>might be</strong> fine <strong>now</strong>.", ja: "あの時薬を飲んでいたら, 今ごろ元気になっているかもしれないのに。", exp: "【混合仮定法（時制のズレ）】if 節は過去の事実に反する仮定（過去完了）、主節は現在の事実に反する仮定（過去形）。then と now などの副詞がヒントになる。" },
       { no: "T-435", en: "<strong>If I had not taken</strong> the wrong train, I <strong>would be</strong> there <strong>now</strong>.", ja: "間違った電車に乗っていなければ、今ごろそこに着いているだろうに。", exp: "【混合仮定法（時制のズレ）】「（過去に）～していなければ、（今は）…だろうに」というように、過去の行動が現在の結果に影響している場合に用いる。" },
       { no: "T-436", en: "<strong>I wish I knew</strong> her mobile number.", ja: "彼女の携帯番号を知っていればなあ。", exp: "【I wish ＋ 仮定法過去】<I wish S 過去形> で「（今）～ならいいのに」という現在の実現不可能な願望や、ないものねだりを表す。" },
       { no: "T-437", en: "<strong>I wish I hadn't bought</strong> such an expensive bag.", ja: "あんな高いバッグを買わなければよかったなあ。", exp: "【I wish ＋ 仮定法過去完了】<I wish S 過去完了(had p.p.)> で「（あの時）～だったらよかったのに」という過去の事実に対する後悔を表す。" },
@@ -361,19 +358,39 @@
     document.getElementById('stopBtn').addEventListener('click', stopAll);
 
     // ==========================================
-    // 追加：ポータルへデータを送信する処理
+    // 追加：ページ内の全単語数を計算する関数
+    // ==========================================
+    function calculateTotalWords() {
+      let total = 0;
+      data.forEach(item => {
+        // HTMLタグ（<strong>など）を除去して純粋なテキストにする
+        const plainText = item.en.replace(/<\/?[^>]+(>|$)/g, " ");
+        // 空白で分割して単語数をカウント
+        const words = plainText.trim().split(/\s+/);
+        if (words[0] !== "") {
+          total += words.length;
+        }
+      });
+      return total;
+    }
+
+    // ==========================================
+    // 修正：ポータルへデータを送信する処理
     // ==========================================
     function finishStudy() {
       if (typeof stopAll === 'function') stopAll(); // 再生機能があれば止める
       
       var sectionName = sessionStorage.getItem('gln_grammar_current_section') || '文法プリント 学習完了';
       
+      // ★実際の単語数を動的に計算
+      var actualWordCount = calculateTotalWords();
+      
       var payload = {
         type:   'GLN_COMPLETE',
         title:  '文法プリント',
         cat:    'Grammar',
         detail: sectionName,
-        words:  600,
+        words:  actualWordCount, // 固定値600から計算値に変更
         timestamp: Date.now()
       };
 
@@ -388,7 +405,7 @@
         }));
       } catch(e) {}
       
-      alert('「' + sectionName + '」の学習完了を記録しました！');
+      alert('「' + sectionName + '」の学習完了を記録しました！\n（カウント語数: ' + actualWordCount + '語）');
       window.location.href = 'index.html';
     }
   </script>

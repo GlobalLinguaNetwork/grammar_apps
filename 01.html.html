@@ -183,7 +183,11 @@
       margin: 30px auto 0;
       padding: 16px;
       font-size: 1.1rem;
+      display: flex; /* 追加 */
       justify-content: center;
+      border: none; /* 追加 */
+      border-radius: 50px; /* 追加 */
+      cursor: pointer; /* 追加 */
       box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
     }
   </style>
@@ -351,37 +355,55 @@
     document.getElementById('stopBtn').addEventListener('click', stopAll);
     
     // ==========================================
-    // 追加：ポータルへデータを送信する処理
+    // 追加：ページ内の全単語数を計算する関数
+    // ==========================================
+    function calculateTotalWords() {
+      let total = 0;
+      data.forEach(item => {
+        // HTMLタグ（<strong>など）を除去して純粋なテキストにする
+        const plainText = item.en.replace(/<\/?[^>]+(>|$)/g, " ");
+        // 空白で分割して単語数をカウント
+        const words = plainText.trim().split(/\s+/);
+        if (words[0] !== "") {
+          total += words.length;
+        }
+      });
+      return total;
+    }
+
+    // ==========================================
+    // 修正：ポータルへデータを送信する処理
     // ==========================================
     function finishStudy() {
       // 連続再生中なら止める
       stopAll();
       
-      // index.htmlの目次でセットされたセクション名（時制のまとめ など）を取得
+      // index.htmlの目次でセットされたセクション名を取得
       const sectionName = sessionStorage.getItem('gln_grammar_current_section') || '01. 時制のまとめ';
+      
+      // ★実際の単語数を動的に計算
+      const actualWordCount = calculateTotalWords();
       
       const payload = {
         type:   'GLN_COMPLETE',
         title:  '文法プリント',
         cat:    'Grammar',
-        detail: sectionName, // これがスプレッドシートのdetailに入ります
-        words:  600,
+        detail: sectionName,
+        words:  actualWordCount, // 固定値600から計算値に変更
         timestamp: Date.now()
       };
 
       // 1. 通常の postMessage (ポータルと通信)
-      // window.opener (別タブ) に加え、念のため iframe (window.parent) にも対応
       if (window.opener && !window.opener.closed) {
         window.opener.postMessage(payload, '*');
       } else if (window.parent && window.parent !== window) {
         window.parent.postMessage(payload, '*');
       }
       
-      // 2. LocalStorage 経由の強力なフォールバック（iOSタブ切断対策）
+      // 2. LocalStorage 経由の強力なフォールバック
       try { 
         localStorage.setItem('GLN_SYNC_PAYLOAD', JSON.stringify(payload)); 
         
-        // 目次ページで「✓ 完了」マークを付けるためのフラグも保存（既存機能の復活）
         localStorage.setItem('gln_grammar_result', JSON.stringify({
           section: sectionName,
           timestamp: Date.now()
@@ -391,7 +413,7 @@
       }
       
       // 送信完了のアラートを出し、目次へ戻る
-      alert('「' + sectionName + '」の学習完了を記録しました！');
+      alert('「' + sectionName + '」の学習完了を記録しました！\n（カウント語数: ' + actualWordCount + '語）');
       window.location.href = 'index.html';
     }
   </script>

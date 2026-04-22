@@ -218,7 +218,7 @@
       { no: "T-561", en: "Where is the CD <strong>that I bought</strong> yesterday?", ja: "昨日私が買った CD はどこ？", exp: "【関係代名詞 that】目的格の用法。日常会話では which よりも that が好まれる傾向がある（省略されることも多い）。" },
       { no: "T-562", en: "I saw a woman <strong>whose hair was</strong> dyed purple.", ja: "私は髪を紫に染めた女性を見かけた。", exp: "【注意：thatの所有格はない】関係代名詞 that には所有格の形が存在しないため、whose の代わりとして that は使えない。" },
       { no: "T-563", en: "This is <strong>the only suit that</strong> I have.", ja: "これが私が持っている唯一のスーツだ。", exp: "【thatの特別用法：強い限定】先行詞に the only, the first, the same, the very や最上級などの強い限定語句がつく場合は that を優先する。" },
-      { no: "T-564", en: "Running the marathon took <strong>all the strength that</strong> she had.", ja: "マラソンを走るのに、彼女は持てる力のすべてを使い果たした。", exp: "【thatの特別用法：不定代名詞】先行詞に all, every, any, no, ～thing などを含む場合も、which より that が好まれる。" },
+      { no: "T-564", en: "Running the marathon took <strong>all the strength that</strong> she had.", ja: "マラソンを走るのに、彼女は持てる力のすべてを使い果たした。", exp: "【thatの特別用法：不定代名詞】先行詞に all, every, any, no, ～thing などを含む場合も, which より that が好まれる。" },
       { no: "T-565", en: "He talked about <strong>the people and the things that</strong> had fascinated him during his trip.", ja: "彼は旅行中に彼を魅了した人や物について語った。", exp: "【thatの特別用法：先行詞の混在】先行詞が「人 ＋ 人以外(物・動物)」の場合、who や which では両方を受けられないため that を用いる。" },
       { no: "T-566", en: "<strong>Who that</strong> has seen the Pyramids can forget their beauty?", ja: "ピラミッドを見たことがある人で、誰がその美しさを忘れられようか。", exp: "【thatの特別用法：疑問詞の後】疑問詞 Who が先行詞になる場合、who ... who と音が重複するのを避けるため that を用いる。" },
       { no: "T-567", en: "He is not <strong>the man that</strong> he was ten years ago.", ja: "彼はもう 10 年前の彼ではない。", exp: "【thatの特別用法：補語になる関係詞】先行詞が「人の性格・状態・地位」を表し、関係詞節内で補語(C)の働きをする場合は that を用いる。" },
@@ -393,19 +393,39 @@
     document.getElementById('stopBtn').addEventListener('click', stopAll);
 
     // ==========================================
-    // 追加：ポータルへデータを送信する処理
+    // 追加：ページ内の全単語数を計算する関数
+    // ==========================================
+    function calculateTotalWords() {
+      let total = 0;
+      data.forEach(item => {
+        // HTMLタグ（<strong>など）を除去して純粋なテキストにする
+        const plainText = item.en.replace(/<\/?[^>]+(>|$)/g, " ");
+        // 空白で分割して単語数をカウント
+        const words = plainText.trim().split(/\s+/);
+        if (words[0] !== "") {
+          total += words.length;
+        }
+      });
+      return total;
+    }
+
+    // ==========================================
+    // 修正：ポータルへデータを送信する処理
     // ==========================================
     function finishStudy() {
       if (typeof stopAll === 'function') stopAll(); // 再生機能があれば止める
       
       var sectionName = sessionStorage.getItem('gln_grammar_current_section') || '文法プリント 学習完了';
       
+      // ★実際の単語数を動的に計算
+      var actualWordCount = calculateTotalWords();
+      
       var payload = {
         type:   'GLN_COMPLETE',
         title:  '文法プリント',
         cat:    'Grammar',
         detail: sectionName,
-        words:  600,
+        words:  actualWordCount, // 固定値600から計算値に変更
         timestamp: Date.now()
       };
 
@@ -420,7 +440,7 @@
         }));
       } catch(e) {}
       
-      alert('「' + sectionName + '」の学習完了を記録しました！');
+      alert('「' + sectionName + '」の学習完了を記録しました！\n（カウント語数: ' + actualWordCount + '語）');
       window.location.href = 'index.html';
     }
   </script>
