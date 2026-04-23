@@ -20,7 +20,7 @@
       background-color: var(--bg-color);
       color: var(--text-main);
       margin: 0;
-      padding-top: 140px;
+      padding-top: 160px;
       line-height: 1.6;
     }
 
@@ -32,7 +32,7 @@
       backdrop-filter: blur(8px);
       box-shadow: 0 4px 20px rgba(0,0,0,0.05);
       z-index: 1000;
-      padding: 20px 0;
+      padding: 8px 0 12px;
       text-align: center;
     }
 
@@ -45,7 +45,8 @@
 
     .controls {
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+      align-items: center;
       gap: 10px;
       padding: 0 15px;
     }
@@ -66,6 +67,13 @@
     .btn-play-all { background: var(--primary-color); color: white; }
     .btn-stop { background: #ef4444; color: white; }
     button:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    /* 速度・一時停止用スタイル */
+    .speed-group { display: flex; gap: 5px; margin-bottom: 5px; }
+    .btn-rate { background: #e2e8f0; color: #475569; padding: 6px 12px; font-size: 0.8rem; }
+    .btn-rate.active { background: var(--primary-color); color: white; }
+    .btn-pause { background: #f59e0b; color: white; }
+    .btn-pause:disabled { background: #cbd5e1; cursor: not-allowed; }
 
     .container {
       max-width: 650px;
@@ -166,7 +174,6 @@
       margin-top: 5px;
     }
 
-    /* 完了ボタン用スタイル */
     .btn-finish-study {
       background: #10b981;
       color: white;
@@ -192,14 +199,22 @@
   <header>
     <h1>関係詞のまとめ (全92文)</h1>
     <div class="controls">
-      <button class="btn-play-all" id="playAllBtn"><span>▶</span> 連続再生</button>
-      <button class="btn-stop" id="stopBtn"><span>■</span> 停止</button>
+      <div class="speed-group" id="speedGroup">
+        <button class="btn-rate" data-rate="0.5">ゆっくり</button>
+        <button class="btn-rate active" data-rate="0.6">標準(100w)</button>
+        <button class="btn-rate" data-rate="0.8">自然</button>
+        <button class="btn-rate" data-rate="1.0">速め</button>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn-play-all" id="playAllBtn"><span>▶</span> 連続再生</button>
+        <button class="btn-pause" id="pauseBtn" disabled><span>⏸</span> 一時停止</button>
+        <button class="btn-stop" id="stopBtn"><span>■</span> 停止</button>
+      </div>
     </div>
     <span class="hint-badge">カードをクリックして和訳・ポイントを確認</span>
   </header>
 
   <main class="container" id="card-container">
-    <!-- 追加：完了ボタン -->
     <button class="btn-finish-study" onclick="finishStudy()">✓ 学習を完了する</button>
   </main>
 
@@ -301,7 +316,25 @@
 
     const container = document.getElementById('card-container');
     const finishBtn = document.querySelector('.btn-finish-study');
-    
+    const playAllBtn = document.getElementById('playAllBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const speedBtns = document.querySelectorAll('.btn-rate');
+
+    let currentRate = 0.6;
+    let isPaused = false;
+    let currentPlayIndex = -1;
+    let isPlayingAll = false;
+    const synth = window.speechSynthesis;
+
+    speedBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        speedBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentRate = parseFloat(btn.getAttribute('data-rate'));
+      });
+    });
+
     data.forEach((item, index) => {
       const card = document.createElement('div');
       card.className = 'card';
@@ -312,7 +345,6 @@
         }
       };
       
-      // HTMLタグとして誤認されないようにエスケープ処理を追加
       const escapedExp = item.exp.replace(/</g, '&lt;').replace(/>/g, '&gt;');
       
       card.innerHTML = `
@@ -326,13 +358,8 @@
             <div class="exp-box">${escapedExp}</div>
         </div>
       `;
-      // カードを完了ボタンの前に挿入
       container.insertBefore(card, finishBtn);
     });
-
-    const synth = window.speechSynthesis;
-    let currentPlayIndex = -1;
-    let isPlayingAll = false;
 
     function stripHtml(html) {
       const tmp = document.createElement("DIV");
@@ -343,11 +370,11 @@
     function speakText(text, onEndCallback) {
       synth.cancel();
       const plainText = stripHtml(text);
-      const utterance = new SpeechSynthesisUtterance(plainText);
-      utterance.lang = 'en-US';
-      utterance.rate = 0.85;
-      utterance.onend = () => { if (onEndCallback) onEndCallback(); };
-      synth.speak(utterance);
+      const utt = new SpeechSynthesisUtterance(plainText);
+      utt.lang = 'en-US';
+      utt.rate = currentRate;
+      utt.onend = () => { if (onEndCallback) onEndCallback(); };
+      synth.speak(utt);
     }
 
     function updateHighlights(index) {
@@ -361,8 +388,23 @@
       });
     }
 
-    function playNext() {
+    function togglePause() {
       if (!isPlayingAll) return;
+      if (!isPaused) {
+        isPaused = true;
+        synth.cancel();
+        pauseBtn.innerHTML = "<span>▶</span> 再開";
+      } else {
+        isPaused = false;
+        pauseBtn.innerHTML = "<span>⏸</span> 一時停止";
+        speakText(data[currentPlayIndex].en, playNext);
+      }
+    }
+
+    pauseBtn.addEventListener('click', togglePause);
+
+    function playNext() {
+      if (!isPlayingAll || isPaused) return;
       currentPlayIndex++;
       if (currentPlayIndex >= data.length) {
         stopAll();
@@ -374,8 +416,11 @@
 
     function stopAll() {
       isPlayingAll = false;
+      isPaused = false;
       synth.cancel();
       updateHighlights(-1);
+      pauseBtn.disabled = true;
+      pauseBtn.innerHTML = "<span>⏸</span> 一時停止";
     }
 
     window.playSingle = function(index) {
@@ -384,62 +429,43 @@
       speakText(data[index].en);
     };
 
-    document.getElementById('playAllBtn').addEventListener('click', () => {
+    playAllBtn.addEventListener('click', () => {
       isPlayingAll = true;
+      isPaused = false;
       currentPlayIndex = -1;
+      pauseBtn.disabled = false;
       playNext();
     });
 
-    document.getElementById('stopBtn').addEventListener('click', stopAll);
+    stopBtn.addEventListener('click', stopAll);
 
-    // ==========================================
-    // 追加：ページ内の全単語数を計算する関数
-    // ==========================================
     function calculateTotalWords() {
       let total = 0;
       data.forEach(item => {
-        // HTMLタグ（<strong>など）を除去して純粋なテキストにする
         const plainText = item.en.replace(/<\/?[^>]+(>|$)/g, " ");
-        // 空白で分割して単語数をカウント
         const words = plainText.trim().split(/\s+/);
-        if (words[0] !== "") {
-          total += words.length;
-        }
+        if (words[0] !== "") total += words.length;
       });
       return total;
     }
 
-    // ==========================================
-    // 修正：ポータルへデータを送信する処理
-    // ==========================================
     function finishStudy() {
-      if (typeof stopAll === 'function') stopAll(); // 再生機能があれば止める
-      
+      stopAll();
       var sectionName = sessionStorage.getItem('gln_grammar_current_section') || '文法プリント 学習完了';
-      
-      // ★実際の単語数を動的に計算
       var actualWordCount = calculateTotalWords();
-      
       var payload = {
         type:   'GLN_COMPLETE',
         title:  '文法プリント',
         cat:    'Grammar',
         detail: sectionName,
-        words:  actualWordCount, // 固定値600から計算値に変更
+        words:  actualWordCount,
         timestamp: Date.now()
       };
-
-      if (window.opener && !window.opener.closed) {
-        window.opener.postMessage(payload, '*');
-      }
+      if (window.opener && !window.opener.closed) { window.opener.postMessage(payload, '*'); }
       try { 
         localStorage.setItem('GLN_SYNC_PAYLOAD', JSON.stringify(payload)); 
-        localStorage.setItem('gln_grammar_result', JSON.stringify({
-          section: sectionName,
-          timestamp: Date.now()
-        }));
+        localStorage.setItem('gln_grammar_result', JSON.stringify({ section: sectionName, timestamp: Date.now() }));
       } catch(e) {}
-      
       alert('「' + sectionName + '」の学習完了を記録しました！\n（カウント語数: ' + actualWordCount + '語）');
       window.location.href = 'index.html';
     }
